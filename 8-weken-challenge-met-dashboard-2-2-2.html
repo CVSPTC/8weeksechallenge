@@ -844,6 +844,38 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
   animation: spin .8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── TRAINING TABLES ── */
+.wk-meta{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0 4px}
+.wk-meta-pill{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:10px;padding:8px 16px;display:flex;flex-direction:column;align-items:center;gap:2px;min-width:60px}
+.wk-meta-val{font-family:var(--font-display);font-size:22px;color:var(--fire);line-height:1}
+.wk-meta-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700}
+.day-tabs{display:flex;gap:4px;margin:16px 0 0;background:var(--dark3);border-radius:10px;padding:4px}
+.day-tab{flex:1;padding:9px 10px;border:none;border-radius:7px;background:none;color:var(--muted);font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;transition:all 0.15s;font-family:var(--font-body);text-transform:uppercase;white-space:nowrap}
+.day-tab:hover{color:var(--text)}.day-tab.active{background:var(--dark2);color:var(--fire);box-shadow:0 2px 8px rgba(0,0,0,0.4)}
+.day-content{display:none}.day-content.active{display:block}
+.train-table-wrap{overflow-x:auto;border-radius:12px;border:1px solid var(--border);margin-top:14px}
+.train-table{width:100%;border-collapse:collapse;font-size:13px}
+.train-table thead tr{background:rgba(255,255,255,0.025)}
+.train-table th{padding:10px 14px;text-align:left;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;white-space:nowrap;border-bottom:1px solid var(--border)}
+.train-table th.th-ex{color:var(--fire2);min-width:160px}
+.train-table tbody tr{border-bottom:1px solid rgba(255,255,255,0.04);transition:background 0.1s}
+.train-table tbody tr:hover{background:rgba(255,255,255,0.03)}
+.train-table tbody tr:last-child{border-bottom:none}
+.train-table td{padding:11px 14px;vertical-align:middle}
+.ex-name{font-weight:600;color:var(--text);white-space:nowrap}
+.ex-sets,.ex-reps{font-family:var(--font-display);font-size:18px;color:var(--fire);text-align:center;white-space:nowrap}
+.ex-rest{font-size:12px;color:var(--muted);text-align:center;white-space:nowrap}
+.ex-note{font-size:12px;color:var(--muted);font-style:italic;min-width:160px}
+.rir-badge{display:inline-block;background:rgba(229,222,209,0.08);border:1px solid rgba(229,222,209,0.18);border-radius:6px;padding:3px 10px;font-size:11px;font-weight:700;color:var(--fire2);white-space:nowrap}
+.rir-badge.rir-high{background:rgba(168,197,160,0.1);border-color:rgba(168,197,160,0.25);color:var(--green)}
+.rir-badge.rir-max{background:rgba(176,160,152,0.12);border-color:rgba(176,160,152,0.28);color:#c8b0a8}
+.rir-badge.rir-na{background:rgba(255,255,255,0.04);border-color:rgba(255,255,255,0.08);color:var(--muted)}
+.ss-badge{display:inline-block;background:rgba(14,165,233,0.1);border:1px solid rgba(14,165,233,0.28);border-radius:5px;padding:1px 7px;font-size:9px;font-weight:700;color:#38bdf8;white-space:nowrap;letter-spacing:0.5px;margin-right:6px;vertical-align:middle}
+.train-table tbody tr.ss-end td{border-bottom:1px solid rgba(255,255,255,0.12)!important}
+.pr-badge{display:inline-block;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);border-radius:5px;padding:1px 8px;font-size:9px;font-weight:700;color:#e8c97a;margin-right:6px;vertical-align:middle;letter-spacing:0.5px}
+.wk-cardio-note{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
+@media(max-width:600px){.train-table th,.train-table td{padding:8px 10px}.ex-note{min-width:0;max-width:120px}.day-tab{font-size:9px;padding:7px 5px}}
 </style>
 </head>
 <body>
@@ -924,348 +956,7 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
     <p>Elke week bouwt voort op de vorige. Open een week om het trainingsplan, de voedingsporties en de tips te zien.</p>
   </div>
 
-  <!-- WEEK 1 -->
-  <div class="week-card" id="wk1">
-    <div class="week-header" onclick="toggleWeek('wk1')">
-      <div class="week-label">
-        <div class="week-num">WK 1</div>
-        <div><div class="week-title">Techniek & ritme opbouwen</div><div class="week-sub">Bewegingspatronen inslijten — lichte gewichten</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-opstart">Opstart</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs — 3× gym (A/B/C) — 5–6 oefeningen per dag</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push:</strong> Bench press 3×10, Incline DB press 3×10, Schouderpress DB 3×12, Lateral raise 3×12, Tricep pushdown 3×12, Cable chest fly 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull:</strong> Lat pulldown 3×10, Seated cable row 3×10, DB row 3×12, Face pull 3×12, Dumbbell curl 3×12, Hammer curl 3×12</li>
-            <li><strong style="color:var(--text)">Dag C — Legs:</strong> Leg press 3×12, Squat (licht, techniek) 3×10, Leg extension 3×12, Leg curl 3×12, Calf raises 3×20, Plank 3×30 sec</li>
-            <li>Rust: 90 sec tussen sets | Gewicht: licht — bewegingspatroon inslijten, focus op techniek (RIR 4–5)</li>
-            <li>Elke sessie starten met 5 min. cardio (roeier of crosstrainer)</li>
-          </ul>
-        </div>
-        <div class="ws-block">
-          <div class="ws-icon">🥗</div>
-          <div class="ws-title">Voeding deze week</div>
-          <ul>
-            <li>Eet normaal — maar schrijf alles op wat je eet</li>
-            <li>Drink 2 liter water per dag</li>
-            <li>Geen frisdrank, alleen water of thee</li>
-            <li>Stop met eten 2 uur voor slapengaan</li>
-          </ul>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Portiegrootte: normaal</div>
-          <div class="portion-bar"><div class="portion-fill" style="width:30%"></div></div>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Perfectie bestaat niet in week 1. Het gaat erom dat je in beweging komt. Zet je 3 trainingen in je agenda zoals een zakelijke afspraak — en annuleer ze niet.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 2 -->
-  <div class="week-card" id="wk2">
-    <div class="week-header" onclick="toggleWeek('wk2')">
-      <div class="week-label">
-        <div class="week-num">WK 2</div>
-        <div><div class="week-title">Gewicht verhogen</div><div class="week-sub">Zelfde schema, iets zwaarder</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-opstart">Opstart</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs — 3× gym (A/B/C) — gewicht omhoog</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push:</strong> Bench press 4×10, Incline DB press 3×10, Schouderpress DB 3×12, Lateral raise 3×12, Tricep dips 3×12, Cable chest fly 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull:</strong> Pull-ups / assisted 4×8, Seated cable row 3×12, DB row 3×10, Barbell curl 3×12, Hammer curl 3×12, Face pull 3×15</li>
-            <li><strong style="color:var(--text)">Dag C — Legs:</strong> Squat (barbell) 4×10, RDL 3×10, Leg press 3×12, Leg curl 3×12, Walking lunges 3×12, Calf raises 4×15</li>
-            <li>Rust: 75 sec tussen sets | Gewicht: uitdagend op de laatste 2 reps (RIR 2–3)</li>
-            <li>Elke sessie afsluiten met 10 min. LISS cardio</li>
-          </ul>
-        </div>
-        <div class="ws-block">
-          <div class="ws-icon">🥗</div>
-          <div class="ws-title">Voeding deze week</div>
-          <ul>
-            <li>Verwijder suikerhoudende snacks uit huis</li>
-            <li>Eet elke maaltijd van een kleiner bord</li>
-            <li>Voeg 1 extra portie groente toe per dag</li>
-            <li>2–2,5 liter water per dag</li>
-          </ul>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Portiegrootte: licht verkleind</div>
-          <div class="portion-bar"><div class="portion-fill" style="width:40%"></div></div>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Je lichaam protesteert misschien — spierpijn is normaal. Maar het verdwijnt. Geef niet op voor de resultaten zichtbaar zijn. Succes in sport en business vraagt allebei geduld.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 3 -->
-  <div class="week-card" id="wk3">
-    <div class="week-header" onclick="toggleWeek('wk3')">
-      <div class="week-label">
-        <div class="week-num">WK 3</div>
-        <div><div class="week-title">Volume omhoog</div><div class="week-sub">Meer sets, meer vetverbranding</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-opbouw">Opbouw</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs + superset finisher — volume stijgt</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push:</strong> Bench press 4×10, Incline DB press 4×10, Schouderpress 4×10, Tricep pushdown 3×12, Cable chest fly 3×12 | Finisher: lateral raise 3×15</li>
-            <li><strong style="color:var(--text)">Dag B — Pull:</strong> Barbell row 4×10, Lat pulldown 4×10, DB row 3×12, Hammer curl 3×12, Face pull 3×15 | Finisher: straight-arm pulldown 3×15</li>
-            <li><strong style="color:var(--text)">Dag C — Legs + core:</strong> Squat 4×10, RDL 4×10, Leg press 3×12, Leg curl 3×12, Calf raises 3×15, Plank 3×45 sec</li>
-            <li>Rust: 60 sec tussen sets | Gewicht: zwaar — uitdagend maar techniek blijft staan (RIR 1–2)</li>
-            <li>Na elke sessie: 15 min. incline treadmill walk (vetverbrandingszone)</li>
-          </ul>
-        </div>
-        <div class="ws-block">
-          <div class="ws-icon">🥗</div>
-          <div class="ws-title">Voeding deze week</div>
-          <ul>
-            <li>Vervang 1 koolhydraatrijke maaltijd door eiwit + groente</li>
-            <li>Eet minder wit brood, pasta, rijst</li>
-            <li>Proteïne bij elk hoofdmaaltijd (ei, kip, kwark, vis)</li>
-            <li>Avondsnack max. 1 kleine portie</li>
-          </ul>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Portiegrootte: -15% koolhydraten</div>
-          <div class="portion-bar"><div class="portion-fill" style="width:52%"></div></div>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Week 3 is waar de meeste mensen afhaken. Zet een reminder op je telefoon: "Ik doe dit voor mijn energie, mijn focus, mijn bedrijf." Verbind je sportdoel aan je zakelijke succes.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 4 -->
-  <div class="week-card" id="wk4">
-    <div class="week-header" onclick="toggleWeek('wk4')">
-      <div class="week-label">
-        <div class="week-num">WK 4</div>
-        <div><div class="week-title">Deload & halverwege meting</div><div class="week-sub">Herstel — lichter trainen, meten</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-opbouw">Opbouw</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Deload week — 3× gym (licht)</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push (deload):</strong> Bench press 3×8 (70%), Incline DB press 3×10, Schouderpress 3×10, Lateral raise 3×12, Tricep pushdown 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull (deload):</strong> Lat pulldown 3×10, Seated row 3×10, DB row 3×10, Dumbbell curl 3×12, Face pull 3×15</li>
-            <li><strong style="color:var(--text)">Dag C — Legs (deload):</strong> Squat 3×10 (70%), Leg press 3×12, Leg curl 3×12, RDL 3×10, Calf raises 3×15, Plank 3×30 sec</li>
-            <li>Rust: 90 sec | Gewicht: 70% van normaal (herstel staat centraal)</li>
-            <li>📏 Doe halverwege meting: weeg + meet taille, heupen</li>
-          </ul>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Rust is geen zwakte — het is strategie. Je spieren groeien en herstellen tijdens de rust. Net zoals een bedrijf soms een pas op de plaats nodig heeft om daarna sneller te groeien.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 5 -->
-  <div class="week-card" id="wk5">
-    <div class="week-header" onclick="toggleWeek('wk5')">
-      <div class="week-label">
-        <div class="week-num">WK 5</div>
-        <div><div class="week-title">Tweede blok — zwaarder & strakker</div><div class="week-sub">Progressieve overload maximaliseren</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-intensief">Intensief</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs — verhoogd gewicht, 6 oefeningen</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push:</strong> Bench press 4×8, Incline DB press 4×8, DB schouderpress 4×10, Lateral raise 3×12, Tricep overhead ext. 3×12, Cable crossover 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull:</strong> Barbell row 4×8, Pull-ups 4×8, DB row 3×10, Incline curl 3×12, Hammer curl 3×12, Straight-arm pulldown 3×15</li>
-            <li><strong style="color:var(--text)">Dag C — Legs:</strong> Squat 4×8, RDL 4×8, Bulgarian split squat 3×10, Leg press 3×12, Leg curl 3×12, Calf raises 4×15</li>
-            <li>Rust: 60 sec | Zwaarder dan week 3 — minimaal 5% meer gewicht</li>
-            <li>Cardio finisher: 20 min. incline treadmill walk na kracht</li>
-          </ul>
-        </div>
-        <div class="ws-block">
-          <div class="ws-icon">🥗</div>
-          <div class="ws-title">Voeding deze week</div>
-          <ul>
-            <li>Koolhydraten alleen 's ochtends en voor training</li>
-            <li>Avondmaaltijd: eiwit + groente, geen koolhydraten</li>
-            <li>Tussenmaaltijden schrappen of vervangen door noten/ei</li>
-            <li>2,5 liter water per dag minimaal</li>
-          </ul>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Portiegrootte: -30% koolhydraten</div>
-          <div class="portion-bar"><div class="portion-fill" style="width:72%"></div></div>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Hier zie je de resultaten beginnen. Je broek zit anders, je hebt meer energie 's ochtends. Dit is het moment om een voor/na foto te maken als motivatie voor de laatste 3 weken.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 6 -->
-  <div class="week-card" id="wk6">
-    <div class="week-header" onclick="toggleWeek('wk6')">
-      <div class="week-label">
-        <div class="week-num">WK 6</div>
-        <div><div class="week-title">Superset protocol</div><div class="week-sub">Hoge hartslag, maximale vetverbranding</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-intensief">Intensief</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs — supersets, 6 oefeningen per dag</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push supersets:</strong> SS1: Bench press 4×10 + Lateral raise 4×15 | SS2: Incline DB press 4×10 + Tricep pushdown 4×12 | SS3: Schouderpress 4×10 + Cable chest fly 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull supersets:</strong> SS1: Barbell row 4×10 + Face pull 4×15 | SS2: Lat pulldown 4×10 + Hammer curl 4×12 | SS3: DB row 3×10 + Straight-arm pulldown 3×15</li>
-            <li><strong style="color:var(--text)">Dag C — Legs supersets:</strong> SS1: Squat 4×10 + Leg curl 4×12 | SS2: RDL 4×10 + Calf raise 4×15 | SS3: Bulgarian split squat 3×10 + Walking lunges 3×12 | Finisher: plank 3×1 min</li>
-            <li>Rust: 30 sec binnen superset, 60 sec tussen supersets</li>
-          </ul>
-        </div>
-        <div class="ws-block">
-          <div class="ws-icon">🥗</div>
-          <div class="ws-title">Voeding deze week</div>
-          <ul>
-            <li>Intermittent fasting optie: eet tussen 10:00–19:00</li>
-            <li>Geen bewerkte producten of pakjes/zakjes</li>
-            <li>Alcohol maximaal 1 glas per week</li>
-            <li>Kook zoveel mogelijk zelf</li>
-          </ul>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Portiegrootte: -35% koolhydraten</div>
-          <div class="portion-bar"><div class="portion-fill" style="width:80%"></div></div>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Supersets besparen tijd én verhogen je vetverbranding door je hartslag hoog te houden. Perfect voor drukke ondernemers. 25 minuten intensief is beter dan 60 minuten matig.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 7 -->
-  <div class="week-card" id="wk7">
-    <div class="week-header" onclick="toggleWeek('wk7')">
-      <div class="week-label">
-        <div class="week-num">WK 7</div>
-        <div><div class="week-title">Piekweek — maximale output</div><div class="week-sub">Zwaarste week van de challenge</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-piek">Piek</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs — maximaal gewicht, 6 oefeningen</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push (heavy):</strong> Bench press 5×6, Incline DB press 4×8, Schouderpress 4×8, Tricep dips 4×10, Lateral raise 3×12, Cable chest fly 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull (heavy):</strong> Barbell row 5×6, Weighted pull-up 4×6, DB row 4×8, Hammer curl 3×10, Cable curl 3×12, Face pull 3×15</li>
-            <li><strong style="color:var(--text)">Dag C — Legs (heavy):</strong> Squat 5×5, RDL 4×8, Leg press 4×10, Bulgarian split squat 3×10, Leg curl 3×12, Calf raise 4×20</li>
-            <li>Extra: 2× 20 min. HIIT cardio op rustdagen (bijv. fietsen of roeier)</li>
-            <li>Rust: 45–60 sec | Zwaarste gewichten van de challenge</li>
-          </ul>
-        </div>
-        <div class="ws-block">
-          <div class="ws-icon">🥗</div>
-          <div class="ws-title">Voeding deze week</div>
-          <ul>
-            <li>Koolhydraten alleen na training (timing!)</li>
-            <li>Groenten onbeperkt — vul je bord ermee</li>
-            <li>Eiwit bij elke maaltijd (doel: 1,6g per kg lichaamsgewicht)</li>
-            <li>Vermijd zout om waterretentie te beperken</li>
-          </ul>
-          <div style="margin-top:10px;font-size:12px;color:var(--muted)">Portiegrootte: -40% koolhydraten</div>
-          <div class="portion-bar"><div class="portion-fill" style="width:90%"></div></div>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">💡</div>
-          <div class="ws-title">Tip van de week</div>
-          <p>Dit is de zwaarste week. Herinner jezelf waarom je begon. Schrijf het op en plak het op je spiegel. Elke ondernemer kent het gevoel van doorzetten als het moeilijk wordt — dit is precies dat moment.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- WEEK 8 -->
-  <div class="week-card" id="wk8">
-    <div class="week-header" onclick="toggleWeek('wk8')">
-      <div class="week-label">
-        <div class="week-num">WK 8</div>
-        <div><div class="week-title">Finishline — benchmark & resultaten</div><div class="week-sub">Eindmeting + vergelijk met week 1</div></div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <span class="week-phase phase-piek">Piek</span>
-        <span class="chevron">▼</span>
-      </div>
-    </div>
-    <div class="week-body">
-      <div class="week-sections">
-        <div class="ws-block full">
-          <div class="ws-icon">🏋️</div>
-          <div class="ws-title">Push / Pull / Legs — benchmark week</div>
-          <ul>
-            <li><strong style="color:var(--text)">Dag A — Push benchmark:</strong> Max gewicht bench press 1×5 (test 1RM), Schouderpress 4×8, Tricep circuit 3×12</li>
-            <li><strong style="color:var(--text)">Dag B — Pull benchmark:</strong> Max gewicht barbell row 1×5, Max pull-ups, Curl 3×12</li>
-            <li><strong style="color:var(--text)">Dag C — Legs benchmark:</strong> Max gewicht squat 1×5 (test 1RM), RDL 4×8, Calf raise 4×15</li>
-            <li>📏 Eindmeting: weeg + meet + foto — vergelijk met week 1 & 4</li>
-            <li>Noteer alle PR's (personal records) — dit is je nieuwe startpunt</li>
-          </ul>
-        </div>
-        <div class="ws-block full">
-          <div class="ws-icon">🏆</div>
-          <div class="ws-title">Gefeliciteerd!</div>
-          <p>Je hebt 8 weken volgehouden. Dat lukt maar een klein percentage mensen. Je hebt bewezen dat je de discipline hebt om resultaten te halen — in sport én in business. Wat is je volgende doel?</p>
-        </div>
-      </div>
-    </div>
-  </div>
+  <div id="wk-schema-container"></div>
 
 </div><!-- /tab-schema -->
 
@@ -1483,6 +1174,11 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
     </div>
     <button class="save-btn" onclick="saveMeting()">Meting opslaan</button>
     <div id="saved-entries"></div>
+    <div id="progress-chart-wrap" style="margin-top:24px;background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:22px;display:none">
+      <div style="font-family:var(--font-display);font-size:22px;letter-spacing:1.5px;color:#fff;margin-bottom:4px">VOORTGANGSGRAFIEK</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Gewicht, taille en heupen over de meetmomenten</div>
+      <canvas id="progress-chart" style="width:100%;display:block"></canvas>
+    </div>
   </div>
 
     <div class="progress-form" style="margin-top:20px">
@@ -1505,6 +1201,10 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
       </div>
       <button class="save-btn" onclick="slaFotoOp()">Foto opslaan</button>
       <div id="foto-preview-grid" class="foto-grid" style="margin-top:20px"></div>
+      <div id="foto-vergelijking" style="display:none;margin-top:24px">
+        <div style="font-family:var(--font-display);font-size:18px;letter-spacing:1.5px;color:#fff;margin-bottom:14px">VOOR / NA VERGELIJKING</div>
+        <div id="foto-vergelijking-grid"></div>
+      </div>
     </div>
 </div>
 
@@ -2265,11 +1965,28 @@ function slaFotoOp() {
   var file = inputEl.files[0];
   var reader = new FileReader();
   reader.onload = function(e) {
-    fotoStore[week] = e.target.result;
-    localStorage.setItem('challenge_fotos', JSON.stringify(fotoStore));
-    renderFotos();
-    weekEl.value = '';
-    inputEl.value = '';
+    // Compress image to max 900px wide, JPEG 0.75 to keep localStorage under quota
+    var img = new Image();
+    img.onload = function() {
+      var MAX = 900;
+      var w = img.width, h = img.height;
+      if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+      var canvas = document.createElement('canvas');
+      canvas.width = w;
+      canvas.height = h;
+      canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+      var compressed = canvas.toDataURL('image/jpeg', 0.75);
+      fotoStore[week] = compressed;
+      try {
+        localStorage.setItem('challenge_fotos', JSON.stringify(fotoStore));
+      } catch(err) {
+        console.warn('Foto opgeslagen in geheugen maar niet in localStorage (opslag vol).');
+      }
+      renderFotos();
+      weekEl.value = '';
+      inputEl.value = '';
+    };
+    img.src = e.target.result;
   };
   reader.readAsDataURL(file);
 }
@@ -2832,6 +2549,935 @@ function bmrHerstelOpgeslagen() {
 // (duplicate click handler removed — zie lokale generator hierboven)
 
 
+// ════════════════════════════════════════
+// DASHBOARD — TAKEN SYSTEEM
+// ════════════════════════════════════════
+var dbActiveWeek = 1;
+var dbTaken = JSON.parse(localStorage.getItem('challenge_taken') || '{}');
+
+var dbWeekData = [
+  {
+    week: 1, title: 'Techniek & ritme opbouwen', sub: 'Bewegingspatronen inslijten',
+    tasks: [
+      { id: 'w1-t1', cat: 'Training', text: 'Dag A (Push) voltooid — Bench press 3×10, Incline press, Schouderpress, Lateral raise, Tricep pushdown' },
+      { id: 'w1-t2', cat: 'Training', text: 'Dag B (Pull) voltooid — Lat pulldown 3×10, Cable row, DB row, Face pull, Curls' },
+      { id: 'w1-t3', cat: 'Training', text: 'Dag C (Legs) voltooid — Leg press 3×12, Squat (techniek), Extensions, Leg curl, Calf raises, Plank' },
+      { id: 'w1-t4', cat: 'Voeding', text: 'Maaltijden bijgehouden — noteer wat je at' },
+      { id: 'w1-t5', cat: 'Voeding', text: '2 liter water gedronken' },
+      { id: 'w1-t6', cat: 'Voeding', text: 'Geen frisdrank vandaag' },
+      { id: 'w1-t7', cat: 'Mindset', text: 'Trainingen in agenda gezet als zakelijke afspraken' },
+      { id: 'w1-t8', cat: 'Meten', text: 'Nulmeting gedaan — gewicht, taille, heupen, energie (tab Progressie)' }
+    ]
+  },
+  {
+    week: 2, title: 'Gewicht verhogen', sub: 'Zelfde schema, iets zwaarder',
+    tasks: [
+      { id: 'w2-t1', cat: 'Training', text: 'Dag A (Push) voltooid — Bench press 4×10, Incline press, Tricep dips' },
+      { id: 'w2-t2', cat: 'Training', text: 'Dag B (Pull) voltooid — Pull-ups/assisted 4×8, Cable row, Barbell curl, Face pull' },
+      { id: 'w2-t3', cat: 'Training', text: 'Dag C (Legs) voltooid — Squat barbell 4×10, RDL, Leg press, Walking lunges' },
+      { id: 'w2-t4', cat: 'Voeding', text: 'Suikerhoudende snacks verwijderd uit huis' },
+      { id: 'w2-t5', cat: 'Voeding', text: '1 extra portie groente toegevoegd per dag' },
+      { id: 'w2-t6', cat: 'Voeding', text: '2,5 liter water gedronken' },
+      { id: 'w2-t7', cat: 'Mindset', text: 'Gereflecteerd: wat ging goed, wat kan beter?' },
+      { id: 'w2-t8', cat: 'Training', text: 'Elke sessie afgesloten met 10 min. LISS cardio' }
+    ]
+  },
+  {
+    week: 3, title: 'Volume verhogen', sub: 'Meer sets, meer energie',
+    tasks: [
+      { id: 'w3-t1', cat: 'Training', text: 'Dag A (Push) voltooid — Bench press 4×8, Cable fly superset, OHP zwaarder' },
+      { id: 'w3-t2', cat: 'Training', text: 'Dag B (Pull) voltooid — Weighted pull-ups, Row superset, Bicep isolatie' },
+      { id: 'w3-t3', cat: 'Training', text: 'Dag C (Legs) voltooid — Squat 4×8, Bulgaarse split squat, Hack squat' },
+      { id: 'w3-t4', cat: 'Voeding', text: 'Calorieën geteld en binnen doel gebleven' },
+      { id: 'w3-t5', cat: 'Voeding', text: 'Portiegrootte verkleind (kleinere borden)' },
+      { id: 'w3-t6', cat: 'Voeding', text: '15 min. bewust wandelen na avondeten' },
+      { id: 'w3-t7', cat: 'Mindset', text: '1 slechte dag niet laten uitgroeien tot slechte week' },
+      { id: 'w3-t8', cat: 'Herstel', text: '7–8 uur geslapen (minimaal 5 van 7 nachten)' }
+    ]
+  },
+  {
+    week: 4, title: 'Deload & herstel', sub: 'Lichter trainen, scherper meten',
+    tasks: [
+      { id: 'w4-t1', cat: 'Training', text: 'Dag A (Push) deload — Bench press 3×8 (60%), Lichte schouder, Tricep isolatie' },
+      { id: 'w4-t2', cat: 'Training', text: 'Dag B (Pull) deload — Lat pulldown 3×10, Lichte rij, Bicep isolatie' },
+      { id: 'w4-t3', cat: 'Training', text: 'Dag C (Legs) deload — Squat 3×10 (licht), Leg press, Calf raises' },
+      { id: 'w4-t4', cat: 'Voeding', text: 'Iets meer eten — deload week = glycogeenaanvulling' },
+      { id: 'w4-t5', cat: 'Voeding', text: 'Maaltijdprep gedaan voor week 5' },
+      { id: 'w4-t6', cat: 'Meten', text: 'Halverwege-meting gedaan — vergelijk met week 1 (tab Progressie)' },
+      { id: 'w4-t7', cat: 'Meten', text: 'Tussenfoto gemaakt (tab Progressie → Foto Upload)' },
+      { id: 'w4-t8', cat: 'Mindset', text: 'Wekelijkse reflectievraag beantwoord (tab Mindset)' }
+    ]
+  },
+  {
+    week: 5, title: 'Intensief — zwaarder & scherper', sub: 'RIR 1–2, vermoeidheid neemt toe',
+    tasks: [
+      { id: 'w5-t1', cat: 'Training', text: 'Dag A (Push) intensief — Bench press 5×6, Superset: Incline + Cable fly, OHP zwaar' },
+      { id: 'w5-t2', cat: 'Training', text: 'Dag B (Pull) intensief — Deadlift 4×5, Superset: Pull-up + Row, Facepull drop-set' },
+      { id: 'w5-t3', cat: 'Training', text: 'Dag C (Legs) intensief — Squat 5×5, Bulgaarse split zwaar, Leg curl dropset' },
+      { id: 'w5-t4', cat: 'Voeding', text: 'Caloriedoel aangehouden (herbereken als gewicht stagneerde)' },
+      { id: 'w5-t5', cat: 'Voeding', text: 'Post-workout maaltijd binnen 60 min. gegeten' },
+      { id: 'w5-t6', cat: 'Herstel', text: '20 min. actief herstel op rustdag (wandelen, yoga, stretching)' },
+      { id: 'w5-t7', cat: 'Mindset', text: 'Energie en focus buiten sportschool geëvalueerd' },
+      { id: 'w5-t8', cat: 'Cardio', text: '2× LISS 20 min. nuchter uitgevoerd' }
+    ]
+  },
+  {
+    week: 6, title: 'Supersets & dropsetting', sub: 'Maximale pomp',
+    tasks: [
+      { id: 'w6-t1', cat: 'Training', text: 'Dag A supersets — Bench+Cable fly, OHP+Lateral raise, Tricep+Overhead extension' },
+      { id: 'w6-t2', cat: 'Training', text: 'Dag B supersets — Pull-up+Row, Face pull+Curl, Hammer+Reverse curl' },
+      { id: 'w6-t3', cat: 'Training', text: 'Dag C supersets — Squat+Leg press, RDL+Leg curl, Lunge+Calf raise' },
+      { id: 'w6-t4', cat: 'Voeding', text: 'Meer koolhydraten op trainingsdagen, minder op rustdagen' },
+      { id: 'w6-t5', cat: 'Voeding', text: 'Eiwitten target bereikt (>1,6 g per kg lichaamsgewicht)' },
+      { id: 'w6-t6', cat: 'Cardio', text: '3× HIIT 15 min. of 2× LISS 25 min. voltooid' },
+      { id: 'w6-t7', cat: 'Mindset', text: 'Zwaarste moment deze week benoemd & overwonnen' },
+      { id: 'w6-t8', cat: 'Herstel', text: 'Foam rollen of stretching gedaan na training' }
+    ]
+  },
+  {
+    week: 7, title: 'Piek — alles eruit', sub: 'Maximale intensiteit',
+    tasks: [
+      { id: 'w7-t1', cat: 'Training', text: 'Dag A peak — Bench press PR poging, Rest-pause sets, Hoge intensiteit push' },
+      { id: 'w7-t2', cat: 'Training', text: 'Dag B peak — Deadlift PR poging, Volume pull, Bicep isolatie intensief' },
+      { id: 'w7-t3', cat: 'Training', text: 'Dag C peak — Squat PR poging, Supersetting legs, Maximale uitdaging' },
+      { id: 'w7-t4', cat: 'Voeding', text: 'Strikt aan voedingsplan gehouden (geen uitzonderingen)' },
+      { id: 'w7-t5', cat: 'Voeding', text: 'Water intake op 3 liter per dag gebracht' },
+      { id: 'w7-t6', cat: 'Cardio', text: '3× HIIT of nuchter cardio voltooid' },
+      { id: 'w7-t7', cat: 'Mindset', text: 'Resultaten zichtbaar? Motivatie voor laatste week opgehaald' },
+      { id: 'w7-t8', cat: 'Training', text: 'Persoonlijk record (PR) geprobeerd op minimaal 1 oefening' }
+    ]
+  },
+  {
+    week: 8, title: 'Eindmeting & benchmark', sub: 'Challenge complete!',
+    tasks: [
+      { id: 'w8-t1', cat: 'Training', text: 'Laatste Push-dag voltooid — alles eruit' },
+      { id: 'w8-t2', cat: 'Training', text: 'Laatste Pull-dag voltooid — eindbenchmark gewichten' },
+      { id: 'w8-t3', cat: 'Training', text: 'Laatste Leg-dag voltooid — sterkste squat van de challenge' },
+      { id: 'w8-t4', cat: 'Meten', text: 'Eindmeting gedaan — gewicht, taille, heupen (tab Progressie)' },
+      { id: 'w8-t5', cat: 'Meten', text: 'Eindfoto gemaakt en vergeleken met startfoto (tab Progressie)' },
+      { id: 'w8-t6', cat: 'Voeding', text: 'Laatste caloriedag bijgehouden' },
+      { id: 'w8-t7', cat: 'Mindset', text: 'Eindreflectie geschreven — 3 lessen voor de komende maanden' },
+      { id: 'w8-t8', cat: 'Challenge', text: '🏆 Challenge voltooid! Gefeliciteerd met 8 weken discipline!' }
+    ]
+  }
+];
+
+function dbRenderWeekBtns() {
+  var container = document.getElementById('db-week-btns');
+  if (!container) return;
+  var html = '';
+  dbWeekData.forEach(function(wd) {
+    var allDone = wd.tasks.every(function(t) { return dbTaken[t.id]; });
+    html += '<button class="db-wk-btn' +
+      (wd.week === dbActiveWeek ? ' active' : '') +
+      (allDone ? ' all-done' : '') +
+      '" onclick="dbSetWeek(' + wd.week + ')">W' + wd.week + '</button>';
+  });
+  container.innerHTML = html;
+}
+
+function dbSetWeek(week) {
+  dbActiveWeek = week;
+  dbRenderWeekBtns();
+  dbRenderBoard();
+}
+
+function dbToggleTask(id) {
+  dbTaken[id] = !dbTaken[id];
+  localStorage.setItem('challenge_taken', JSON.stringify(dbTaken));
+  dbRenderBoard();
+  dbRenderStats();
+  dbRenderWeekBtns();
+}
+
+function dbRenderBoard() {
+  var board = document.getElementById('db-task-board');
+  if (!board) return;
+  var wd = dbWeekData.find(function(w) { return w.week === dbActiveWeek; });
+  if (!wd) return;
+
+  var done = wd.tasks.filter(function(t) { return dbTaken[t.id]; }).length;
+  var pct = Math.round((done / wd.tasks.length) * 100);
+
+  var html = '<div class="db-week-banner" style="grid-column:1/-1">' +
+    '<div><div class="db-wb-num">WEEK ' + wd.week + ' / 8</div>' +
+    '<div class="db-wb-title">' + wd.title + '</div>' +
+    '<div class="db-wb-sub">' + wd.sub + '</div></div></div>';
+
+  html += '<div class="db-task-prog" style="grid-column:1/-1">' +
+    '<div class="db-tp-bar"><div class="db-tp-fill" style="width:' + pct + '%"></div></div>' +
+    '<div class="db-tp-text">' + done + '/' + wd.tasks.length + ' taken</div>' +
+    '<div class="db-tp-pct">' + pct + '%</div></div>';
+
+  var openHtml = '', doneHtml = '';
+  wd.tasks.forEach(function(t) {
+    var isDone = !!dbTaken[t.id];
+    var taskEl = '<div class="db-task' + (isDone ? ' done' : '') + '" onclick="dbToggleTask(\'' + t.id + '\')">' +
+      '<div class="db-chk">' + (isDone ? '✓' : '') + '</div>' +
+      '<div><div class="db-task-text">' + t.text + '</div>' +
+      '<div class="db-task-cat">' + t.cat + '</div></div></div>';
+    if (isDone) doneHtml += taskEl;
+    else openHtml += taskEl;
+  });
+
+  if (!openHtml) openHtml = '<div class="db-empty">✅ Alle taken afgevinkt voor deze week!</div>';
+  if (!doneHtml) doneHtml = '<div class="db-empty">Nog geen taken voltooid</div>';
+
+  html += '<div><div class="db-col-head red-head"><div class="db-dot red"></div>Open taken</div>' + openHtml + '</div>';
+  html += '<div><div class="db-col-head green-head"><div class="db-dot green"></div>Klaar</div>' + doneHtml + '</div>';
+
+  board.innerHTML = html;
+  var awEl = document.getElementById('db-active-week');
+  if (awEl) awEl.textContent = dbActiveWeek;
+}
+
+function dbRenderStats() {
+  var totalDone = 0, totalTasks = 0;
+  dbWeekData.forEach(function(wd) {
+    wd.tasks.forEach(function(t) {
+      totalTasks++;
+      if (dbTaken[t.id]) totalDone++;
+    });
+  });
+  var totalPct = totalTasks > 0 ? Math.round((totalDone / totalTasks) * 100) : 0;
+
+  var doneEl = document.getElementById('db-done-count');
+  var openEl = document.getElementById('db-open-count');
+  var progFill = document.getElementById('db-prog-fill');
+  var progPct = document.getElementById('db-prog-pct');
+  var answEl = document.getElementById('db-answers-count');
+
+  if (doneEl) doneEl.textContent = totalDone;
+  if (openEl) openEl.textContent = totalTasks - totalDone;
+  if (progFill) progFill.style.width = totalPct + '%';
+  if (progPct) progPct.textContent = totalPct + '%';
+
+  var mqAns = JSON.parse(localStorage.getItem('challenge_mq_answers') || '{}');
+  var answerCount = Object.keys(mqAns).filter(function(k) { return mqAns[k] && mqAns[k].trim(); }).length;
+  if (answEl) answEl.textContent = answerCount;
+}
+
+
+// ════════════════════════════════════════
+// MINDSET VRAGEN
+// ════════════════════════════════════════
+var mqActiveWeek = 1;
+var mqAnswers = JSON.parse(localStorage.getItem('challenge_mq_answers') || '{}');
+
+var mqData = [
+  {
+    week: 1, title: 'Jouw diepe motivatie',
+    question: 'Waarom doe je deze challenge? Schrijf je échte, diepste motivatie op — niet de oppervlakkige. Wat verandert er als je slaagt?',
+    hint: 'Denk aan hoe je je wilt voelen, wie je wilt zijn — niet alleen hoe je eruit wilt zien.'
+  },
+  {
+    week: 2, title: 'Saboterende gewoontes',
+    question: 'Welke drie gewoontes brengen jouw lichaamsdoel het meest in gevaar? Hoe ga je die dit week concreet doorbreken?',
+    hint: 'Denk aan eetgewoontes, slaaptijden, werkpatronen, stressreacties.'
+  },
+  {
+    week: 3, title: 'Training en drukke werkdagen',
+    question: 'Hoe heb je je training dit week aangepast aan drukke werkdagen? Welk systeem werkte het beste?',
+    hint: 'Denk aan tijdstip, locatie, type training. Wat maakt het makkelijker om toch te gaan?'
+  },
+  {
+    week: 4, title: 'Halverwege — eerlijke evaluatie',
+    question: 'Je bent halverwege. Wat werkt heel goed? Wat werkt absoluut niet? Wat ga je aanpassen voor de tweede helft?',
+    hint: 'Wees eerlijk. Dit is geen beoordeling — het is een bijstuurmoment.'
+  },
+  {
+    week: 5, title: 'Energie en focus buiten de gym',
+    question: 'Hoe heeft je energie, concentratie en slaapkwaliteit zich verbeterd de afgelopen weken? Wat merk je in je werk en leven?',
+    hint: 'Lichamelijke veranderingen beïnvloeden alles. Let ook op subtiele signalen.'
+  },
+  {
+    week: 6, title: 'Jouw zwaarste moment',
+    question: 'Wat was het zwaarste moment in de challenge tot nu toe? Hoe heb je het overwonnen — of hoe ga je het de volgende keer aanpakken?',
+    hint: 'Mislukking is data, geen falen. Wat leerde je ervan?'
+  },
+  {
+    week: 7, title: 'Zichtbare resultaten',
+    question: 'Kun je de resultaten al zien of voelen? Wat motiveert jou het meest voor de laatste week? Noem drie concrete dingen.',
+    hint: 'Resultaten zijn niet alleen visueel — denk ook aan kracht, energie en discipline.'
+  },
+  {
+    week: 8, title: 'Challenge voltooid — drie lessen',
+    question: 'Je hebt de 8-weken challenge afgerond! Welke drie lessen neem je mee naar de komende maanden? Hoe blijf je dit vasthouden?',
+    hint: 'Schrijf ook een actieplan voor week 9 en verder. Wat doe je anders dan voor de challenge?'
+  }
+];
+
+function mqRender() {
+  var navEl = document.getElementById('mq-week-nav');
+  var cardEl = document.getElementById('mq-card-container');
+  if (!navEl || !cardEl) return;
+
+  var navHtml = '';
+  mqData.forEach(function(mq) {
+    var answered = mqAnswers[mq.week] && mqAnswers[mq.week].trim();
+    navHtml += '<button class="mq-btn' +
+      (mq.week === mqActiveWeek ? ' active' : '') +
+      (answered ? ' answered' : '') +
+      '" onclick="mqSetWeek(' + mq.week + ')">Week ' + mq.week + '</button>';
+  });
+  navEl.innerHTML = navHtml;
+
+  var mq = mqData.find(function(m) { return m.week === mqActiveWeek; });
+  if (!mq) return;
+  var wkStr = mq.week < 10 ? '0' + mq.week : '' + mq.week;
+  var savedAnswer = mqAnswers[mq.week] || '';
+
+  cardEl.innerHTML = '<div class="mq-card">' +
+    '<div class="mq-head">' +
+    '<div class="mq-wknum">' + wkStr + '</div>' +
+    '<div><div class="mq-week-lbl">Week ' + mq.week + ' van 8</div>' +
+    '<div class="mq-title">' + mq.title + '</div></div>' +
+    '</div>' +
+    '<div class="mq-body">' +
+    '<div class="mq-qlabel">Reflectievraag</div>' +
+    '<div class="mq-question">' + mq.question + '</div>' +
+    '<div class="mq-hint">' + mq.hint + '</div>' +
+    '<textarea class="mq-textarea" id="mq-answer-' + mq.week + '" placeholder="Schrijf je antwoord hier...">' + savedAnswer + '</textarea>' +
+    '<button class="mq-save-btn" onclick="mqSave(' + mq.week + ')">Opslaan</button>' +
+    '<span class="mq-saved-ind" id="mq-saved-ind-' + mq.week + '">&#10003; Opgeslagen</span>' +
+    '</div></div>';
+}
+
+function mqSetWeek(week) {
+  mqActiveWeek = week;
+  mqRender();
+}
+
+function mqSave(week) {
+  var ta = document.getElementById('mq-answer-' + week);
+  if (!ta) return;
+  mqAnswers[week] = ta.value;
+  localStorage.setItem('challenge_mq_answers', JSON.stringify(mqAnswers));
+  var ind = document.getElementById('mq-saved-ind-' + week);
+  if (ind) { ind.classList.add('show'); setTimeout(function() { ind.classList.remove('show'); }, 2000); }
+  mqRender();
+  dbRenderStats();
+}
+
+
+// ════════════════════════════════════════
+// WATER TRACKER — PERSISTENTIE
+// ════════════════════════════════════════
+(function() {
+  var saved = parseInt(localStorage.getItem('challenge_water') || '0', 10);
+  if (saved > 0) { waterCount = saved; buildWater(); }
+})();
+
+var _origToggleGlass = toggleGlass;
+toggleGlass = function(i) {
+  _origToggleGlass(i);
+  localStorage.setItem('challenge_water', String(waterCount));
+};
+
+var _origResetWater = resetWater;
+resetWater = function() {
+  _origResetWater();
+  localStorage.setItem('challenge_water', '0');
+};
+
+
+// ════════════════════════════════════════
+// METINGEN — PERSISTENTIE
+// ════════════════════════════════════════
+(function() {
+  var saved = localStorage.getItem('challenge_metingen');
+  if (saved) {
+    try { Object.assign(metingen, JSON.parse(saved)); } catch(e) {}
+  }
+})();
+
+var _origSaveMeting = saveMeting;
+saveMeting = function() {
+  // Round weight/measurements to 2 decimal places before the original reads them
+  ['gewicht', 'taille', 'heupen'].forEach(function(f) {
+    var el = document.getElementById('inp-' + f);
+    if (el && el.value) el.value = Math.round(parseFloat(el.value) * 100) / 100;
+  });
+  _origSaveMeting();
+  localStorage.setItem('challenge_metingen', JSON.stringify(metingen));
+  renderProgressChart();
+};
+
+
+// ════════════════════════════════════════
+// SETTINGS — PERSISTENTIE
+// ════════════════════════════════════════
+function saveSettings() {
+  var r = document.documentElement;
+  localStorage.setItem('challenge_settings', JSON.stringify({
+    fire: r.style.getPropertyValue('--fire'),
+    fire2: r.style.getPropertyValue('--fire2'),
+    fontDisplay: r.style.getPropertyValue('--font-display'),
+    fontBody: r.style.getPropertyValue('--font-body'),
+    isDark: isDark
+  }));
+}
+
+function loadSettings() {
+  var saved = localStorage.getItem('challenge_settings');
+  if (!saved) return;
+  try {
+    var s = JSON.parse(saved);
+    var r = document.documentElement;
+    if (s.fire) { r.style.setProperty('--fire', s.fire); r.style.setProperty('--week-color', s.fire); }
+    if (s.fire2) r.style.setProperty('--fire2', s.fire2);
+    if (s.fontDisplay) r.style.setProperty('--font-display', s.fontDisplay);
+    if (s.fontBody) r.style.setProperty('--font-body', s.fontBody);
+    if (typeof s.isDark !== 'undefined' && s.isDark === false && isDark === true) {
+      r.style.setProperty('--dark', '#f4f1ed');
+      r.style.setProperty('--dark2', '#ffffff');
+      r.style.setProperty('--dark3', '#ede9e3');
+      r.style.setProperty('--border', 'rgba(0,0,0,0.08)');
+      r.style.setProperty('--text', '#1a1a1a');
+      r.style.setProperty('--muted', '#6b6560');
+      isDark = false;
+      var btn = document.getElementById('dark-toggle');
+      if (btn) btn.classList.remove('on');
+    }
+  } catch(e) {}
+}
+
+var _origSetAccent = setAccent;
+setAccent = function(c1, c2) { _origSetAccent(c1, c2); saveSettings(); };
+
+var _origSetFont = setFont;
+setFont = function(d, b) { _origSetFont(d, b); saveSettings(); };
+
+var _origApplyTheme = applyTheme;
+applyTheme = function(name) { _origApplyTheme(name); saveSettings(); };
+
+var _origToggleDark = toggleDark;
+toggleDark = function() { _origToggleDark(); saveSettings(); };
+
+
+// ════════════════════════════════════════
+// WEEK CARD ACCORDION
+// ════════════════════════════════════════
+toggleWeek = function(id) {
+  var card = document.getElementById(id);
+  var wasOpen = card.classList.contains('open');
+  document.querySelectorAll('.week-card.open').forEach(function(c) { c.classList.remove('open'); });
+  if (!wasOpen) card.classList.add('open');
+};
+
+
+// ════════════════════════════════════════
+// FOTO DELETE BEVESTIGING
+// ════════════════════════════════════════
+var _origVerwijderFoto = verwijderFoto;
+verwijderFoto = function(week) {
+  var labels = { '1': 'Week 1 (startfoto)', '4': 'Week 4 (tussenfoto)', '8': 'Week 8 (eindfoto)' };
+  if (confirm('Weet je zeker dat je de foto van ' + (labels[String(week)] || 'week ' + week) + ' wilt verwijderen?\nDit kan niet ongedaan worden gemaakt.')) {
+    _origVerwijderFoto(week);
+  }
+};
+
+
+// ════════════════════════════════════════
+// VOORTGANGSGRAFIEK (Canvas)
+// ════════════════════════════════════════
+function renderProgressChart() {
+  var wrap = document.getElementById('progress-chart-wrap');
+  var canvas = document.getElementById('progress-chart');
+  if (!canvas || !wrap) return;
+
+  var weeks = [1, 4, 8];
+  var hasData = weeks.some(function(w) { return metingen[w]; });
+  wrap.style.display = hasData ? 'block' : 'none';
+  if (!hasData) return;
+
+  var datasets = [
+    { label: 'Gewicht (kg)', key: 'gewicht', color: '#e5ded1' },
+    { label: 'Taille (cm)', key: 'taille', color: '#0ea5e9' },
+    { label: 'Heupen (cm)', key: 'heupen', color: '#a8c5a0' }
+  ];
+
+  var W = (canvas.parentElement.offsetWidth - 44) || 500;
+  var H = 230;
+  canvas.width = W;
+  canvas.height = H;
+  var ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, W, H);
+
+  var pad = { top: 28, right: 20, bottom: 42, left: 52 };
+  var plotW = W - pad.left - pad.right;
+  var plotH = H - pad.top - pad.bottom;
+
+  var allVals = [];
+  datasets.forEach(function(ds) {
+    weeks.forEach(function(w) {
+      var v = metingen[w] && metingen[w][ds.key];
+      if (v) allVals.push(v);
+    });
+  });
+  if (allVals.length === 0) return;
+
+  var minVal = Math.min.apply(null, allVals) * 0.94;
+  var maxVal = Math.max.apply(null, allVals) * 1.04;
+  var range = maxVal - minVal || 1;
+
+  function toX(i) { return pad.left + (i / (weeks.length - 1)) * plotW; }
+  function toY(v) { return pad.top + plotH - ((v - minVal) / range) * plotH; }
+
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  for (var gi = 0; gi <= 4; gi++) {
+    var gy = pad.top + (gi / 4) * plotH;
+    ctx.beginPath(); ctx.moveTo(pad.left, gy); ctx.lineTo(pad.left + plotW, gy); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(Math.round(maxVal - (gi / 4) * range), pad.left - 7, gy + 4);
+  }
+
+  var xLabels = ['Week 1', 'Week 4', 'Week 8'];
+  ctx.textAlign = 'center';
+  ctx.fillStyle = 'rgba(255,255,255,0.45)';
+  ctx.font = '11px sans-serif';
+  weeks.forEach(function(w, i) { ctx.fillText(xLabels[i], toX(i), H - 8); });
+
+  datasets.forEach(function(ds) {
+    var pts = weeks.map(function(w, i) {
+      var v = metingen[w] && metingen[w][ds.key];
+      return v ? { x: toX(i), y: toY(v), v: v } : null;
+    }).filter(Boolean);
+    if (pts.length === 0) return;
+
+    ctx.strokeStyle = ds.color;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    pts.forEach(function(p, idx) { idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
+    ctx.stroke();
+
+    pts.forEach(function(p) {
+      ctx.fillStyle = ds.color;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
+      ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(p.v, p.x, p.y - 10);
+    });
+  });
+
+  var lx = pad.left;
+  ctx.font = '10px sans-serif';
+  datasets.forEach(function(ds) {
+    var hasPts = weeks.some(function(w) { return metingen[w] && metingen[w][ds.key]; });
+    if (!hasPts) return;
+    ctx.fillStyle = ds.color;
+    ctx.fillRect(lx, 8, 16, 3);
+    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+    ctx.textAlign = 'left';
+    ctx.fillText(ds.label, lx + 20, 12);
+    lx += ctx.measureText(ds.label).width + 44;
+  });
+}
+
+
+// ════════════════════════════════════════
+// FOTO VERGELIJKING SIDE-BY-SIDE
+// ════════════════════════════════════════
+function renderFotoVergelijking() {
+  var el = document.getElementById('foto-vergelijking');
+  var grid = document.getElementById('foto-vergelijking-grid');
+  if (!el || !grid) return;
+
+  var fotoWeken = Object.keys(fotoStore).sort();
+  if (fotoWeken.length < 2) { el.style.display = 'none'; return; }
+  el.style.display = 'block';
+
+  var labels = { '1': 'Week 1 — Start', '4': 'Week 4 — Halverwege', '8': 'Week 8 — Eind' };
+  var html = '<div style="display:grid;grid-template-columns:repeat(' + fotoWeken.length + ',1fr);gap:12px">';
+  fotoWeken.forEach(function(wk) {
+    html += '<div style="text-align:center">' +
+      '<img src="' + fotoStore[wk] + '" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.08)">' +
+      '<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:6px;font-weight:600">' +
+      (labels[wk] || 'Week ' + wk) + '</div></div>';
+  });
+  html += '</div>';
+  grid.innerHTML = html;
+}
+
+var _origRenderFotos = renderFotos;
+renderFotos = function() {
+  _origRenderFotos();
+  renderFotoVergelijking();
+};
+
+
+// ════════════════════════════════════════
+// DAY TAB SWITCHER
+// ════════════════════════════════════════
+function showDay(weekId, dayIdx, btn) {
+  var card = document.getElementById(weekId);
+  card.querySelectorAll('.day-content').forEach(function(d) { d.classList.remove('active'); });
+  card.querySelectorAll('.day-tab').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById(weekId + '-d' + dayIdx).classList.add('active');
+  btn.classList.add('active');
+}
+
+
+// ════════════════════════════════════════
+// TRAINING SCHEMA DATA
+// ════════════════════════════════════════
+var wkTrainData = [
+  {
+    week:1, title:'Techniek & Ritme Opbouwen', sub:'Bewegingspatronen inslijten — lichte gewichten',
+    phase:'Opstart', phaseClass:'phase-opstart', sessies:'3×', rust:'90s', rir:'4–5',
+    cardio:'Elke sessie starten met 5 min. cardio (roeier of crosstrainer)',
+    voeding:{ tips:['Eet normaal — schrijf alles op wat je eet','Drink 2 liter water per dag','Geen frisdrank, alleen water of thee','Stop met eten 2 uur voor slapengaan'], portie:'Normaal', balk:28 },
+    tip:'Perfectie bestaat niet in week 1. Het gaat erom dat je in beweging komt. Zet je 3 trainingen in je agenda zoals een zakelijke afspraak — en annuleer ze niet.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { name:'Bench Press',          sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Focus op borstcontractie, ellebogen 45°' },
+        { name:'Incline DB Press',     sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Lichte dumbbells, bovenste borst activeren' },
+        { name:'DB Schouderpress',     sets:'3', reps:'12', rest:'75s', rir:'4–5', rc:'rir-high', note:'Zittend, neutrale grip' },
+        { name:'Lateral Raise',        sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Armen licht gebogen, langzaam omlaag' },
+        { name:'Tricep Pushdown',      sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Cable touw of stang, ellebogen gefixeerd' },
+        { name:'Cable Chest Fly',      sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Volle bewegingsboog, squeeze bovenaan' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { name:'Lat Pulldown',         sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Schouderbreede grip, ellebogen omlaag' },
+        { name:'Seated Cable Row',     sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Rug recht, schouderbladen samentrekken' },
+        { name:'DB Row',               sets:'3', reps:'12', rest:'75s', rir:'4–5', rc:'rir-high', note:'Per arm, bank als steun, elleboog hoog' },
+        { name:'Face Pull',            sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Cable op schouderhoogte, ellebogen omhoog' },
+        { name:'DB Curl',              sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Beurtelings, geen swing met romp' },
+        { name:'Hammer Curl',          sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Neutrale greep, armen langs lichaam' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { name:'Leg Press',            sets:'3', reps:'12', rest:'90s', rir:'4–5', rc:'rir-high', note:'Voeten schouderbreedte, diep zakken' },
+        { name:'Squat (Techniek)',     sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Licht gewicht, focus op diepte en balans' },
+        { name:'Leg Extension',        sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Quadriceps isolatie, langzaam eccentrisch' },
+        { name:'Leg Curl',             sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Liggend of zittend, 2s hold bovenaan' },
+        { name:'Calf Raises',          sets:'3', reps:'20', rest:'60s', rir:'4–5', rc:'rir-high', note:'Volle bewegingsboog, pauze 1s bovenaan' },
+        { name:'Plank',                sets:'3', reps:'30s', rest:'60s', rir:'—',  rc:'rir-na',   note:'Core stabiliteit, rug recht houden' }
+      ]}
+    ]
+  },
+  {
+    week:2, title:'Gewicht Verhogen', sub:'Zelfde schema — iets zwaarder, meer sets',
+    phase:'Opstart', phaseClass:'phase-opstart', sessies:'3×', rust:'75s', rir:'2–3',
+    cardio:'Elke sessie afsluiten met 10 min. LISS cardio (incline treadmill of crosstrainer)',
+    voeding:{ tips:['Verwijder suikerhoudende snacks uit huis','Eet elke maaltijd van een kleiner bord','Voeg 1 extra portie groente toe per dag','2–2,5 liter water per dag'], portie:'Licht verkleind', balk:40 },
+    tip:'Je lichaam protesteert misschien — spierpijn is normaal. Maar het verdwijnt. Geef niet op voor de resultaten zichtbaar zijn. Succes in sport en business vraagt allebei geduld.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { name:'Bench Press',          sets:'4', reps:'10', rest:'75s', rir:'2–3', rc:'', note:'+5% gewicht vs week 1, uitdagend op rep 9-10' },
+        { name:'Incline DB Press',     sets:'3', reps:'10', rest:'75s', rir:'2–3', rc:'', note:'Zwaardere dumbbells dan week 1' },
+        { name:'DB Schouderpress',     sets:'3', reps:'12', rest:'60s', rir:'2–3', rc:'', note:'Explosief omhoog, gecontroleerd omlaag' },
+        { name:'Lateral Raise',        sets:'3', reps:'12', rest:'60s', rir:'3',   rc:'', note:'3 seconden excentrisch omlaag' },
+        { name:'Tricep Dips',          sets:'3', reps:'12', rest:'60s', rir:'2–3', rc:'', note:'Bench of parallel bars, ellebogen achteruit' },
+        { name:'Cable Chest Fly',      sets:'3', reps:'12', rest:'60s', rir:'3',   rc:'', note:'Volle stretch bovenkant, squeeze onderaan' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { name:'Pull-ups / Assisted',  sets:'4', reps:'8',  rest:'90s', rir:'2–3', rc:'', note:'Volle bewegingsboog, schouderbreede grip' },
+        { name:'Seated Cable Row',     sets:'3', reps:'12', rest:'75s', rir:'2–3', rc:'', note:'Smalle grip, rug strak' },
+        { name:'DB Row',               sets:'3', reps:'10', rest:'75s', rir:'2–3', rc:'', note:'Elleboog recht omhoog, 1s hold bovenaan' },
+        { name:'Barbell Curl',         sets:'3', reps:'12', rest:'60s', rir:'2–3', rc:'', note:'Geen slingerbewegingen met romp' },
+        { name:'Hammer Curl',          sets:'3', reps:'12', rest:'60s', rir:'3',   rc:'', note:'Neutrale greep, beurtelings' },
+        { name:'Face Pull',            sets:'3', reps:'15', rest:'60s', rir:'3',   rc:'', note:'Licht gewicht, external rotation activeren' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { name:'Squat (Barbell)',      sets:'4', reps:'10', rest:'90s', rir:'2–3', rc:'', note:'Hiel plat of iets omhoog, diep zakken' },
+        { name:'RDL',                  sets:'3', reps:'10', rest:'75s', rir:'2–3', rc:'', note:'Rug recht, heupen achteruit, hamstrings stretch' },
+        { name:'Leg Press',            sets:'3', reps:'12', rest:'75s', rir:'3',   rc:'', note:'Voeten iets hoger voor meer hamstrings' },
+        { name:'Leg Curl',             sets:'3', reps:'12', rest:'60s', rir:'3',   rc:'', note:'Langzaam omlaag (3 sec excentrisch)' },
+        { name:'Walking Lunges',       sets:'3', reps:'12', rest:'60s', rir:'2–3', rc:'', note:'12 stappen per been, romp rechtop' },
+        { name:'Calf Raises',          sets:'4', reps:'15', rest:'60s', rir:'3',   rc:'', note:'Pauze 1s bovenaan, volle bewegingsboog' }
+      ]}
+    ]
+  },
+  {
+    week:3, title:'Volume Omhoog', sub:'Meer sets, meer vetverbranding',
+    phase:'Opbouw', phaseClass:'phase-opbouw', sessies:'3×', rust:'60s', rir:'1–2',
+    cardio:'Na elke sessie: 15 min. incline treadmill walk (vetverbrandingszone, 60-70% max HR)',
+    voeding:{ tips:['Vervang 1 koolhydraatrijke maaltijd door eiwit + groente','Eet minder wit brood, pasta, rijst','Proteïne bij elke hoofdmaaltijd','Avondsnack max. 1 kleine portie kwark of noten'], portie:'-15% koolhydraten', balk:52 },
+    tip:'Week 3 is waar de meeste mensen afhaken. Zet een reminder: "Ik doe dit voor mijn energie, mijn focus, mijn bedrijf." Verbind je sportdoel aan je zakelijke succes.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { name:'Bench Press',          sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Zwaar — techniek blijft staan, geen cheat reps' },
+        { name:'Incline DB Press',     sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Uitdagend op de laatste rep' },
+        { name:'Schouderpress',        sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Barbell of DB, volle overhead extensie' },
+        { name:'Tricep Pushdown',      sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Ellebogen gefixeerd langs lichaam' },
+        { name:'Cable Chest Fly',      sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Borstcontractie squeeze bovenaan' },
+        { name:'Lateral Raise',        sets:'3', reps:'15', rest:'45s', rir:'2',   rc:'', note:'Finisher — licht gewicht, pompset' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { name:'Barbell Row',          sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Explosief omhoog, 3s gecontroleerd omlaag' },
+        { name:'Lat Pulldown',         sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Breed of neutral grip, ellebogen omlaag' },
+        { name:'DB Row',               sets:'3', reps:'12', rest:'60s', rir:'2',   rc:'', note:'Elleboog hoog, 1s squeeze bovenaan' },
+        { name:'Hammer Curl',          sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Beurtelings, explosief omhoog' },
+        { name:'Face Pull',            sets:'3', reps:'15', rest:'45s', rir:'2',   rc:'', note:'External rotation focus, licht gewicht' },
+        { name:'Straight-arm Pulldown',sets:'3', reps:'15', rest:'45s', rir:'2',   rc:'', note:'Lats finisher, armen licht gebogen' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { name:'Squat',                sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Zwaarder dan week 2, focus op diepte' },
+        { name:'RDL',                  sets:'4', reps:'10', rest:'60s', rir:'1–2', rc:'', note:'Maximale hamstring stretch onderaan' },
+        { name:'Leg Press',            sets:'3', reps:'12', rest:'60s', rir:'2',   rc:'', note:'Hoge voetplaatsing voor hamstrings' },
+        { name:'Leg Curl',             sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'2s hold bovenaan per rep' },
+        { name:'Calf Raises',          sets:'3', reps:'15', rest:'45s', rir:'2',   rc:'', note:'Volle bewegingsboog, explosief' },
+        { name:'Plank',                sets:'3', reps:'45s', rest:'45s', rir:'—',  rc:'rir-na', note:'Core stabiliteit, schouders boven polsen' }
+      ]}
+    ]
+  },
+  {
+    week:4, title:'Deload & Halverwege Meting', sub:'Herstel — lichter trainen, meten, bijsturen',
+    phase:'Opbouw', phaseClass:'phase-opbouw', sessies:'3×', rust:'90s', rir:'4–5',
+    cardio:'Geen extra cardio — herstel staat centraal. Optioneel: 20 min. rustige wandeling',
+    voeding:{ tips:['Eet iets meer koolhydraten — glycogeen aanvullen voor tweede blok','Slaap minimaal 8 uur per nacht','Maaltijdprep doen voor week 5','Blijf voldoende drinken — herstel vereist hydratatie'], portie:'Normaal (herstelweek)', balk:35 },
+    tip:'Rust is geen zwakte — het is strategie. Je spieren groeien en herstellen tijdens de rust. Net zoals een bedrijf soms een pas op de plaats nodig heeft om daarna sneller te groeien.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { name:'Bench Press',          sets:'3', reps:'8',  rest:'90s', rir:'4–5', rc:'rir-high', note:'70% van gebruikelijk gewicht — herstel' },
+        { name:'Incline DB Press',     sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Licht, techniek herhalen' },
+        { name:'Schouderpress',        sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Geen pijn — bewegingskwaliteit centraal' },
+        { name:'Lateral Raise',        sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Licht gewicht, mobiliteit activeren' },
+        { name:'Tricep Pushdown',      sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Volledige extensie, geen maximale poging' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { name:'Lat Pulldown',         sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'70% gewicht, schouders volledig strekken' },
+        { name:'Seated Cable Row',     sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Schouders laten rusten, geen maximale trekkracht' },
+        { name:'DB Row',               sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Licht en gecontroleerd, herstel mindset' },
+        { name:'DB Curl',              sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Slow tempo 3-0-3, geen swing' },
+        { name:'Face Pull',            sets:'3', reps:'15', rest:'60s', rir:'4–5', rc:'rir-high', note:'Mobiliteit en rotator cuff herstel' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { name:'Squat',                sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'70% gewicht — controleer diepte en techniek' },
+        { name:'Leg Press',            sets:'3', reps:'12', rest:'90s', rir:'4–5', rc:'rir-high', note:'Geen maximale inspanning, herstelweek' },
+        { name:'Leg Curl',             sets:'3', reps:'12', rest:'60s', rir:'4–5', rc:'rir-high', note:'Langzaam en gecontroleerd' },
+        { name:'RDL',                  sets:'3', reps:'10', rest:'90s', rir:'4–5', rc:'rir-high', note:'Stretch en mobiliteit, geen zware belasting' },
+        { name:'Calf Raises',          sets:'3', reps:'15', rest:'60s', rir:'4–5', rc:'rir-high', note:'Volle bewegingsboog' },
+        { name:'Plank',                sets:'3', reps:'30s', rest:'60s', rir:'—',  rc:'rir-na',   note:'Actief herstel, core activeren' }
+      ]}
+    ]
+  },
+  {
+    week:5, title:'Tweede Blok — Zwaarder & Strakker', sub:'Progressieve overload maximaliseren (+5% vs week 3)',
+    phase:'Intensief', phaseClass:'phase-intensief', sessies:'3×', rust:'60s', rir:'1–2',
+    cardio:'Cardio finisher: 20 min. incline treadmill walk na elke krachttraining',
+    voeding:{ tips:['Koolhydraten alleen \'s ochtends en voor training','Avondmaaltijd: eiwit + groente, geen koolhydraten','Tussenmaaltijden vervangen door noten of ei','2,5 liter water per dag minimaal'], portie:'-30% koolhydraten', balk:70 },
+    tip:'Hier zie je de resultaten beginnen. Je broek zit anders, je hebt meer energie. Dit is het moment om een tussenfoto te maken als motivatie voor de laatste 3 weken.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { name:'Bench Press',          sets:'4', reps:'8',  rest:'60s', rir:'1–2', rc:'', note:'+5% gewicht vs week 3' },
+        { name:'Incline DB Press',     sets:'4', reps:'8',  rest:'60s', rir:'1–2', note:'Zwaardere dumbbells, 30–45° bank' },
+        { name:'DB Schouderpress',     sets:'4', reps:'10', rest:'60s', rir:'1–2', note:'Volle overhead extensie' },
+        { name:'Lateral Raise',        sets:'3', reps:'12', rest:'45s', rir:'2',   note:'Langzame eccentrische fase (3 sec)' },
+        { name:'Tricep Overhead Ext.', sets:'3', reps:'12', rest:'45s', rir:'1–2', note:'Volle stretch bovenaan, cable of DB' },
+        { name:'Cable Crossover',      sets:'3', reps:'12', rest:'45s', rir:'2',   note:'Handen kruisen onderaan voor maximale squeeze' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { name:'Barbell Row',          sets:'4', reps:'8',  rest:'60s', rir:'1–2', note:'Explosief omhoog, gecontroleerd omlaag' },
+        { name:'Pull-ups',             sets:'4', reps:'8',  rest:'60s', rir:'1–2', note:'Gewogen indien 8 reps te makkelijk' },
+        { name:'DB Row',               sets:'3', reps:'10', rest:'60s', rir:'2',   note:'Elleboog hoog, 1s hold bovenaan' },
+        { name:'Incline Curl',         sets:'3', reps:'12', rest:'45s', rir:'2',   note:'Lange bicep stretch onderaan op incline bank' },
+        { name:'Hammer Curl',          sets:'3', reps:'12', rest:'45s', rir:'2',   note:'Beurtelings, explosief omhoog' },
+        { name:'Straight-arm Pulldown',sets:'3', reps:'15', rest:'45s', rir:'2',   note:'Lats isolatie, geen bicep' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { name:'Squat',                sets:'4', reps:'8',  rest:'60s', rir:'1–2', note:'Zwaarst van de challenge tot nu toe' },
+        { name:'RDL',                  sets:'4', reps:'8',  rest:'60s', rir:'1–2', note:'Volle hamstring stretch, rug strak' },
+        { name:'Bulgarian Split Squat',sets:'3', reps:'10', rest:'60s', rir:'1–2', note:'10 reps per been, achterste voet op bank' },
+        { name:'Leg Press',            sets:'3', reps:'12', rest:'45s', rir:'2',   note:'Hoge voetplaatsing = meer hamstrings' },
+        { name:'Leg Curl',             sets:'3', reps:'12', rest:'45s', rir:'2',   note:'2s hold bovenaan per rep' },
+        { name:'Calf Raises',          sets:'4', reps:'15', rest:'45s', rir:'2',   note:'Varieer tempo per set' }
+      ]}
+    ]
+  },
+  {
+    week:6, title:'Superset Protocol', sub:'Hoge hartslag — maximale vetverbranding',
+    phase:'Intensief', phaseClass:'phase-intensief', sessies:'3×', rust:'30s/60s', rir:'1–2',
+    cardio:'Geen extra cardio nodig — supersets houden hartslag hoog. Optioneel: 15 min. HIIT op rustdag',
+    voeding:{ tips:['Intermittent fasting optie: eet tussen 10:00–19:00','Geen bewerkte producten of pakjes en zakjes','Alcohol maximaal 1 glas per week','Kook zoveel mogelijk zelf — controle over ingrediënten'], portie:'-35% koolhydraten', balk:80 },
+    tip:'Supersets besparen tijd én verhogen je vetverbranding door je hartslag hoog te houden. 25 minuten intensief is beter dan 60 minuten matig. Perfect voor drukke ondernemers.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { ss:'SS1', name:'Bench Press',          sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Direct naar SS1B na laatste rep' },
+        { ss:'SS1', name:'Lateral Raise',        sets:'4', reps:'15', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'60s rust, dan verder naar SS2' },
+        { ss:'SS2', name:'Incline DB Press',     sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Direct naar SS2B na laatste rep' },
+        { ss:'SS2', name:'Tricep Pushdown',      sets:'4', reps:'12', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'60s rust, dan verder naar SS3' },
+        { ss:'SS3', name:'Schouderpress',        sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'BB of DB, volle extensie' },
+        { ss:'SS3', name:'Cable Chest Fly',      sets:'3', reps:'12', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Squeeze bovenaan, afsluiter' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { ss:'SS1', name:'Barbell Row',          sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Explosief, rug strak' },
+        { ss:'SS1', name:'Face Pull',            sets:'4', reps:'15', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Posterior delts activeren' },
+        { ss:'SS2', name:'Lat Pulldown',         sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Breed of neutral grip' },
+        { ss:'SS2', name:'Hammer Curl',          sets:'4', reps:'12', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Brachialis en bicep' },
+        { ss:'SS3', name:'DB Row',               sets:'3', reps:'10', rest:'30s', rir:'2',   rc:'', note:'Per arm, elleboog hoog' },
+        { ss:'SS3', name:'Straight-arm Pulldown',sets:'3', reps:'15', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Lats isolatie finisher' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { ss:'SS1', name:'Squat',                sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Hoge bar, diep zakken' },
+        { ss:'SS1', name:'Leg Curl',             sets:'4', reps:'12', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Hamstrings direct na squat' },
+        { ss:'SS2', name:'RDL',                  sets:'4', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Heupen achteruit, rug strak' },
+        { ss:'SS2', name:'Calf Raise',           sets:'4', reps:'15', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Pauze 1s bovenaan' },
+        { ss:'SS3', name:'Bulgarian Split Squat',sets:'3', reps:'10', rest:'30s', rir:'1–2', rc:'', note:'Per been, achterste voet op bank' },
+        { ss:'SS3', name:'Walking Lunges',       sets:'3', reps:'12', rest:'60s', rir:'2',   rc:'', ssEnd:true, note:'Per been — core afsluiter' }
+      ]}
+    ]
+  },
+  {
+    week:7, title:'Piekweek — Maximale Output', sub:'Zwaarste week van de challenge',
+    phase:'Piek', phaseClass:'phase-piek', sessies:'3×', rust:'45–60s', rir:'0–1',
+    cardio:'Extra: 2× 20 min. HIIT cardio op rustdagen (fiets of roeier)',
+    voeding:{ tips:['Koolhydraten uitsluitend na training (timing!)','Groenten onbeperkt — vul je bord ermee','Eiwit bij elke maaltijd (doel: 1,6 g per kg)','Vermijd zout om waterretentie te beperken'], portie:'-40% koolhydraten', balk:90 },
+    tip:'Dit is de zwaarste week. Herinner jezelf waarom je begon. Schrijf het op, plak het op je spiegel. Elke ondernemer kent het gevoel van doorzetten als het moeilijk wordt — dit is precies dat moment.',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { name:'Bench Press',          sets:'5', reps:'6',  rest:'60s', rir:'0–1', rc:'rir-max', note:'Zwaarste gewicht van de challenge' },
+        { name:'Incline DB Press',     sets:'4', reps:'8',  rest:'60s', rir:'1',   rc:'rir-max', note:'Zware dumbbells, volledige range of motion' },
+        { name:'Schouderpress',        sets:'4', reps:'8',  rest:'60s', rir:'1',   rc:'rir-max', note:'Barbell of DB, volle overhead' },
+        { name:'Tricep Dips',          sets:'4', reps:'10', rest:'45s', rir:'1–2', rc:'', note:'Gewogen indien mogelijk, ellebogen achteruit' },
+        { name:'Lateral Raise',        sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Drop-set op laatste set' },
+        { name:'Cable Chest Fly',      sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Afsluiter met pomp' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { name:'Barbell Row',          sets:'5', reps:'6',  rest:'60s', rir:'0–1', rc:'rir-max', note:'Zwaar, rug absoluut strak houden' },
+        { name:'Weighted Pull-up',     sets:'4', reps:'6',  rest:'60s', rir:'0–1', rc:'rir-max', note:'Gordel + gewichtsschijf, volle bewegingsboog' },
+        { name:'DB Row',               sets:'4', reps:'8',  rest:'60s', rir:'1',   rc:'rir-max', note:'Per arm, zwaar, 1s hold bovenaan' },
+        { name:'Hammer Curl',          sets:'3', reps:'10', rest:'45s', rir:'1–2', rc:'', note:'Alternating, explosief omhoog' },
+        { name:'Cable Curl',           sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Volledige range of motion bicep' },
+        { name:'Face Pull',            sets:'3', reps:'15', rest:'45s', rir:'2',   rc:'', note:'Rotator cuff activeren, afsluiter' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { name:'Squat',                sets:'5', reps:'5',  rest:'60s', rir:'0–1', rc:'rir-max', note:'Zwaarste squat van de challenge' },
+        { name:'RDL',                  sets:'4', reps:'8',  rest:'60s', rir:'1',   rc:'rir-max', note:'Maximale hamstring belasting' },
+        { name:'Leg Press',            sets:'4', reps:'10', rest:'60s', rir:'1',   rc:'rir-max', note:'Hoge plaatsing, zware belasting' },
+        { name:'Bulgarian Split Squat',sets:'3', reps:'10', rest:'45s', rir:'1–2', rc:'', note:'Per been, achterste voet op bank' },
+        { name:'Leg Curl',             sets:'3', reps:'12', rest:'45s', rir:'2',   rc:'', note:'Drop-set op laatste set' },
+        { name:'Calf Raise',           sets:'4', reps:'20', rest:'45s', rir:'2',   rc:'', note:'Explosief omhoog, volledig uitrekken' }
+      ]}
+    ]
+  },
+  {
+    week:8, title:'Finishline — Benchmark & Resultaten', sub:'Eindmeting + vergelijk met week 1',
+    phase:'Piek', phaseClass:'phase-piek', sessies:'3×', rust:'3–5 min (PR) / 90s', rir:'0 (PR) / 2',
+    cardio:'Geen extra cardio — herstel maximaliseren voor eindmeting',
+    voeding:{ tips:['Eet normaal — geen extreme restricties in eindweek','Voldoende koolhydraten voor maximale prestatie','3 liter water per dag voor optimale hydratatie','Eindmeting: weeg en meet op dezelfde tijd als week 1'], portie:'Normaal (prestatiegerichte eindweek)', balk:95 },
+    tip:'Je hebt 8 weken volgehouden. Dat lukt maar een klein percentage mensen. Je hebt bewezen dat je de discipline hebt om resultaten te halen — in sport én in business. Wat is je volgende doel?',
+    days:[
+      { label:'DAG A — PUSH', rows:[
+        { pr:true, name:'Bench Press — 1×5 PR', sets:'1',  reps:'5',  rest:'3–5 min', rir:'0',   rc:'rir-max', note:'Maximaal gewicht — noteer je persoonlijk record' },
+        { name:'Bench Press (back-off)',         sets:'3',  reps:'8',  rest:'90s',     rir:'2',   rc:'', note:'80% van PR gewicht, gecontroleerd' },
+        { name:'Schouderpress',                  sets:'4',  reps:'8',  rest:'75s',     rir:'1–2', rc:'', note:'Sterk afsluiten — noteer gewicht' },
+        { name:'Tricep Circuit',                 sets:'3',  reps:'12', rest:'60s',     rir:'2',   rc:'', note:'Pushdown + overhead extension + dips' },
+        { name:'Lateral Raise',                  sets:'3',  reps:'15', rest:'45s',     rir:'2–3', rc:'', note:'Pompset — challenge afsluiter' }
+      ]},
+      { label:'DAG B — PULL', rows:[
+        { pr:true, name:'Barbell Row — 1×5 PR',  sets:'1',  reps:'5',  rest:'3–5 min', rir:'0',   rc:'rir-max', note:'Maximaal gewicht — noteer je persoonlijk record' },
+        { name:'Barbell Row (back-off)',          sets:'3',  reps:'8',  rest:'90s',     rir:'2',   rc:'', note:'80% van PR gewicht, gecontroleerd' },
+        { pr:true, name:'Max Pull-ups',          sets:'1',  reps:'MAX', rest:'3 min',  rir:'0',   rc:'rir-max', note:'Noteer maximaal aantal — jouw score' },
+        { name:'Pull-ups (reps)',                 sets:'3',  reps:'6',  rest:'75s',     rir:'2',   rc:'', note:'Sub-maximale sets na PR poging' },
+        { name:'Barbell / DB Curl',              sets:'3',  reps:'12', rest:'60s',     rir:'2',   rc:'', note:'Sterk afsluiten' }
+      ]},
+      { label:'DAG C — LEGS', rows:[
+        { pr:true, name:'Squat — 1×5 PR',        sets:'1',  reps:'5',  rest:'3–5 min', rir:'0',   rc:'rir-max', note:'Maximale squat — noteer je persoonlijk record' },
+        { name:'Squat (back-off)',                sets:'3',  reps:'8',  rest:'90s',     rir:'2',   rc:'', note:'80% van PR gewicht, perfecte techniek' },
+        { name:'RDL',                             sets:'4',  reps:'8',  rest:'75s',     rir:'1–2', rc:'', note:'Sterk afsluiten — noteer gewicht' },
+        { name:'Leg Press',                       sets:'3',  reps:'12', rest:'60s',     rir:'2',   rc:'', note:'Noteer maximaal gewicht voor records' },
+        { name:'Calf Raise',                      sets:'4',  reps:'15', rest:'45s',     rir:'2',   rc:'', note:'Challenge afsluiter — alles eruit' }
+      ]}
+    ]
+  }
+];
+
+
+function renderWeekCards() {
+  var container = document.getElementById('wk-schema-container');
+  if (!container) return;
+  var html = '';
+
+  wkTrainData.forEach(function(wk) {
+    // Build day tabs + content
+    var tabsHtml = '<div class="day-tabs">';
+    var contentsHtml = '';
+
+    wk.days.forEach(function(day, di) {
+      tabsHtml += '<button class="day-tab' + (di === 0 ? ' active' : '') + '" onclick="showDay(\'wk' + wk.week + '\',' + di + ',this)">' + day.label + '</button>';
+
+      var rowsHtml = '';
+      day.rows.forEach(function(r) {
+        var exName = (r.ss ? '<span class="ss-badge">' + r.ss + '</span>' : '') +
+                     (r.pr ? '<span class="pr-badge">PR</span>' : '') + r.name;
+        var rirHtml = '<span class="rir-badge' + (r.rc ? ' ' + r.rc : '') + '">' + r.rir + '</span>';
+        rowsHtml += '<tr' + (r.ssEnd ? ' class="ss-end"' : '') + '>' +
+          '<td class="ex-name">' + exName + '</td>' +
+          '<td class="ex-sets">' + r.sets + '</td>' +
+          '<td class="ex-reps">' + r.reps + '</td>' +
+          '<td class="ex-rest">' + r.rest + '</td>' +
+          '<td>' + rirHtml + '</td>' +
+          '<td class="ex-note">' + (r.note || '') + '</td>' +
+          '</tr>';
+      });
+
+      contentsHtml += '<div class="day-content' + (di === 0 ? ' active' : '') + '" id="wk' + wk.week + '-d' + di + '">' +
+        '<div class="train-table-wrap"><table class="train-table">' +
+        '<thead><tr><th class="th-ex">Oefening</th><th>Sets</th><th>Reps</th><th>Rust</th><th>RIR</th><th>Notes</th></tr></thead>' +
+        '<tbody>' + rowsHtml + '</tbody></table></div>' +
+        (wk.cardio ? '<div class="wk-cardio-note">🏃 <span>' + wk.cardio + '</span></div>' : '') +
+        '</div>';
+    });
+    tabsHtml += '</div>';
+
+    // Nutrition tips list
+    var tipList = wk.voeding.tips.map(function(t) { return '<li>' + t + '</li>'; }).join('');
+
+    html += '<div class="week-card" id="wk' + wk.week + '">' +
+      '<div class="week-header" onclick="toggleWeek(\'wk' + wk.week + '\')">' +
+      '<div class="week-label">' +
+      '<div class="week-num">WK ' + wk.week + '</div>' +
+      '<div><div class="week-title">' + wk.title + '</div><div class="week-sub">' + wk.sub + '</div></div>' +
+      '</div>' +
+      '<div style="display:flex;align-items:center;gap:12px">' +
+      '<span class="week-phase ' + wk.phaseClass + '">' + wk.phase + '</span>' +
+      '<span class="chevron">▼</span>' +
+      '</div></div>' +
+
+      '<div class="week-body">' +
+      '<div class="wk-meta">' +
+      '<div class="wk-meta-pill"><span class="wk-meta-val">' + wk.sessies + '</span><span class="wk-meta-lbl">Per week</span></div>' +
+      '<div class="wk-meta-pill"><span class="wk-meta-val">' + wk.rust + '</span><span class="wk-meta-lbl">Rusttijd</span></div>' +
+      '<div class="wk-meta-pill"><span class="wk-meta-val">' + wk.rir + '</span><span class="wk-meta-lbl">RIR Target</span></div>' +
+      '<div class="wk-meta-pill"><span class="wk-meta-val">' + wk.days.length + '</span><span class="wk-meta-lbl">Sessies</span></div>' +
+      '</div>' +
+      tabsHtml + contentsHtml +
+      '<div class="week-sections" style="margin-top:20px">' +
+      '<div class="ws-block">' +
+      '<div class="ws-icon">🥗</div>' +
+      '<div class="ws-title">Voeding deze week</div>' +
+      '<ul>' + tipList + '</ul>' +
+      '<div style="margin-top:10px;font-size:12px;color:var(--muted)">' + wk.voeding.portie + '</div>' +
+      '<div class="portion-bar"><div class="portion-fill" style="width:' + wk.voeding.balk + '%"></div></div>' +
+      '</div>' +
+      '<div class="ws-block full">' +
+      '<div class="ws-icon">💡</div>' +
+      '<div class="ws-title">Tip van de week</div>' +
+      '<p>' + wk.tip + '</p>' +
+      '</div></div>' +
+      '</div></div>';
+  });
+
+  container.innerHTML = html;
+}
+
+
+// ════════════════════════════════════════
+// EXTRA INIT
+// ════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', function() {
+  loadSettings();
+  renderWeekCards();
+  setTimeout(function() {
+    renderProgressChart();
+    renderFotoVergelijking();
+    if (Object.keys(metingen).length > 0) renderMetingen();
+  }, 150);
+});
 
 
 
