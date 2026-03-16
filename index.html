@@ -716,19 +716,158 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 .foto-delete:hover { color: #b0a098; }
 
 /* ── PRINT / PDF EXPORT ── */
+@page {
+  size: A4 portrait;
+  margin: 15mm 12mm;
+}
+
 @media print {
-  .tab-bar, .top-utility-bar, #settings-toggle, #settings-panel, .save-btn,
-  .bq-options, .export-btn, .db-wk-btn, .mq-save-btn, .foto-delete { display: none !important; }
-  body { background: #fff !important; color: #000 !important; }
-  .tab-content { display: block !important; margin-bottom: 40px; }
+  /* ── Verberg interactieve elementen ── */
+  .tab-bar, .top-utility-bar, #settings-toggle, #settings-panel,
+  .save-btn, .bq-options, .export-btn, .db-wk-btn, .mq-save-btn,
+  .foto-delete, .mq-btn, .search-block, .search-results-panel,
+  .hero-bg, .hero-grid, .db-prog-bar, .db-tp-bar,
+  .chevron, .week-toggle { display: none !important; }
+
+  /* ── Reset basis ── */
+  *, *::before, *::after {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    animation: none !important;
+    transition: none !important;
+  }
+
+  html, body {
+    background: #fff !important;
+    color: #111 !important;
+    font-size: 11pt !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  main {
+    max-width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    background: #f5f5f5 !important;
+    padding: 14px 16px !important;
+    border-radius: 0 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+  .hero h1, .hero-title { color: #111 !important; font-size: 28pt !important; }
+  .hero-sub { color: #444 !important; }
+  .hero-stat-num { color: #111 !important; }
+  .hero-stat-label { color: #555 !important; }
+
+  /* ── Tabs: alles tonen, elke tab op nieuwe pagina ── */
+  .tab-content {
+    display: block !important;
+    page-break-before: always;
+    break-before: page;
+    page-break-after: always;
+    break-after: page;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  .tab-content:first-of-type {
+    page-break-before: avoid;
+    break-before: avoid;
+  }
+
+  /* ── Sectie-koppen ── */
+  .sec-head h2, .bq-section-title, .mq-title {
+    color: #111 !important;
+    page-break-after: avoid;
+    break-after: avoid;
+  }
+
+  /* ── Kaarten: niet halverwege doorbreken ── */
+  .db-stat-card, .db-task, .week-card, .mq-card,
+  .bq-result-block, .bq-categorie-blok, .food-card,
+  .bmr-section, .bq-schema-block, .db-week-banner,
+  .db-task-prog, .db-total-prog, .foto-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    background: #f9f9f9 !important;
+    border: 1px solid #ccc !important;
+    color: #111 !important;
+  }
+
+  /* ── Grid-layouts aanpassen voor print ── */
+  .db-stats-row {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+  .db-board {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .week-sections {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .bq-grid {
+    grid-template-columns: 1fr !important;
+    gap: 8px !important;
+  }
+  .foto-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  /* ── Tekst- en accentkleuren ── */
+  .db-stat-num, .stat-num, .db-prog-pct, .db-tp-pct,
+  .mq-wknum, .bq-result-title { color: #333 !important; }
+  .db-stat-label, .db-col-head, .mq-week-lbl,
+  .bq-label, .bq-cat-title, .db-wb-num { color: #555 !important; }
+  .db-task-text, .ws-block li, .food-card li,
+  .bq-result-list li, .bq-item-naam { color: #111 !important; }
+  .db-task.done .db-task-text { text-decoration: line-through; color: #888 !important; }
+  .db-task-cat, .db-wb-sub, .bq-schema-sub { color: #666 !important; }
+
+  /* ── Week-kaarten: altijd open ── */
   .week-card .week-body { display: block !important; }
-  main { max-width: 100% !important; padding: 0 !important; }
-  .hero { padding: 20px !important; }
-  .hero h1, .sec-head h2 { color: #000 !important; }
-  .db-stat-num, .stat-num { color: #c0392b !important; }
-  .db-task-text, .ws-block li, .food-card li { color: #333 !important; }
-  .db-task.done .db-task-text { text-decoration: line-through; color: #999 !important; }
-  a { text-decoration: none; }
+  .week-card {
+    background: #f9f9f9 !important;
+    border: 1px solid #ccc !important;
+    margin-bottom: 10px !important;
+  }
+  .week-card .week-head { color: #111 !important; }
+  .ws-block { background: #fff !important; border: 1px solid #ddd !important; }
+
+  /* ── Mindset-antwoorden ── */
+  .mq-card { page-break-inside: avoid !important; break-inside: avoid !important; }
+  .mq-textarea {
+    background: #fff !important;
+    border: 1px solid #ccc !important;
+    color: #111 !important;
+    resize: none !important;
+    min-height: auto !important;
+  }
+
+  /* ── Boodschappenlijst ── */
+  .bq-item-row { border-bottom: 1px solid #e5e5e5 !important; }
+  .bq-item-hoeveelheid { color: #333 !important; }
+  .bq-item-row:has(.bq-checkbox:checked) .bq-item-naam { color: #aaa !important; }
+
+  /* ── Dashboard-taken ── */
+  .db-chk {
+    background: #fff !important;
+    border: 1.5px solid #999 !important;
+    color: #fff !important;
+  }
+  .db-task.done .db-chk { background: #555 !important; border-color: #555 !important; }
+
+  /* ── Voortgangsbalken (versimpeld) ── */
+  .db-prog-fill, .db-tp-fill { background: #555 !important; }
+
+  a { text-decoration: none !important; color: inherit !important; }
 }
 
 
@@ -1097,12 +1236,12 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
       <div class="measure-week">Week 1 — Nulmeting</div>
       <div class="measure-title">Startpunt vastleggen</div>
       <div class="measure-list">
-        <span class="measure-tag">⚖️ Gewicht</span>
-        <span class="measure-tag">📐 Taille</span>
-        <span class="measure-tag">📐 Heupen</span>
-        <span class="measure-tag">📐 Borst</span>
+        <span class="measure-tag"> Gewicht</span>
+        <span class="measure-tag"> Taille</span>
+        <span class="measure-tag"> Heupen</span>
+        <span class="measure-tag"> Borst</span>
         <span class="measure-tag">📸 Startfoto</span>
-        <span class="measure-tag">⚡ Energie (1–10)</span>
+        <span class="measure-tag"> Energie (1–10)</span>
       </div>
     </div>
     <div class="measure-item">
@@ -1110,26 +1249,26 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
       <div class="measure-week">Week 4 — Halverwege meting</div>
       <div class="measure-title">Bijsturen waar nodig</div>
       <div class="measure-list">
-        <span class="measure-tag">⚖️ Gewicht</span>
-        <span class="measure-tag">📐 Taille</span>
-        <span class="measure-tag">📐 Heupen</span>
+        <span class="measure-tag"> Gewicht</span>
+        <span class="measure-tag"> Taille</span>
+        <span class="measure-tag"> Heupen</span>
         <span class="measure-tag">📸 Tussenfoto</span>
-        <span class="measure-tag">⚡ Energie (1–10)</span>
+        <span class="measure-tag"> Energie (1–10)</span>
         <span class="measure-tag">💪 Kracht test</span>
       </div>
     </div>
     <div class="measure-item">
       <div class="measure-dot"></div>
-      <div class="measure-week">Week 8 — Eindmeting</div>
+      <div class="measure-week">Week 8  Eindmeting</div>
       <div class="measure-title">Transformatie zichtbaar maken</div>
       <div class="measure-list">
-        <span class="measure-tag">⚖️ Gewicht</span>
-        <span class="measure-tag">📐 Taille</span>
-        <span class="measure-tag">📐 Heupen</span>
-        <span class="measure-tag">📐 Borst</span>
+        <span class="measure-tag"> Gewicht</span>
+        <span class="measure-tag"> Taille</span>
+        <span class="measure-tag"> Heupen</span>
+        <span class="measure-tag"> Borst</span>
         <span class="measure-tag">📸 Eindfoto</span>
-        <span class="measure-tag">⚡ Energie (1–10)</span>
-        <span class="measure-tag">💪 Benchmark test</span>
+        <span class="measure-tag"> Energie (1–10)</span>
+        <span class="measure-tag"> Benchmark test</span>
       </div>
     </div>
   </div>
@@ -1941,14 +2080,23 @@ function clearSearch() {
 // EXPORT PDF
 // ════════════════════════════════════════
 function exportPDF() {
-  // Show all tabs for print, then restore
+  // Toon alle tabs
   var allTabs = document.querySelectorAll('.tab-content');
   var origDisplay = [];
   allTabs.forEach(function(t, i) { origDisplay[i] = t.style.display; t.style.display = 'block'; });
+
+  // Open alle week-kaarten zodat inhoud zichtbaar is
+  var weekCards = document.querySelectorAll('.week-card');
+  var origOpen = [];
+  weekCards.forEach(function(c, i) { origOpen[i] = c.classList.contains('open'); c.classList.add('open'); });
+
   window.print();
+
+  // Herstel originele toestand
   setTimeout(function() {
     allTabs.forEach(function(t, i) { t.style.display = origDisplay[i]; });
-  }, 1000);
+    weekCards.forEach(function(c, i) { if (!origOpen[i]) c.classList.remove('open'); });
+  }, 1200);
 }
 
 // ════════════════════════════════════════
