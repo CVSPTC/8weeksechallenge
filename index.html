@@ -2285,104 +2285,157 @@ function genereerBoodschappen() {
   const pGroen  = scaleG(isHeer ? 200 : 150) + ' g';
   const pSnack  = scaleG(isHeer ? 200 : 150) + ' g';
 
-  // Ontbijt-opties op basis van beschikbare producten
-  let ontbijtWat, ontbijtPortie;
+  // ── Extra flags ──────────────────────────────────────────────────
   const heeftHavermout = beschikbareKoolh.includes('havermout');
   const heeftEi        = beschikbareEiwitten.includes('ei');
   const heeftKwark     = beschikbareEiwitten.includes('kwark');
   const heeftYoghurt   = beschikbareEiwitten.includes('griekse-yoghurt');
   const heeftBrood     = beschikbareKoolh.includes('brood');
+  const heeftWraps     = beschikbareKoolh.includes('wraps');
+  const heeftCottage   = beschikbareEiwitten.includes('cottage-cheese');
+  const heeftNoten     = beschikbareVetten.some(k => ['noten','amandelen','walnoten'].includes(k));
+  const heeftPinda     = beschikbareVetten.includes('pindakaas');
 
-  if (heeftHavermout && (heeftKwark || heeftYoghurt)) {
-    ontbijtWat = `Havermout met ${heeftKwark ? 'kwark' : 'Griekse yoghurt 0%'} en kaneel`;
-    ontbijtPortie = `${isHeer ? '80 g' : '60 g'} havermout + ${isHeer ? '150 g' : '100 g'} ${heeftKwark ? 'kwark' : 'yoghurt'}`;
-  } else if (heeftEi && (heeftBrood || beschikbareKoolh.length > 0)) {
-    ontbijtWat = `Roerei (${heeftBrood ? 'met volkoren brood' : 'met ' + (kh(0) || 'koolhydraat naar keuze')})`;
-    ontbijtPortie = `${isHeer ? '3 eieren' : '2 eieren'} + ${heeftBrood ? '2 sneden brood' : pKoolh}`;
-  } else if (heeftYoghurt) {
-    ontbijtWat = 'Griekse yoghurt 0% met kaneel';
-    ontbijtPortie = pSnack;
-  } else if (ep(0)) {
-    ontbijtWat = `${ep(0)} met ${kh(0) || 'rijst'}`;
-    ontbijtPortie = `${pEiwit} + ${pKoolh}`;
-  } else {
-    ontbijtWat = 'Eiwitrijke maaltijd naar keuze';
-    ontbijtPortie = 'Zie boodschappenlijst';
-  }
+  // ── Breakfast rotation (NO starchy carbs: rice/pasta/potato) ────
+  const _obRot = [];
+  if (heeftHavermout && heeftKwark)    _obRot.push({ w:'Havermout met kwark & kaneel',        p:`${scaleG(isHeer?80:60)} g havermout + ${scaleG(isHeer?150:100)} g kwark` });
+  if (heeftHavermout && heeftYoghurt)  _obRot.push({ w:'Havermout met Griekse yoghurt',        p:`${scaleG(isHeer?80:60)} g havermout + ${scaleG(isHeer?150:100)} g yoghurt` });
+  if (heeftHavermout)                  _obRot.push({ w:'Havermout met melk & kaneel',           p:`${scaleG(isHeer?80:60)} g havermout` });
+  if (heeftEi && heeftBrood)           _obRot.push({ w:'Scrambled eggs op volkoren brood',      p:`${isHeer?'3':'2'} eieren + 2 sneden brood` });
+  if (heeftEi && heeftWraps)           _obRot.push({ w:'Omelet in volkoren wrap',               p:`${isHeer?'3':'2'} eieren + 1 wrap` });
+  if (heeftEi)                         _obRot.push({ w:'Roerei met groenten',                   p:`${isHeer?'3':'2'} eieren + handvol groenten` });
+  if (heeftYoghurt)                    _obRot.push({ w:'Griekse yoghurt 0% met noten',          p:`${scaleG(isHeer?200:150)} g yoghurt + 20 g noten` });
+  if (heeftKwark)                      _obRot.push({ w:'Kwark met kaneel & fruit',              p:`${scaleG(isHeer?200:150)} g kwark` });
+  if (heeftCottage)                    _obRot.push({ w:'Cottage cheese kom',                    p:`${scaleG(isHeer?200:150)} g cottage cheese` });
+  if (heeftBrood && heeftKwark)        _obRot.push({ w:'Volkoren brood met kwark',              p:`2 sneden + ${scaleG(isHeer?100:80)} g kwark` });
+  if (_obRot.length === 0)             _obRot.push({ w:'Eiwitrijke ochtendmaaltijd',            p:'Zie boodschappenlijst' });
 
-  // Maaltijdopbouw
+  // ── Snack rotation ───────────────────────────────────────────────
+  const _snRot = [];
+  if (heeftKwark)   _snRot.push({ w:'Magere kwark',                p:`${scaleG(isHeer?150:120)} g` });
+  if (heeftYoghurt) _snRot.push({ w:'Griekse yoghurt 0%',          p:`${scaleG(isHeer?150:120)} g` });
+  if (heeftNoten)   _snRot.push({ w:'Gemengde noten',              p:'25–30 g' });
+  if (heeftEi)      _snRot.push({ w:'Hardgekookt ei',              p:`${isHeer?'2':'1–2'} eieren` });
+  if (heeftPinda && heeftBrood) _snRot.push({ w:'Brood met pindakaas', p:'1 snede + 20 g' });
+  if (heeftCottage) _snRot.push({ w:'Cottage cheese',              p:`${scaleG(isHeer?150:120)} g` });
+  if (_snRot.length === 0) _snRot.push({ w:'Eiwitrijke snack',     p:pSnack });
+
+  // ── Avondsnack (caseine) ─────────────────────────────────────────
+  const _avSn = heeftKwark   ? { w:'Magere kwark',        p:`${scaleG(isHeer?150:120)} g` }
+              : heeftYoghurt ? { w:'Griekse yoghurt 0%',  p:`${scaleG(isHeer?150:120)} g` }
+              : heeftCottage ? { w:'Cottage cheese',       p:`${scaleG(isHeer?150:120)} g` }
+              : _snRot[0];
+
+  // ── Main-meal carbs (lunch/post-workout only, not brood/wraps) ───
+  const _mainKoolh = beschikbareKoolh.filter(k => !['brood','wraps'].includes(k));
+  const _useKoolh  = _mainKoolh.length ? _mainKoolh : beschikbareKoolh;
+
+  function _ep(i) { const k = beschikbareEiwitten[i % Math.max(beschikbareEiwitten.length,1)]; return k && eiwitMap[k] ? eiwitMap[k].naam : 'Eiwitbron'; }
+  function _kh(i) { const k = _useKoolh[i % Math.max(_useKoolh.length,1)]; return k && koolhydratenMap[k] ? koolhydratenMap[k].naam : 'Koolhydraat'; }
+  function _gr(i) { const k = beschikbareGroenten[i % Math.max(beschikbareGroenten.length,1)]; return k && groentenMap[k] ? groentenMap[k].naam : 'Groenten'; }
+
+  // ── Single-day schema (fixed view) ───────────────────────────────
   const schema = [
-    {
-      maaltijd: '🌅 Ontbijt',
-      wat: ontbijtWat,
-      portie: ontbijtPortie,
-      tip: 'Start de dag met eiwitten om spierverlies te beperken'
-    },
-    {
-      maaltijd: '🍎 Ochtendsnack',
-      wat: vt(0) ? `${vt(0)} + ${ep(beschikbareEiwitten.includes('kwark') ? beschikbareEiwitten.indexOf('kwark') : 0) ? (heeftKwark ? 'kwark' : (heeftYoghurt ? 'Griekse yoghurt' : (ep(0) || 'eiwitbron'))) : 'eiwitbron'}` : (ep(0) ? ep(0) : 'Fruit + eiwitbron'),
-      portie: `${isHeer ? '30 g noten of 200 g kwark' : '20 g noten of 150 g kwark'}`,
-      tip: 'Houd de bloedsuikerspiegel stabiel'
-    },
-    {
-      maaltijd: '☀️ Lunch',
-      wat: `${ep(0) || 'Eiwitbron'} met ${kh(0) || 'koolhydraat'} en ${gr(0) || 'groenten'}`,
-      portie: `${pEiwit} eiwit · ${pKoolh} koolhydraat · ${pGroen} groenten`,
-      tip: 'Grootste koolhydraatmaaltijd vóór of na training'
-    },
-    {
-      maaltijd: '💪 Na training',
-      wat: `${ep(1) || ep(0) || 'Eiwitbron'} met ${kh(1) || kh(0) || 'koolhydraat'}`,
-      portie: `${pEiwit} eiwit · ${isHeer ? '100–150 g' : '80–120 g'} koolhydraat`,
-      tip: 'Binnen 30–60 min na training voor herstel'
-    },
-    {
-      maaltijd: '🌙 Avondeten',
-      wat: `${ep(2) || ep(0) || 'Eiwitbron'} met ${gr(1) || gr(0) || 'groenten'}${beschikbareKoolh.length > 0 ? ' en kleine portie ' + (kh(2) || kh(0)) : ''}`,
-      portie: `${pEiwit} eiwit · ${pGroen} groenten${beschikbareKoolh.length > 0 ? ' · ' + (isHeer ? '80–100 g' : '60–80 g') + ' koolhydraat' : ''}`,
-      tip: 'Minder koolhydraten \'s avonds bij gewichtsverlies'
-    },
-    {
-      maaltijd: '🌛 Avondsnack',
-      wat: heeftKwark ? 'Magere kwark' : (heeftYoghurt ? 'Griekse yoghurt 0%' : (ep(0) || 'Eiwitrijke snack')),
-      portie: pSnack,
-      tip: 'Caseïne-eiwit voor nachtelijk spierherstel'
-    }
+    { maaltijd:'🌅 Ontbijt',       wat:_obRot[0].w,                                                         portie:_obRot[0].p,                                                    tip:'Start de dag met eiwitten — geen snel-opgenomen koolhydraten' },
+    { maaltijd:'🍎 Ochtendsnack',  wat:_snRot[0].w,                                                         portie:_snRot[0].p,                                                    tip:'Houd bloedsuiker stabiel tot de lunch' },
+    { maaltijd:'☀️ Lunch',         wat:`${_ep(0)} met ${_kh(0)} en ${_gr(0)}`,                              portie:`${pEiwit} · ${pKoolh} · ${pGroen}`,                            tip:'Grootste koolhydraatmaaltijd van de dag' },
+    { maaltijd:'💪 Na training',   wat:`${_ep(1)} met ${_kh(1)}`,                                           portie:`${pEiwit} · ${scaleG(isHeer?120:90)} g koolhydraat`,           tip:'Binnen 30–60 min na training — glycogeen aanvullen' },
+    { maaltijd:'🌙 Avondeten',     wat:`${_ep(2)} met ${_gr(1)}`,                                           portie:`${pEiwit} eiwit · ${pGroen} groenten`,                         tip:'Geen/weinig koolhydraten — eiwit + groenten' },
+    { maaltijd:'🌛 Avondsnack',    wat:_avSn.w,                                                             portie:_avSn.p,                                                        tip:'Caseïne-eiwit voor nachtelijk spierherstel' }
   ];
 
-  // Render schema
+  // ── 7-day varied plan ────────────────────────────────────────────
+  const _dagNamen    = ['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag','Zaterdag','Zondag'];
+  const _trainDagen  = [true, false, true, false, true, false, false];
+  const _weekPlan = _dagNamen.map(function(dag, d) {
+    const tr  = _trainDagen[d];
+    const ob  = _obRot[d % _obRot.length];
+    const sn  = _snRot[d % _snRot.length];
+    return {
+      dag: dag, training: tr,
+      m: [
+        { m:'🌅 Ontbijt',                            w: ob.w,                                          p: ob.p },
+        { m:'🍎 Ochtendsnack',                        w: sn.w,                                          p: sn.p },
+        { m:'☀️ Lunch',                               w: `${_ep(d)} met ${_kh(d)} en ${_gr(d)}`,       p: `${pEiwit} · ${pKoolh} · ${pGroen}` },
+        { m: tr ? '💪 Na training' : '🍽️ Middagsnack', w: tr ? `${_ep(d)} met ${_kh((d+1)%Math.max(_useKoolh.length,1))}` : (_snRot[(d+1)%_snRot.length]).w,
+                                                       p: tr ? `${pEiwit} · ${scaleG(isHeer?120:90)} g koolh.` : (_snRot[(d+1)%_snRot.length]).p },
+        { m:'🌙 Avondeten',                           w: `${_ep(d+1)} met ${_gr(d+2)}`,                p: `${pEiwit} eiwit · ${pGroen} groenten` },
+        { m:'🌛 Avondsnack',                          w: _avSn.w,                                       p: _avSn.p }
+      ]
+    };
+  });
+
+  // ── Helper: render a meal table ───────────────────────────────────
+  function renderMaalTable(maaltijden, showTip) {
+    let t = '<div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">';
+    t += '<thead><tr style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">'
+       + '<td style="padding:8px 12px 8px 0;white-space:nowrap">Maaltijd</td>'
+       + '<td style="padding:8px 12px">Wat je eet</td>'
+       + '<td style="padding:8px 12px;white-space:nowrap">Portie</td>'
+       + (showTip ? '<td style="padding:8px 0;color:var(--fire2)">💡 Tip</td>' : '')
+       + '</tr></thead><tbody>';
+    maaltijden.forEach(function(m) {
+      t += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05)">'
+         + `<td style="padding:10px 12px 10px 0;color:var(--text);font-weight:600;white-space:nowrap;vertical-align:top">${m.maaltijd||m.m}</td>`
+         + `<td style="padding:10px 12px;color:var(--text);vertical-align:top">${m.wat||m.w}</td>`
+         + `<td style="padding:10px 12px;color:var(--accent,#e8c96d);font-size:12px;white-space:nowrap;vertical-align:top">${m.portie||m.p}</td>`
+         + (showTip && m.tip ? `<td style="padding:10px 0;color:var(--muted);font-size:11px;font-style:italic;vertical-align:top">${m.tip}</td>` : (showTip ? '<td></td>' : ''))
+         + '</tr>';
+    });
+    t += '</tbody></table></div>';
+    return t;
+  }
+
+  // ── Build weekly day tabs HTML ────────────────────────────────────
+  let weekTabsHtml = '<div class="day-tabs" style="margin:12px 0 0">';
+  let weekPanelsHtml = '';
+  _weekPlan.forEach(function(dag, d) {
+    weekTabsHtml += `<button class="day-tab${d===0?' active':''}" onclick="bqDagShow(${d},this)">${dag.dag.substring(0,3)}${dag.training?' 💪':''}</button>`;
+    weekPanelsHtml += `<div id="bq-dag-${d}" style="${d===0?'':'display:none'}">` + renderMaalTable(dag.m, false);
+    if (dag.training) weekPanelsHtml += `<div style="margin-top:10px;padding:8px 12px;background:rgba(229,113,0,0.08);border-radius:8px;font-size:12px;color:var(--fire2)">💪 Trainingsdag — eet voldoende koolhydraten voor en eiwitten na de training.</div>`;
+    weekPanelsHtml += '</div>';
+  });
+  weekTabsHtml += '</div>';
+
+  // ── Render schema section ─────────────────────────────────────────
   html += `
     <div class="bq-categorie-blok" style="margin-top:24px;border:1px solid rgba(229,222,209,0.12);background:linear-gradient(135deg,rgba(229,222,209,0.04),transparent)">
-      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:16px">
-        <div class="bq-cat-title" style="color:var(--fire);margin-bottom:0">Dagvoedingsschema — afgestemd op jouw keuzes</div>
-        <div style="font-size:11px;color:var(--muted)">Doel: ${calDoel}/dag</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:16px">
+        <div>
+          <div class="bq-cat-title" style="color:var(--fire);margin-bottom:2px">Voedingsschema — afgestemd op jouw keuzes</div>
+          <div style="font-size:11px;color:var(--muted)">Doel: ${calDoel}/dag</div>
+        </div>
+        <div class="day-tabs" style="margin:0">
+          <button class="day-tab active" id="bq-tog-dag"  onclick="bqWeekToggle('dag',this)">Dagschema</button>
+          <button class="day-tab"        id="bq-tog-week" onclick="bqWeekToggle('week',this)">Week variëren</button>
+        </div>
       </div>
-      <div style="overflow-x:auto">
-        <table style="width:100%;border-collapse:collapse;font-size:13px">
-          <tr style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">
-            <td style="padding:8px 12px 8px 0;white-space:nowrap">Maaltijd</td>
-            <td style="padding:8px 12px">Wat je eet</td>
-            <td style="padding:8px 12px">Portie</td>
-            <td style="padding:8px 0;color:var(--fire2)">💡 Tip</td>
-          </tr>
-          ${schema.map(m => `
-            <tr style="border-bottom:1px solid rgba(255,255,255,0.05)">
-              <td style="padding:10px 12px 10px 0;color:var(--text);font-weight:600;white-space:nowrap;vertical-align:top">${m.maaltijd}</td>
-              <td style="padding:10px 12px;color:var(--text);vertical-align:top">${m.wat}</td>
-              <td style="padding:10px 12px;color:var(--accent,#e8c96d);font-size:12px;white-space:nowrap;vertical-align:top">${m.portie}</td>
-              <td style="padding:10px 0;color:var(--muted);font-size:11px;font-style:italic;vertical-align:top">${m.tip}</td>
-            </tr>
-          `).join('')}
-        </table>
+
+      <div id="bq-view-dag">
+        ${renderMaalTable(schema, true)}
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
+          <strong style="color:var(--text)">Macroverdeling:</strong>
+          Eiwitten <strong style="color:var(--green)">30–35%</strong> &nbsp;·&nbsp;
+          Koolhydraten <strong style="color:var(--fire2)">35–40%</strong> &nbsp;·&nbsp;
+          Vetten <strong style="color:var(--fire2)">25–30%</strong>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <strong style="color:var(--text)">Eetpatroon:</strong> ${eetpatroon}
+          ${allergies.filter(a => a !== 'geen').length ? '&nbsp;·&nbsp;<strong style="color:var(--text)">Allergie-vrij:</strong> ' + allergies.filter(a => a !== 'geen').join(', ') : ''}
+        </div>
       </div>
-      <div style="margin-top:14px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
-        <strong style="color:var(--text)">Macroverdeling:</strong>
-        Eiwitten <strong style="color:var(--green)">30–35%</strong> &nbsp;·&nbsp;
-        Koolhydraten <strong style="color:var(--fire2)">35–40%</strong> &nbsp;·&nbsp;
-        Vetten <strong style="color:var(--fire2)">25–30%</strong>
-        &nbsp;&nbsp;|&nbsp;&nbsp;
-        <strong style="color:var(--text)">Eetpatroon:</strong> ${eetpatroon}
-        ${allergies.filter(a => a !== 'geen').length ? '&nbsp;·&nbsp;<strong style="color:var(--text)">Allergie-vrij:</strong> ' + allergies.filter(a => a !== 'geen').join(', ') : ''}
+
+      <div id="bq-view-week" style="display:none">
+        <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Alle producten uit de boodschappenlijst worden verdeeld over de week. 💪 = trainingsdag (ma/wo/vr).</div>
+        ${weekTabsHtml}
+        <div id="bq-week-panels" style="margin-top:12px">${weekPanelsHtml}</div>
+        <div style="margin-top:14px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
+          <strong style="color:var(--text)">Macroverdeling:</strong>
+          Eiwitten <strong style="color:var(--green)">30–35%</strong> &nbsp;·&nbsp;
+          Koolhydraten <strong style="color:var(--fire2)">35–40%</strong> &nbsp;·&nbsp;
+          Vetten <strong style="color:var(--fire2)">25–30%</strong>
+          &nbsp;&nbsp;|&nbsp;&nbsp;
+          <strong style="color:var(--text)">Eetpatroon:</strong> ${eetpatroon}
+        </div>
       </div>
     </div>`;
 
@@ -2399,6 +2452,26 @@ function genereerBoodschappen() {
 function resetBoodschappen() {
   document.getElementById('boodschappen-stap1').style.display = 'block';
   document.getElementById('boodschappen-stap2').style.display = 'none';
+}
+
+function bqWeekToggle(view, btn) {
+  ['dag','week'].forEach(function(v) {
+    var el = document.getElementById('bq-view-' + v);
+    var tb = document.getElementById('bq-tog-' + v);
+    if (el) el.style.display = v === view ? 'block' : 'none';
+    if (tb) tb.classList.toggle('active', v === view);
+  });
+}
+
+function bqDagShow(idx, btn) {
+  var panels = document.getElementById('bq-week-panels');
+  if (!panels) return;
+  panels.querySelectorAll('[id^="bq-dag-"]').forEach(function(p) { p.style.display = 'none'; });
+  var active = document.getElementById('bq-dag-' + idx);
+  if (active) active.style.display = 'block';
+  var tabWrap = btn.closest('.day-tabs');
+  if (tabWrap) tabWrap.querySelectorAll('.day-tab').forEach(function(b) { b.classList.remove('active'); });
+  btn.classList.add('active');
 }
 
 // ════════════════════════════════════════
