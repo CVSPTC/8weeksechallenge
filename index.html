@@ -2274,12 +2274,16 @@ function genereerBoodschappen() {
   function gr(i)  { return beschikbareGroenten[i % beschikbareGroenten.length]  ? groentenMap[beschikbareGroenten[i % beschikbareGroenten.length]].naam : null; }
   function vt(i)  { return beschikbareVetten[i % beschikbareVetten.length]      ? vettenMap[beschikbareVetten[i % beschikbareVetten.length]].naam       : null; }
 
-  // Portiegroottes op gender
-  const pEiwit  = isHeer ? '150–180 g' : '100–130 g';
-  const pKoolh  = isHeer ? '150–200 g' : '100–150 g';
-  const pGroen  = isHeer ? '200 g'     : '150 g';
-  const pSnack  = isHeer ? '200 g'     : '150 g';
-  const calDoel = isHeer ? '~1900 kcal' : '~1500 kcal';
+  // Portiegroottes op calorie target (BMR doel indien beschikbaar, anders gender-gemiddelde)
+  const baseKcal  = isHeer ? 1900 : 1500;
+  const actualKcal = (bmrData && bmrData.doel) ? bmrData.doel : baseKcal;
+  const calDoel   = actualKcal + ' kcal';
+  const kcalScale = actualKcal / baseKcal;
+  function scaleG(val) { return Math.round(val * kcalScale); }
+  const pEiwit  = scaleG(isHeer ? 150 : 100) + '–' + scaleG(isHeer ? 180 : 130) + ' g';
+  const pKoolh  = scaleG(isHeer ? 150 : 100) + '–' + scaleG(isHeer ? 200 : 150) + ' g';
+  const pGroen  = scaleG(isHeer ? 200 : 150) + ' g';
+  const pSnack  = scaleG(isHeer ? 200 : 150) + ' g';
 
   // Ontbijt-opties op basis van beschikbare producten
   let ontbijtWat, ontbijtPortie;
@@ -2462,6 +2466,30 @@ window.addEventListener('DOMContentLoaded', function() {
 
 
 // ════════════════════════════════════════
+// BOODSCHAPPEN ↔ VOEDING SYNC
+// ════════════════════════════════════════
+function updateBoodschappenBmrNotice() {
+  var warn   = document.getElementById('bq-tee-warning');
+  var notice = document.getElementById('bq-tee-notice');
+  if (!warn || !notice) return;
+  if (bmrData && bmrData.doel) {
+    warn.style.display = 'none';
+    notice.innerHTML = '&#10003; Caloriedoel: <strong>' + bmrData.doel + ' kcal/dag</strong> &nbsp;·&nbsp; TEE: ' + bmrData.tee + ' kcal &nbsp;·&nbsp; ' + bmrData.deficit + '% tekort &mdash; Porties en boodschappenlijst zijn hierop afgestemd.';
+    notice.classList.add('show');
+  } else {
+    warn.style.display = 'block';
+    notice.classList.remove('show');
+  }
+}
+
+// Patch showTab to refresh the notice when switching to boodschappen
+var _origShowTab = showTab;
+showTab = function(id) {
+  _origShowTab.call(this, id);
+  if (id === 'boodschappen') updateBoodschappenBmrNotice();
+};
+
+// ════════════════════════════════════════
 // BMR / TEE CALCULATOR (Ten Haaf)
 // ════════════════════════════════════════
 var bmrGender = 'vrouw';
@@ -2517,6 +2545,10 @@ function bmrBereken() {
 
   var note = document.getElementById('bmr-saved-note');
   if (note) { note.classList.add('show'); setTimeout(function() { note.classList.remove('show'); }, 2500); }
+
+  // Sync boodschappen notice + re-render week cards with updated target
+  updateBoodschappenBmrNotice();
+  renderWeekCards();
 }
 
 function bmrHerstelOpgeslagen() {
@@ -3129,7 +3161,7 @@ var wkTrainData = [
     week:1, title:'Techniek & Ritme Opbouwen', sub:'Bewegingspatronen inslijten — lichte gewichten',
     phase:'Opstart', phaseClass:'phase-opstart', sessies:'3×', rust:'90s', rir:'4–5',
     cardio:'Elke sessie starten met 5 min. cardio (roeier of crosstrainer)',
-    voeding:{ tips:['Eet normaal — schrijf alles op wat je eet','Drink 2 liter water per dag','Geen frisdrank, alleen water of thee','Stop met eten 2 uur voor slapengaan'], portie:'Normaal', balk:28 },
+    voeding:{ tips:['Eet normaal — schrijf alles op wat je eet','Drink 2 liter water per dag','Geen frisdrank, alleen water of thee','Stop met eten 2 uur voor slapengaan'], portie:'Normaal', balk:28, kcalMult:1.00 },
     tip:'Perfectie bestaat niet in week 1. Het gaat erom dat je in beweging komt. Zet je 3 trainingen in je agenda zoals een zakelijke afspraak — en annuleer ze niet.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3162,7 +3194,7 @@ var wkTrainData = [
     week:2, title:'Gewicht Verhogen', sub:'Zelfde schema — iets zwaarder, meer sets',
     phase:'Opstart', phaseClass:'phase-opstart', sessies:'3×', rust:'75s', rir:'2–3',
     cardio:'Elke sessie afsluiten met 10 min. LISS cardio (incline treadmill of crosstrainer)',
-    voeding:{ tips:['Verwijder suikerhoudende snacks uit huis','Eet elke maaltijd van een kleiner bord','Voeg 1 extra portie groente toe per dag','2–2,5 liter water per dag'], portie:'Licht verkleind', balk:40 },
+    voeding:{ tips:['Verwijder suikerhoudende snacks uit huis','Eet elke maaltijd van een kleiner bord','Voeg 1 extra portie groente toe per dag','2–2,5 liter water per dag'], portie:'Licht verkleind', balk:40, kcalMult:0.95 },
     tip:'Je lichaam protesteert misschien — spierpijn is normaal. Maar het verdwijnt. Geef niet op voor de resultaten zichtbaar zijn. Succes in sport en business vraagt allebei geduld.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3195,7 +3227,7 @@ var wkTrainData = [
     week:3, title:'Volume Omhoog', sub:'Meer sets, meer vetverbranding',
     phase:'Opbouw', phaseClass:'phase-opbouw', sessies:'3×', rust:'60s', rir:'1–2',
     cardio:'Na elke sessie: 15 min. incline treadmill walk (vetverbrandingszone, 60-70% max HR)',
-    voeding:{ tips:['Vervang 1 koolhydraatrijke maaltijd door eiwit + groente','Eet minder wit brood, pasta, rijst','Proteïne bij elke hoofdmaaltijd','Avondsnack max. 1 kleine portie kwark of noten'], portie:'-15% koolhydraten', balk:52 },
+    voeding:{ tips:['Vervang 1 koolhydraatrijke maaltijd door eiwit + groente','Eet minder wit brood, pasta, rijst','Proteïne bij elke hoofdmaaltijd','Avondsnack max. 1 kleine portie kwark of noten'], portie:'-15% koolhydraten', balk:52, kcalMult:0.90 },
     tip:'Week 3 is waar de meeste mensen afhaken. Zet een reminder: "Ik doe dit voor mijn energie, mijn focus, mijn bedrijf." Verbind je sportdoel aan je zakelijke succes.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3228,7 +3260,7 @@ var wkTrainData = [
     week:4, title:'Deload & Halverwege Meting', sub:'Herstel — lichter trainen, meten, bijsturen',
     phase:'Opbouw', phaseClass:'phase-opbouw', sessies:'3×', rust:'90s', rir:'4–5',
     cardio:'Geen extra cardio — herstel staat centraal. Optioneel: 20 min. rustige wandeling',
-    voeding:{ tips:['Eet iets meer koolhydraten — glycogeen aanvullen voor tweede blok','Slaap minimaal 8 uur per nacht','Maaltijdprep doen voor week 5','Blijf voldoende drinken — herstel vereist hydratatie'], portie:'Normaal (herstelweek)', balk:35 },
+    voeding:{ tips:['Eet iets meer koolhydraten — glycogeen aanvullen voor tweede blok','Slaap minimaal 8 uur per nacht','Maaltijdprep doen voor week 5','Blijf voldoende drinken — herstel vereist hydratatie'], portie:'Normaal (herstelweek)', balk:35, kcalMult:1.00 },
     tip:'Rust is geen zwakte — het is strategie. Je spieren groeien en herstellen tijdens de rust. Net zoals een bedrijf soms een pas op de plaats nodig heeft om daarna sneller te groeien.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3259,7 +3291,7 @@ var wkTrainData = [
     week:5, title:'Tweede Blok — Zwaarder & Strakker', sub:'Progressieve overload maximaliseren (+5% vs week 3)',
     phase:'Intensief', phaseClass:'phase-intensief', sessies:'3×', rust:'60s', rir:'1–2',
     cardio:'Cardio finisher: 20 min. incline treadmill walk na elke krachttraining',
-    voeding:{ tips:['Koolhydraten alleen \'s ochtends en voor training','Avondmaaltijd: eiwit + groente, geen koolhydraten','Tussenmaaltijden vervangen door noten of ei','2,5 liter water per dag minimaal'], portie:'-30% koolhydraten', balk:70 },
+    voeding:{ tips:['Koolhydraten alleen \'s ochtends en voor training','Avondmaaltijd: eiwit + groente, geen koolhydraten','Tussenmaaltijden vervangen door noten of ei','2,5 liter water per dag minimaal'], portie:'-30% koolhydraten', balk:70, kcalMult:0.88 },
     tip:'Hier zie je de resultaten beginnen. Je broek zit anders, je hebt meer energie. Dit is het moment om een tussenfoto te maken als motivatie voor de laatste 3 weken.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3292,7 +3324,7 @@ var wkTrainData = [
     week:6, title:'Superset Protocol', sub:'Hoge hartslag — maximale vetverbranding',
     phase:'Intensief', phaseClass:'phase-intensief', sessies:'3×', rust:'30s/60s', rir:'1–2',
     cardio:'Geen extra cardio nodig — supersets houden hartslag hoog. Optioneel: 15 min. HIIT op rustdag',
-    voeding:{ tips:['Intermittent fasting optie: eet tussen 10:00–19:00','Geen bewerkte producten of pakjes en zakjes','Alcohol maximaal 1 glas per week','Kook zoveel mogelijk zelf — controle over ingrediënten'], portie:'-35% koolhydraten', balk:80 },
+    voeding:{ tips:['Intermittent fasting optie: eet tussen 10:00–19:00','Geen bewerkte producten of pakjes en zakjes','Alcohol maximaal 1 glas per week','Kook zoveel mogelijk zelf — controle over ingrediënten'], portie:'-35% koolhydraten', balk:80, kcalMult:0.85 },
     tip:'Supersets besparen tijd én verhogen je vetverbranding door je hartslag hoog te houden. 25 minuten intensief is beter dan 60 minuten matig. Perfect voor drukke ondernemers.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3325,7 +3357,7 @@ var wkTrainData = [
     week:7, title:'Piekweek — Maximale Output', sub:'Zwaarste week van de challenge',
     phase:'Piek', phaseClass:'phase-piek', sessies:'3×', rust:'45–60s', rir:'0–1',
     cardio:'Extra: 2× 20 min. HIIT cardio op rustdagen (fiets of roeier)',
-    voeding:{ tips:['Koolhydraten uitsluitend na training (timing!)','Groenten onbeperkt — vul je bord ermee','Eiwit bij elke maaltijd (doel: 1,6 g per kg)','Vermijd zout om waterretentie te beperken'], portie:'-40% koolhydraten', balk:90 },
+    voeding:{ tips:['Koolhydraten uitsluitend na training (timing!)','Groenten onbeperkt — vul je bord ermee','Eiwit bij elke maaltijd (doel: 1,6 g per kg)','Vermijd zout om waterretentie te beperken'], portie:'-40% koolhydraten', balk:90, kcalMult:0.82 },
     tip:'Dit is de zwaarste week. Herinner jezelf waarom je begon. Schrijf het op, plak het op je spiegel. Elke ondernemer kent het gevoel van doorzetten als het moeilijk wordt — dit is precies dat moment.',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3358,7 +3390,7 @@ var wkTrainData = [
     week:8, title:'Finishline — Benchmark & Resultaten', sub:'Eindmeting + vergelijk met week 1',
     phase:'Piek', phaseClass:'phase-piek', sessies:'3×', rust:'3–5 min (PR) / 90s', rir:'0 (PR) / 2',
     cardio:'Geen extra cardio — herstel maximaliseren voor eindmeting',
-    voeding:{ tips:['Eet normaal — geen extreme restricties in eindweek','Voldoende koolhydraten voor maximale prestatie','3 liter water per dag voor optimale hydratatie','Eindmeting: weeg en meet op dezelfde tijd als week 1'], portie:'Normaal (prestatiegerichte eindweek)', balk:95 },
+    voeding:{ tips:['Eet normaal — geen extreme restricties in eindweek','Voldoende koolhydraten voor maximale prestatie','3 liter water per dag voor optimale hydratatie','Eindmeting: weeg en meet op dezelfde tijd als week 1'], portie:'Normaal (prestatiegerichte eindweek)', balk:95, kcalMult:1.00 },
     tip:'Je hebt 8 weken volgehouden. Dat lukt maar een klein percentage mensen. Je hebt bewezen dat je de discipline hebt om resultaten te halen — in sport én in business. Wat is je volgende doel?',
     days:[
       { label:'DAG A — PUSH', rows:[
@@ -3427,6 +3459,16 @@ function renderWeekCards() {
     // Nutrition tips list
     var tipList = wk.voeding.tips.map(function(t) { return '<li>' + t + '</li>'; }).join('');
 
+    // Calorie target for this week
+    var wkKcalStr;
+    if (bmrData && bmrData.doel) {
+      var wkKcal = Math.round(bmrData.doel * wk.voeding.kcalMult);
+      wkKcalStr = '<span style="color:var(--fire);font-family:var(--font-display);font-size:16px">' + wkKcal + ' kcal/dag</span>' +
+                  '<span style="color:var(--muted);font-size:11px;margin-left:6px">(' + wk.voeding.portie + ')</span>';
+    } else {
+      wkKcalStr = '<span style="color:var(--muted)">' + wk.voeding.portie + '</span>';
+    }
+
     html += '<div class="week-card" id="wk' + wk.week + '">' +
       '<div class="week-header" onclick="toggleWeek(\'wk' + wk.week + '\')">' +
       '<div class="week-label">' +
@@ -3451,7 +3493,7 @@ function renderWeekCards() {
       '<div class="ws-icon">🥗</div>' +
       '<div class="ws-title">Voeding deze week</div>' +
       '<ul>' + tipList + '</ul>' +
-      '<div style="margin-top:10px;font-size:12px;color:var(--muted)">' + wk.voeding.portie + '</div>' +
+      '<div style="margin-top:10px;font-size:12px">' + wkKcalStr + '</div>' +
       '<div class="portion-bar"><div class="portion-fill" style="width:' + wk.voeding.balk + '%"></div></div>' +
       '</div>' +
       '<div class="ws-block full">' +
@@ -3472,6 +3514,7 @@ function renderWeekCards() {
 document.addEventListener('DOMContentLoaded', function() {
   loadSettings();
   renderWeekCards();
+  updateBoodschappenBmrNotice();
   setTimeout(function() {
     renderProgressChart();
     renderFotoVergelijking();
