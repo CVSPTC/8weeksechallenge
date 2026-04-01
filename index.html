@@ -1344,39 +1344,38 @@ body.print-boodschappen .bq-print-header { display:block !important }
       <div class="measure-week">Week 1 — Nulmeting</div>
       <div class="measure-title">Startpunt vastleggen</div>
       <div class="measure-list">
-        <span class="measure-tag"> Gewicht</span>
-        <span class="measure-tag"> Taille</span>
-        <span class="measure-tag"> Heupen</span>
-        <span class="measure-tag"> Borst</span>
-        <span class="measure-tag">📸 Startfoto</span>
-        <span class="measure-tag"> Energie (1–10)</span>
+        <span class="measure-tag">Gewicht (kg)</span>
+        <span class="measure-tag">Spiermassa (kg)</span>
+        <span class="measure-tag">Vetpercentage (%)</span>
+        <span class="measure-tag">Visceraal Vet</span>
+        <span class="measure-tag">Energie (1–10)</span>
+        <span class="measure-tag">Slaap (1–10)</span>
       </div>
     </div>
     <div class="measure-item">
       <div class="measure-dot"></div>
-      <div class="measure-week">Week 4 — Halverwege meting</div>
-      <div class="measure-title">Bijsturen waar nodig</div>
+      <div class="measure-week">Week 2 t/m 7 — Wekelijkse meting</div>
+      <div class="measure-title">Wekelijks bijhouden en bijsturen</div>
       <div class="measure-list">
-        <span class="measure-tag"> Gewicht</span>
-        <span class="measure-tag"> Taille</span>
-        <span class="measure-tag"> Heupen</span>
-        <span class="measure-tag">📸 Tussenfoto</span>
-        <span class="measure-tag"> Energie (1–10)</span>
-        <span class="measure-tag">💪 Kracht test</span>
+        <span class="measure-tag">Gewicht (kg)</span>
+        <span class="measure-tag">Spiermassa (kg)</span>
+        <span class="measure-tag">Vetpercentage (%)</span>
+        <span class="measure-tag">Visceraal Vet</span>
+        <span class="measure-tag">Energie (1–10)</span>
+        <span class="measure-tag">Slaap (1–10)</span>
       </div>
     </div>
     <div class="measure-item">
       <div class="measure-dot"></div>
-      <div class="measure-week">Week 8  Eindmeting</div>
+      <div class="measure-week">Week 8 — Eindmeting</div>
       <div class="measure-title">Transformatie zichtbaar maken</div>
       <div class="measure-list">
-        <span class="measure-tag"> Gewicht</span>
-        <span class="measure-tag"> Taille</span>
-        <span class="measure-tag"> Heupen</span>
-        <span class="measure-tag"> Borst</span>
-        <span class="measure-tag">📸 Eindfoto</span>
-        <span class="measure-tag"> Energie (1–10)</span>
-        <span class="measure-tag"> Benchmark test</span>
+        <span class="measure-tag">Gewicht (kg)</span>
+        <span class="measure-tag">Spiermassa (kg)</span>
+        <span class="measure-tag">Vetpercentage (%)</span>
+        <span class="measure-tag">Visceraal Vet</span>
+        <span class="measure-tag">Energie (1–10)</span>
+        <span class="measure-tag">Slaap (1–10)</span>
       </div>
     </div>
   </div>
@@ -1384,15 +1383,20 @@ body.print-boodschappen .bq-print-header { display:block !important }
   <div class="progress-form">
     <h3>NOTEER JE METINGEN</h3>
     <div style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6">
-      Vul elke 4 weken je metingen in. Na de tweede meting zie je automatisch of je op de goede weg zit.
+      Vul elke week je metingen in. Na elke meting zie je automatisch je voortgang in de grafiek.
     </div>
     <div class="form-row">
       <div class="form-field">
-        <label>Meetmoment</label>
+        <label>Week</label>
         <select id="inp-week" style="width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:14px;color:var(--text);outline:none;transition:border-color 0.2s;-webkit-appearance:none;">
-          <option value="">Kies moment</option>
+          <option value="">Kies week</option>
           <option value="1">Week 1 — Nulmeting</option>
+          <option value="2">Week 2</option>
+          <option value="3">Week 3</option>
           <option value="4">Week 4 — Halverwege</option>
+          <option value="5">Week 5</option>
+          <option value="6">Week 6</option>
+          <option value="7">Week 7</option>
           <option value="8">Week 8 — Eindmeting</option>
         </select>
       </div>
@@ -1401,18 +1405,28 @@ body.print-boodschappen .bq-print-header { display:block !important }
         <input type="number" id="inp-gewicht" placeholder="bijv. 82.5" step="0.1">
       </div>
       <div class="form-field">
-        <label>Taille (cm)</label>
-        <input type="number" id="inp-taille" placeholder="bijv. 90">
+        <label>Spiermassa (kg)</label>
+        <input type="number" id="inp-spiermassa" placeholder="bijv. 38.0" step="0.1">
       </div>
     </div>
     <div class="form-row">
       <div class="form-field">
-        <label>Heupen (cm)</label>
-        <input type="number" id="inp-heupen" placeholder="bijv. 102">
+        <label>Vetpercentage (%)</label>
+        <input type="number" id="inp-vetpct" placeholder="bijv. 22.5" step="0.1" min="3" max="60">
       </div>
       <div class="form-field">
-        <label>Energie (1–10)</label>
+        <label>Visceraal Vet niveau</label>
+        <input type="number" id="inp-visceraaivet" placeholder="bijv. 8" min="1" max="30">
+      </div>
+      <div class="form-field">
+        <label>Energie niveau (1–10)</label>
         <input type="number" id="inp-energie" placeholder="bijv. 7" min="1" max="10">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label>Slaap niveau (1–10)</label>
+        <input type="number" id="inp-slaap" placeholder="bijv. 7" min="1" max="10">
       </div>
       <div class="form-field">
         <label>Notitie</label>
@@ -1423,35 +1437,12 @@ body.print-boodschappen .bq-print-header { display:block !important }
     <div id="saved-entries"></div>
     <div id="progress-chart-wrap" style="margin-top:24px;background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:22px;display:none">
       <div style="font-family:var(--font-display);font-size:22px;letter-spacing:1.5px;color:#fff;margin-bottom:4px">VOORTGANGSGRAFIEK</div>
-      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Gewicht, taille en heupen over de meetmomenten</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Alle metingen over 8 weken</div>
+      <div id="chart-metric-toggles" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px"></div>
       <canvas id="progress-chart" style="width:100%;display:block"></canvas>
     </div>
   </div>
 
-  <!-- WEKELIJKSE GEWICHTSGRAFIEK -->
-  <div class="wg-wrap">
-    <div class="wg-head">
-      <div>
-        <div class="wg-title">WEKELIJKSE WEGING</div>
-        <div class="wg-sub">Vul elke week je gewicht in voor een volledige grafiek over 8 weken</div>
-      </div>
-      <div id="wg-delta-block" style="display:none">
-        <div class="wg-delta neutral" id="wg-delta-num">—</div>
-        <div class="wg-delta-lbl">verschil vs week 1</div>
-      </div>
-    </div>
-    <div class="wg-goal-row">
-      <span class="wg-goal-lbl">🎯 Doelgewicht (kg):</span>
-      <input type="number" step="0.1" class="wg-goal-inp" id="wg-goal" placeholder="bijv. 78.0" oninput="wgSaveGoal(this.value)">
-    </div>
-    <div class="wg-inputs" id="wg-inputs">
-      <!-- ingevuld door JS -->
-    </div>
-    <div class="wg-canvas-wrap" id="wg-canvas-wrap" style="display:none">
-      <canvas id="wg-canvas"></canvas>
-    </div>
-    <div class="wg-stats-row" id="wg-stats" style="display:none"></div>
-  </div>
 
     <div class="progress-form" style="margin-top:20px">
       <h3>FOTO UPLOAD</h3>
@@ -1822,19 +1813,24 @@ let metingen = {}; // keyed by week number: {1, 4, 8}
 
 function saveMeting() {
   const week = document.getElementById('inp-week').value;
-  if (!week) { alert('Selecteer eerst een meetmoment.'); return; }
+  if (!week) { alert('Selecteer eerst een week.'); return; }
   const entry = {
     week: parseInt(week),
-    gewicht: parseFloat(document.getElementById('inp-gewicht').value) || null,
-    taille: parseFloat(document.getElementById('inp-taille').value) || null,
-    heupen: parseFloat(document.getElementById('inp-heupen').value) || null,
-    energie: parseInt(document.getElementById('inp-energie').value) || null,
-    notitie: document.getElementById('inp-notitie').value || ''
+    gewicht:      parseFloat(document.getElementById('inp-gewicht').value)     || null,
+    spiermassa:   parseFloat(document.getElementById('inp-spiermassa').value)  || null,
+    vetpct:       parseFloat(document.getElementById('inp-vetpct').value)      || null,
+    visceraaivet: parseFloat(document.getElementById('inp-visceraaivet').value)|| null,
+    energie:      parseInt(document.getElementById('inp-energie').value)       || null,
+    slaap:        parseInt(document.getElementById('inp-slaap').value)         || null,
+    notitie:      document.getElementById('inp-notitie').value || ''
   };
   metingen[entry.week] = entry;
   renderMetingen();
   document.getElementById('inp-week').value = '';
-  ['gewicht','taille','heupen','energie','notitie'].forEach(f => document.getElementById('inp-'+f).value = '');
+  ['gewicht','spiermassa','vetpct','visceraaivet','energie','slaap','notitie'].forEach(f => {
+    const el = document.getElementById('inp-'+f);
+    if (el) el.value = '';
+  });
 }
 
 function getDelta(oldVal, newVal, lowerIsBetter) {
@@ -1871,23 +1867,26 @@ function metricHTML(label, oldVal, newVal, unit, lowerIsBetter) {
 }
 
 function renderComparison(prev, curr) {
-  const label = curr.week === 4 ? 'Week 1 → Week 4 (halverwege)' : curr.week === 8 ? 'Week 4 → Week 8 (eindresultaat)' : '';
-  const prevLabel = curr.week === 4 ? 'Nulmeting' : 'Halverwege';
-  const currLabel = curr.week === 4 ? 'Halverwege' : 'Eindmeting';
+  const label = `Week ${prev.week} → Week ${curr.week}`;
+  const prevLabel = `Week ${prev.week}`;
+  const currLabel = `Week ${curr.week}`;
 
   let metrics = '';
-  metrics += metricHTML('⚖️ Gewicht', prev.gewicht, curr.gewicht, ' kg', true);
-  metrics += metricHTML('📐 Taille', prev.taille, curr.taille, ' cm', true);
-  metrics += metricHTML('📐 Heupen', prev.heupen, curr.heupen, ' cm', true);
-  metrics += metricHTML('⚡ Energie', prev.energie, curr.energie, '/10', false);
+  metrics += metricHTML('Gewicht', prev.gewicht, curr.gewicht, ' kg', true);
+  metrics += metricHTML('Spiermassa', prev.spiermassa, curr.spiermassa, ' kg', false);
+  metrics += metricHTML('Vetpercentage', prev.vetpct, curr.vetpct, '%', true);
+  metrics += metricHTML('Visceraal Vet', prev.visceraaivet, curr.visceraaivet, '', true);
+  metrics += metricHTML('Energie', prev.energie, curr.energie, '/10', false);
+  metrics += metricHTML('Slaap', prev.slaap, curr.slaap, '/10', false);
 
-  // Determine overall status
   let goodCount = 0, badCount = 0;
   const fields = [
     { old: prev.gewicht, new: curr.gewicht, lower: true },
-    { old: prev.taille, new: curr.taille, lower: true },
-    { old: prev.heupen, new: curr.heupen, lower: true },
-    { old: prev.energie, new: curr.energie, lower: false }
+    { old: prev.spiermassa, new: curr.spiermassa, lower: false },
+    { old: prev.vetpct, new: curr.vetpct, lower: true },
+    { old: prev.visceraaivet, new: curr.visceraaivet, lower: true },
+    { old: prev.energie, new: curr.energie, lower: false },
+    { old: prev.slaap, new: curr.slaap, lower: false }
   ];
   fields.forEach(f => {
     if (f.old !== null && f.new !== null) {
@@ -1900,16 +1899,16 @@ function renderComparison(prev, curr) {
   let statusClass, statusText;
   if (badCount === 0 && goodCount > 0) {
     statusClass = 'winning';
-    statusText = '✅ Uitstekend! Je bent op de goede weg. Alle metingen gaan de juiste kant op.';
+    statusText = 'Uitstekend! Je bent op de goede weg. Alle metingen gaan de juiste kant op.';
   } else if (goodCount > badCount) {
     statusClass = 'mixed';
-    statusText = '⚠️ Gemengd resultaat. Sommige metingen gaan goed, maar er is nog ruimte voor verbetering.';
+    statusText = 'Gemengd resultaat. Sommige metingen gaan goed, maar er is nog ruimte voor verbetering.';
   } else if (badCount > 0 && goodCount === 0) {
     statusClass = 'losing';
-    statusText = '🔴 Bijsturen nodig! De metingen gaan de verkeerde kant op. Bespreek dit met je trainer.';
+    statusText = 'Bijsturen nodig! De metingen gaan de verkeerde kant op. Bespreek dit met je trainer.';
   } else {
     statusClass = 'mixed';
-    statusText = '→ Geen grote verandering gemeten. Analyseer voeding en training.';
+    statusText = 'Geen grote verandering gemeten. Analyseer voeding en training.';
   }
 
   const notitie = curr.notitie ? `<div style="margin-top:10px;font-size:12px;color:var(--muted);font-style:italic">"${curr.notitie}"</div>` : '';
@@ -1927,41 +1926,40 @@ function renderComparison(prev, curr) {
 
 function renderMetingen() {
   const el = document.getElementById('saved-entries');
+  const weekNums = Object.keys(metingen).map(Number).sort((a,b) => a - b);
+
+  if (weekNums.length === 0) { el.innerHTML = ''; return; }
+
   let html = '<div class="progress-comparison">';
 
-  // Always show week 1 as baseline
-  if (metingen[1]) {
-    const m = metingen[1];
-    html += `<div class="comparison-card">
-      <div class="comparison-header">
-        <div class="comparison-title">📍 Week 1 — Nulmeting (startpunt)</div>
-      </div>
-      <div class="comparison-metrics">
-        ${m.gewicht ? `<div class="metric-block"><div class="metric-label">⚖️ Gewicht</div><div class="metric-values"><span class="metric-new neutral">${m.gewicht} kg</span></div></div>` : ''}
-        ${m.taille ? `<div class="metric-block"><div class="metric-label">📐 Taille</div><div class="metric-values"><span class="metric-new neutral">${m.taille} cm</span></div></div>` : ''}
-        ${m.heupen ? `<div class="metric-block"><div class="metric-label">📐 Heupen</div><div class="metric-values"><span class="metric-new neutral">${m.heupen} cm</span></div></div>` : ''}
-        ${m.energie ? `<div class="metric-block"><div class="metric-label">⚡ Energie</div><div class="metric-values"><span class="metric-new neutral">${m.energie}/10</span></div></div>` : ''}
-      </div>
-      ${m.notitie ? `<div style="margin-top:8px;font-size:12px;color:var(--muted);font-style:italic">"${m.notitie}"</div>` : ''}
-    </div>`;
-  }
-
-  if (metingen[4] && metingen[1]) {
-    html += renderComparison(metingen[1], metingen[4]);
-  } else if (metingen[4]) {
-    html += `<div class="comparison-card"><div class="comparison-title">Week 4 opgeslagen — voeg ook week 1 toe voor vergelijking</div></div>`;
-  }
-
-  if (metingen[8] && metingen[4]) {
-    html += renderComparison(metingen[4], metingen[8]);
-  } else if (metingen[8] && metingen[1]) {
-    html += renderComparison(metingen[1], metingen[8]);
-  } else if (metingen[8]) {
-    html += `<div class="comparison-card"><div class="comparison-title">Week 8 opgeslagen — voeg ook eerdere metingen toe voor vergelijking</div></div>`;
-  }
+  // Show each week as a card; if previous week exists, show comparison
+  weekNums.forEach((wk, idx) => {
+    const m = metingen[wk];
+    if (idx === 0) {
+      // First entry: baseline card
+      const wkLabel = wk === 1 ? 'Week 1 — Nulmeting (startpunt)' : `Week ${wk} — Startpunt`;
+      html += `<div class="comparison-card">
+        <div class="comparison-header">
+          <div class="comparison-title">${wkLabel}</div>
+        </div>
+        <div class="comparison-metrics">
+          ${m.gewicht ? `<div class="metric-block"><div class="metric-label">Gewicht</div><div class="metric-values"><span class="metric-new neutral">${m.gewicht} kg</span></div></div>` : ''}
+          ${m.spiermassa ? `<div class="metric-block"><div class="metric-label">Spiermassa</div><div class="metric-values"><span class="metric-new neutral">${m.spiermassa} kg</span></div></div>` : ''}
+          ${m.vetpct ? `<div class="metric-block"><div class="metric-label">Vetpercentage</div><div class="metric-values"><span class="metric-new neutral">${m.vetpct}%</span></div></div>` : ''}
+          ${m.visceraaivet ? `<div class="metric-block"><div class="metric-label">Visceraal Vet</div><div class="metric-values"><span class="metric-new neutral">${m.visceraaivet}</span></div></div>` : ''}
+          ${m.energie ? `<div class="metric-block"><div class="metric-label">Energie</div><div class="metric-values"><span class="metric-new neutral">${m.energie}/10</span></div></div>` : ''}
+          ${m.slaap ? `<div class="metric-block"><div class="metric-label">Slaap</div><div class="metric-values"><span class="metric-new neutral">${m.slaap}/10</span></div></div>` : ''}
+        </div>
+        ${m.notitie ? `<div style="margin-top:8px;font-size:12px;color:var(--muted);font-style:italic">"${m.notitie}"</div>` : ''}
+      </div>`;
+    } else {
+      // Subsequent entries: comparison with previous
+      html += renderComparison(metingen[weekNums[idx - 1]], m);
+    }
+  });
 
   html += '</div>';
-  el.innerHTML = Object.keys(metingen).length > 0 ? html : '';
+  el.innerHTML = html;
 }
 
 
@@ -2957,7 +2955,7 @@ var dbWeekData = [
       { id: 'w1-t5', cat: 'Voeding', text: '2 liter water gedronken' },
       { id: 'w1-t6', cat: 'Voeding', text: 'Geen frisdrank vandaag' },
       { id: 'w1-t7', cat: 'Mindset', text: 'Trainingen in agenda gezet als zakelijke afspraken' },
-      { id: 'w1-t8', cat: 'Meten', text: 'Nulmeting gedaan — gewicht, taille, heupen, energie (tab Progressie)' }
+      { id: 'w1-t8', cat: 'Meten', text: 'Nulmeting gedaan — gewicht, spiermassa, vetpercentage, energie (tab Progressie)' }
     ]
   },
   {
@@ -3044,7 +3042,7 @@ var dbWeekData = [
       { id: 'w8-t1', cat: 'Training', text: 'Laatste Push-dag voltooid — alles eruit' },
       { id: 'w8-t2', cat: 'Training', text: 'Laatste Pull-dag voltooid — eindbenchmark gewichten' },
       { id: 'w8-t3', cat: 'Training', text: 'Laatste Leg-dag voltooid — sterkste squat van de challenge' },
-      { id: 'w8-t4', cat: 'Meten', text: 'Eindmeting gedaan — gewicht, taille, heupen (tab Progressie)' },
+      { id: 'w8-t4', cat: 'Meten', text: 'Eindmeting gedaan — gewicht, spiermassa, vetpercentage (tab Progressie)' },
       { id: 'w8-t5', cat: 'Meten', text: 'Eindfoto gemaakt en vergeleken met startfoto (tab Progressie)' },
       { id: 'w8-t6', cat: 'Voeding', text: 'Laatste caloriedag bijgehouden' },
       { id: 'w8-t7', cat: 'Mindset', text: 'Eindreflectie geschreven — 3 lessen voor de komende maanden' },
@@ -3284,8 +3282,7 @@ resetWater = function() {
 
 var _origSaveMeting = saveMeting;
 saveMeting = function() {
-  // Round weight/measurements to 2 decimal places before the original reads them
-  ['gewicht', 'taille', 'heupen'].forEach(function(f) {
+  ['gewicht', 'spiermassa', 'vetpct', 'visceraaivet'].forEach(function(f) {
     var el = document.getElementById('inp-' + f);
     if (el && el.value) el.value = Math.round(parseFloat(el.value) * 100) / 100;
   });
@@ -3372,99 +3369,219 @@ verwijderFoto = function(week) {
 // ════════════════════════════════════════
 // VOORTGANGSGRAFIEK (Canvas)
 // ════════════════════════════════════════
+var chartActiveMetrics = { gewicht: true, spiermassa: true, vetpct: true, visceraaivet: true, energie: true, slaap: true };
+
+var CHART_METRICS = [
+  { key: 'gewicht',      label: 'Gewicht',       unit: 'kg',  color: '#e5ded1' },
+  { key: 'spiermassa',   label: 'Spiermassa',    unit: 'kg',  color: '#4da6ff' },
+  { key: 'vetpct',       label: 'Vetpercentage', unit: '%',   color: '#ff8c42' },
+  { key: 'visceraaivet', label: 'Visceraal Vet', unit: '',    color: '#ff5c5c' },
+  { key: 'energie',      label: 'Energie',       unit: '/10', color: '#a8c5a0' },
+  { key: 'slaap',        label: 'Slaap',         unit: '/10', color: '#c7a8ff' }
+];
+
+function buildChartToggles() {
+  var wrap = document.getElementById('chart-metric-toggles');
+  if (!wrap) return;
+  var html = '';
+  CHART_METRICS.forEach(function(m) {
+    var active = chartActiveMetrics[m.key];
+    html += '<button onclick="toggleChartMetric(\'' + m.key + '\')" id="ctog-' + m.key + '" style="' +
+      'padding:6px 14px;border-radius:20px;border:2px solid ' + m.color + ';' +
+      'background:' + (active ? m.color : 'transparent') + ';' +
+      'color:' + (active ? '#000' : m.color) + ';' +
+      'font-family:var(--font-body);font-size:12px;font-weight:600;cursor:pointer;' +
+      'transition:all 0.15s;letter-spacing:0.3px;">' + m.label + '</button>';
+  });
+  wrap.innerHTML = html;
+}
+
+function toggleChartMetric(key) {
+  chartActiveMetrics[key] = !chartActiveMetrics[key];
+  buildChartToggles();
+  renderProgressChart();
+}
+
+function hexToRgba(hex, alpha) {
+  var r = parseInt(hex.slice(1,3),16), g = parseInt(hex.slice(3,5),16), b = parseInt(hex.slice(5,7),16);
+  return 'rgba(' + r + ',' + g + ',' + b + ',' + alpha + ')';
+}
+
 function renderProgressChart() {
   var wrap = document.getElementById('progress-chart-wrap');
   var canvas = document.getElementById('progress-chart');
   if (!canvas || !wrap) return;
 
-  var weeks = [1, 4, 8];
-  var hasData = weeks.some(function(w) { return metingen[w]; });
+  var weekNums = Object.keys(metingen).map(Number).sort(function(a,b){return a-b;});
+  var hasData = weekNums.length > 0;
   wrap.style.display = hasData ? 'block' : 'none';
   if (!hasData) return;
 
-  var datasets = [
-    { label: 'Gewicht (kg)', key: 'gewicht', color: '#e5ded1' },
-    { label: 'Taille (cm)', key: 'taille', color: '#0ea5e9' },
-    { label: 'Heupen (cm)', key: 'heupen', color: '#a8c5a0' }
-  ];
+  buildChartToggles();
 
-  var W = (canvas.parentElement.offsetWidth - 44) || 500;
-  var H = 230;
-  canvas.width = W;
-  canvas.height = H;
+  var DPR = window.devicePixelRatio || 1;
+  var W = (canvas.parentElement.offsetWidth) || 560;
+  var H = 300;
+  canvas.width = Math.round(W * DPR);
+  canvas.height = Math.round(H * DPR);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+
   var ctx = canvas.getContext('2d');
+  ctx.scale(DPR, DPR);
   ctx.clearRect(0, 0, W, H);
 
-  var pad = { top: 28, right: 20, bottom: 42, left: 52 };
+  var pad = { top: 28, right: 24, bottom: 52, left: 62 };
   var plotW = W - pad.left - pad.right;
   var plotH = H - pad.top - pad.bottom;
 
-  var allVals = [];
-  datasets.forEach(function(ds) {
-    weeks.forEach(function(w) {
-      var v = metingen[w] && metingen[w][ds.key];
-      if (v) allVals.push(v);
+  var active = CHART_METRICS.filter(function(m) {
+    return chartActiveMetrics[m.key] && weekNums.some(function(w) {
+      return metingen[w] && metingen[w][m.key] != null;
     });
   });
-  if (allVals.length === 0) return;
 
-  var minVal = Math.min.apply(null, allVals) * 0.94;
-  var maxVal = Math.max.apply(null, allVals) * 1.04;
-  var range = maxVal - minVal || 1;
-
-  function toX(i) { return pad.left + (i / (weeks.length - 1)) * plotW; }
-  function toY(v) { return pad.top + plotH - ((v - minVal) / range) * plotH; }
-
-  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-  ctx.lineWidth = 1;
-  for (var gi = 0; gi <= 4; gi++) {
-    var gy = pad.top + (gi / 4) * plotH;
-    ctx.beginPath(); ctx.moveTo(pad.left, gy); ctx.lineTo(pad.left + plotW, gy); ctx.stroke();
-    ctx.fillStyle = 'rgba(255,255,255,0.35)';
-    ctx.font = '10px sans-serif';
-    ctx.textAlign = 'right';
-    ctx.fillText(Math.round(maxVal - (gi / 4) * range), pad.left - 7, gy + 4);
+  if (active.length === 0) {
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.font = '14px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('Selecteer een metriek hierboven', W / 2, H / 2);
+    return;
   }
 
-  var xLabels = ['Week 1', 'Week 4', 'Week 8'];
-  ctx.textAlign = 'center';
-  ctx.fillStyle = 'rgba(255,255,255,0.45)';
-  ctx.font = '11px sans-serif';
-  weeks.forEach(function(w, i) { ctx.fillText(xLabels[i], toX(i), H - 8); });
+  var singleMetric = active.length === 1 ? active[0] : null;
 
-  datasets.forEach(function(ds) {
-    var pts = weeks.map(function(w, i) {
-      var v = metingen[w] && metingen[w][ds.key];
-      return v ? { x: toX(i), y: toY(v), v: v } : null;
-    }).filter(Boolean);
+  function getMetricRange(m) {
+    var vals = weekNums.map(function(w) { return metingen[w] && metingen[w][m.key]; }).filter(function(v) { return v != null; });
+    if (vals.length === 0) return null;
+    var mn = Math.min.apply(null, vals);
+    var mx = Math.max.apply(null, vals);
+    var margin = (mx - mn) * 0.3 || 1;
+    return { min: mn - margin, max: mx + margin, vals: vals };
+  }
+
+  var xStep = plotW / 7;
+  function toX(week) { return pad.left + (week - 1) * xStep; }
+  function toY(val, range) {
+    var span = range.max - range.min || 1;
+    return pad.top + plotH - ((val - range.min) / span) * plotH;
+  }
+
+  // Grid lines
+  for (var gi = 0; gi <= 5; gi++) {
+    var gy = pad.top + (gi / 5) * plotH;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.left, gy); ctx.lineTo(pad.left + plotW, gy); ctx.stroke();
+    if (singleMetric) {
+      var range0 = getMetricRange(singleMetric);
+      if (range0) {
+        var yVal = range0.max - (gi / 5) * (range0.max - range0.min);
+        ctx.fillStyle = 'rgba(255,255,255,0.5)';
+        ctx.font = '11px sans-serif';
+        ctx.textAlign = 'right';
+        ctx.fillText(yVal.toFixed(1), pad.left - 8, gy + 4);
+      }
+    }
+  }
+
+  // X-axis week labels
+  for (var xi = 1; xi <= 8; xi++) {
+    var xx = toX(xi);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath(); ctx.moveTo(xx, pad.top); ctx.lineTo(xx, pad.top + plotH); ctx.stroke();
+    ctx.setLineDash([]);
+    var hasMeting = metingen[xi] != null;
+    ctx.fillStyle = hasMeting ? 'rgba(229,222,209,0.9)' : 'rgba(255,255,255,0.2)';
+    ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText('W' + xi, xx, H - 6);
+    if (xi === 1 || xi === 4 || xi === 8) {
+      var markerLbl = xi === 1 ? 'Start' : xi === 4 ? 'Half' : 'Eind';
+      ctx.fillStyle = 'rgba(255,255,255,0.35)';
+      ctx.font = '9px sans-serif';
+      ctx.fillText(markerLbl, xx, H - 20);
+    }
+  }
+
+  // Draw each active metric line
+  active.forEach(function(m) {
+    var range = getMetricRange(m);
+    if (!range) return;
+
+    var pts = [];
+    weekNums.forEach(function(w) {
+      var v = metingen[w] && metingen[w][m.key];
+      if (v != null) pts.push({ x: toX(w), y: toY(v, range), v: v, week: w });
+    });
     if (pts.length === 0) return;
 
-    ctx.strokeStyle = ds.color;
-    ctx.lineWidth = 2;
+    // Gradient fill under single metric
+    if (singleMetric && pts.length >= 2) {
+      var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+      grad.addColorStop(0, hexToRgba(m.color, 0.2));
+      grad.addColorStop(1, hexToRgba(m.color, 0.01));
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (var pi = 1; pi < pts.length; pi++) {
+        var cpx = (pts[pi-1].x + pts[pi].x) / 2;
+        ctx.bezierCurveTo(cpx, pts[pi-1].y, cpx, pts[pi].y, pts[pi].x, pts[pi].y);
+      }
+      ctx.lineTo(pts[pts.length-1].x, pad.top + plotH);
+      ctx.lineTo(pts[0].x, pad.top + plotH);
+      ctx.closePath();
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
+    // Smooth curved line
+    ctx.strokeStyle = m.color;
+    ctx.lineWidth = active.length === 1 ? 2.5 : 2;
+    ctx.lineJoin = 'round';
     ctx.beginPath();
-    pts.forEach(function(p, idx) { idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); });
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var pj = 1; pj < pts.length; pj++) {
+      var cpx2 = (pts[pj-1].x + pts[pj].x) / 2;
+      ctx.bezierCurveTo(cpx2, pts[pj-1].y, cpx2, pts[pj].y, pts[pj].x, pts[pj].y);
+    }
     ctx.stroke();
 
-    pts.forEach(function(p) {
-      ctx.fillStyle = ds.color;
-      ctx.beginPath(); ctx.arc(p.x, p.y, 4, 0, Math.PI * 2); ctx.fill();
-      ctx.font = 'bold 10px sans-serif';
-      ctx.textAlign = 'center';
-      ctx.fillText(p.v, p.x, p.y - 10);
+    // Dots + labels
+    pts.forEach(function(p, idx) {
+      var dotR = active.length === 1 ? 5 : 4;
+      ctx.shadowBlur = 8; ctx.shadowColor = hexToRgba(m.color, 0.5);
+      ctx.beginPath(); ctx.arc(p.x, p.y, dotR, 0, Math.PI * 2);
+      ctx.fillStyle = m.color; ctx.fill();
+      ctx.shadowBlur = 0;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = '#fff'; ctx.fill();
+
+      if (active.length === 1) {
+        ctx.fillStyle = m.color;
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        var labelY = (idx % 2 === 0) ? p.y - 14 : p.y + 20;
+        ctx.fillText(p.v + (m.unit || ''), p.x, labelY);
+      }
     });
   });
 
+  // Legend
   var lx = pad.left;
+  var legendY = 16;
   ctx.font = '10px sans-serif';
-  datasets.forEach(function(ds) {
-    var hasPts = weeks.some(function(w) { return metingen[w] && metingen[w][ds.key]; });
-    if (!hasPts) return;
-    ctx.fillStyle = ds.color;
-    ctx.fillRect(lx, 8, 16, 3);
-    ctx.fillStyle = 'rgba(255,255,255,0.5)';
+  active.forEach(function(m) {
+    var ltext = m.label + (m.unit ? ' (' + m.unit + ')' : '');
+    var tw = ctx.measureText(ltext).width + 38;
+    if (lx + tw > W - pad.right) { lx = pad.left; legendY += 14; }
+    ctx.fillStyle = m.color;
+    ctx.fillRect(lx, legendY - 3, 18, 3);
+    ctx.fillStyle = 'rgba(255,255,255,0.6)';
     ctx.textAlign = 'left';
-    ctx.fillText(ds.label, lx + 20, 12);
-    lx += ctx.measureText(ds.label).width + 44;
+    ctx.fillText(ltext, lx + 23, legendY + 1);
+    lx += tw;
   });
 }
 
@@ -4244,22 +4361,19 @@ function generateShareCard() {
   // Stats: gewicht
   var statY = 380;
   var stats = [];
-  // Gewicht data
-  var filledGew = [];
-  for (var w = 1; w <= 8; w++) { if (gewichtData[w]) filledGew.push({ week: w, val: gewichtData[w] }); }
-  if (filledGew.length >= 2) {
-    var diff = Math.round((filledGew[filledGew.length-1].val - filledGew[0].val) * 10) / 10;
-    stats.push({ label: 'GEWICHT', val: filledGew[filledGew.length-1].val.toFixed(1) + ' kg', sub: (diff > 0 ? '+' : '') + diff + ' kg vs start', good: diff <= 0 });
-  } else if (filledGew.length === 1) {
-    stats.push({ label: 'GEWICHT', val: filledGew[0].val.toFixed(1) + ' kg', sub: 'week ' + filledGew[0].week, good: true });
-  }
 
   // Metingen data
-  if (metingen[1] && metingen[1].gewicht) {
-    var latestMeting = metingen[8] || metingen[4] || metingen[1];
-    if (latestMeting !== metingen[1] && latestMeting.taille && metingen[1].taille) {
-      var tailleDiff = Math.round((latestMeting.taille - metingen[1].taille) * 10) / 10;
-      stats.push({ label: 'TAILLE', val: latestMeting.taille + ' cm', sub: (tailleDiff > 0 ? '+' : '') + tailleDiff + ' cm vs start', good: tailleDiff <= 0 });
+  var weekNumsSM = Object.keys(metingen).map(Number).sort(function(a,b){return a-b;});
+  if (weekNumsSM.length >= 2) {
+    var firstM = metingen[weekNumsSM[0]];
+    var lastM = metingen[weekNumsSM[weekNumsSM.length-1]];
+    if (firstM.gewicht && lastM.gewicht && firstM !== lastM) {
+      var gDiff = Math.round((lastM.gewicht - firstM.gewicht) * 10) / 10;
+      stats.push({ label: 'GEWICHT', val: lastM.gewicht.toFixed(1) + ' kg', sub: (gDiff > 0 ? '+' : '') + gDiff + ' kg vs start', good: gDiff <= 0 });
+    }
+    if (firstM.vetpct && lastM.vetpct && firstM !== lastM) {
+      var vDiff = Math.round((lastM.vetpct - firstM.vetpct) * 10) / 10;
+      stats.push({ label: 'VETPCT', val: lastM.vetpct + '%', sub: (vDiff > 0 ? '+' : '') + vDiff + '% vs start', good: vDiff <= 0 });
     }
   }
 
