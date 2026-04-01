@@ -1365,7 +1365,10 @@ body.print-boodschappen .bq-print-header { display:block !important }
       <h2>PROGRESSIE METEN</h2>
       <p>Wat je meet, beheer je. Vul elke week je metingen in na je lichaamssamenstelling meting. Groen = goede kant op, rood = bijsturen.</p>
     </div>
-    <button class="export-btn" onclick="openShareModal()" style="margin-top:4px;white-space:nowrap">📤 Deel voortgang</button>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:4px">
+      <button class="export-btn" onclick="openShareModal()" style="white-space:nowrap">📤 Deel voortgang</button>
+      <button class="export-btn" onclick="resetMetingen()" style="white-space:nowrap;background:rgba(180,100,100,0.15);border-color:rgba(180,100,100,0.3);color:#c48a8a">Metingen resetten</button>
+    </div>
   </div>
 
 
@@ -1409,10 +1412,15 @@ body.print-boodschappen .bq-print-header { display:block !important }
         <div class="form-field">
           <label>Meetmoment</label>
           <select id="foto-week" style="width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font-body);font-size:14px;color:var(--text);outline:none;-webkit-appearance:none;">
-            <option value="">Kies moment</option>
-            <option value="1">Week 1 — Startfoto</option>
-            <option value="4">Week 4 — Tussenfoto</option>
-            <option value="8">Week 8 — Eindfoto</option>
+            <option value="">Kies week</option>
+            <option value="1">Week 1 — Nulmeting</option>
+            <option value="2">Week 2</option>
+            <option value="3">Week 3</option>
+            <option value="4">Week 4 — Halverwege</option>
+            <option value="5">Week 5</option>
+            <option value="6">Week 6</option>
+            <option value="7">Week 7</option>
+            <option value="8">Week 8 — Eindmeting</option>
           </select>
         </div>
         <div class="form-field">
@@ -1864,7 +1872,15 @@ function saveMetingCell(week, field, val, el) {
   renderSparklines();
 }
 
-// Legacy stub — persistence wrapper calls this after saves
+function resetMetingen() {
+  if (!confirm('Weet je zeker dat je alle metingen wilt wissen? Dit kan niet ongedaan worden gemaakt.')) return;
+  metingen = {};
+  localStorage.removeItem('challenge_metingen');
+  initMetingTable();
+  renderSparklines();
+}
+
+// Legacy stubs
 function saveMeting() {}
 function renderMetingen() { initMetingTable(); renderSparklines(); }
 
@@ -2188,15 +2204,19 @@ function verwijderFoto(week) {
   renderFotos();
 }
 
+function fotoWeekLabel(wk) {
+  var labels = { '1': 'Nulmeting', '4': 'Halverwege', '8': 'Eindmeting' };
+  return 'Week ' + wk + (labels[wk] ? ' — ' + labels[wk] : '');
+}
+
 function renderFotos() {
   var grid = document.getElementById('foto-preview-grid');
   if (!grid) return;
-  var labels = { '1': 'Week 1 — Start', '4': 'Week 4 — Halverwege', '8': 'Week 8 — Eind' };
   var html = '';
-  Object.keys(fotoStore).sort().forEach(function(wk) {
+  Object.keys(fotoStore).sort(function(a,b){return parseInt(a)-parseInt(b);}).forEach(function(wk) {
     html += '<div class="foto-item">' +
       '<img src="' + fotoStore[wk] + '" alt="Foto week ' + wk + '">' +
-      '<div class="foto-item-label">' + (labels[wk] || 'Week ' + wk) + '</div>' +
+      '<div class="foto-item-label">' + fotoWeekLabel(wk) + '</div>' +
       '<span class="foto-delete" onclick="verwijderFoto(\'' + wk + '\')">Verwijderen</span>' +
       '</div>';
   });
@@ -3257,8 +3277,7 @@ toggleWeek = function(id) {
 // ════════════════════════════════════════
 var _origVerwijderFoto = verwijderFoto;
 verwijderFoto = function(week) {
-  var labels = { '1': 'Week 1 (startfoto)', '4': 'Week 4 (tussenfoto)', '8': 'Week 8 (eindfoto)' };
-  if (confirm('Weet je zeker dat je de foto van ' + (labels[String(week)] || 'week ' + week) + ' wilt verwijderen?\nDit kan niet ongedaan worden gemaakt.')) {
+  if (confirm('Weet je zeker dat je de foto van ' + fotoWeekLabel(String(week)) + ' wilt verwijderen?\nDit kan niet ongedaan worden gemaakt.')) {
     _origVerwijderFoto(week);
   }
 };
@@ -3473,17 +3492,17 @@ function renderFotoVergelijking() {
   var grid = document.getElementById('foto-vergelijking-grid');
   if (!el || !grid) return;
 
-  var fotoWeken = Object.keys(fotoStore).sort();
+  var fotoWeken = Object.keys(fotoStore).sort(function(a,b){return parseInt(a)-parseInt(b);});
   if (fotoWeken.length < 2) { el.style.display = 'none'; return; }
   el.style.display = 'block';
 
-  var labels = { '1': 'Week 1 — Start', '4': 'Week 4 — Halverwege', '8': 'Week 8 — Eind' };
-  var html = '<div style="display:grid;grid-template-columns:repeat(' + fotoWeken.length + ',1fr);gap:12px">';
+  var cols = Math.min(fotoWeken.length, 4);
+  var html = '<div style="display:grid;grid-template-columns:repeat(' + cols + ',1fr);gap:12px">';
   fotoWeken.forEach(function(wk) {
     html += '<div style="text-align:center">' +
       '<img src="' + fotoStore[wk] + '" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.08)">' +
       '<div style="font-size:11px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:6px;font-weight:600">' +
-      (labels[wk] || 'Week ' + wk) + '</div></div>';
+      fotoWeekLabel(wk) + '</div></div>';
   });
   html += '</div>';
   grid.innerHTML = html;
