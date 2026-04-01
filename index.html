@@ -468,8 +468,15 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 .meting-inp::-webkit-outer-spin-button,.meting-inp::-webkit-inner-spin-button { -webkit-appearance: none; }
 .meting-inp:focus { border-color: var(--fire); }
 .meting-inp.filled { border-color: rgba(229,222,209,0.3); background: rgba(229,222,209,0.04); }
+.meting-inp.cell-good { border-color: rgba(168,197,160,0.55) !important; background: rgba(168,197,160,0.06) !important; }
+.meting-inp.cell-bad  { border-color: rgba(180,160,150,0.45) !important; background: rgba(180,160,150,0.05) !important; }
+.cell-delta { font-size: 9px; font-weight: 700; text-align: center; margin-top: 3px; letter-spacing: 0.3px; }
+.cell-delta.good { color: var(--green); }
+.cell-delta.bad  { color: #b0a098; }
 .meting-notitie-inp { width: 110px; background: var(--dark3); border: 1px solid var(--border); border-radius: 6px; padding: 7px 8px; font-family: var(--font-body); font-size: 11px; color: var(--text); outline: none; transition: border-color 0.2s; }
 .meting-notitie-inp:focus { border-color: var(--fire); }
+@keyframes rowSaved { 0%{background:rgba(168,197,160,0.12)} 100%{background:transparent} }
+.row-saved { animation: rowSaved 0.9s ease-out; }
 
 /* ── SPARKLINE GRID ── */
 .sparkline-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
@@ -1356,52 +1363,11 @@ body.print-boodschappen .bq-print-header { display:block !important }
   <div class="sec-head" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
     <div>
       <h2>PROGRESSIE METEN</h2>
-      <p>Wat je meet, beheer je. Weeg jezelf niet dagelijks — gebruik de drie meetmomenten. Groen = goede kant op, rood = bijsturen.</p>
+      <p>Wat je meet, beheer je. Vul elke week je metingen in na je lichaamssamenstelling meting. Groen = goede kant op, rood = bijsturen.</p>
     </div>
     <button class="export-btn" onclick="openShareModal()" style="margin-top:4px;white-space:nowrap">📤 Deel voortgang</button>
   </div>
 
-  <div class="measure-timeline">
-    <div class="measure-item">
-      <div class="measure-dot"></div>
-      <div class="measure-week">Week 1 — Nulmeting</div>
-      <div class="measure-title">Startpunt vastleggen</div>
-      <div class="measure-list">
-        <span class="measure-tag">Gewicht (kg)</span>
-        <span class="measure-tag">Spiermassa (kg)</span>
-        <span class="measure-tag">Vetpercentage (%)</span>
-        <span class="measure-tag">Visceraal Vet</span>
-        <span class="measure-tag">Energie (1–10)</span>
-        <span class="measure-tag">Slaap (1–10)</span>
-      </div>
-    </div>
-    <div class="measure-item">
-      <div class="measure-dot"></div>
-      <div class="measure-week">Week 2 t/m 7 — Wekelijkse meting</div>
-      <div class="measure-title">Wekelijks bijhouden en bijsturen</div>
-      <div class="measure-list">
-        <span class="measure-tag">Gewicht (kg)</span>
-        <span class="measure-tag">Spiermassa (kg)</span>
-        <span class="measure-tag">Vetpercentage (%)</span>
-        <span class="measure-tag">Visceraal Vet</span>
-        <span class="measure-tag">Energie (1–10)</span>
-        <span class="measure-tag">Slaap (1–10)</span>
-      </div>
-    </div>
-    <div class="measure-item">
-      <div class="measure-dot"></div>
-      <div class="measure-week">Week 8 — Eindmeting</div>
-      <div class="measure-title">Transformatie zichtbaar maken</div>
-      <div class="measure-list">
-        <span class="measure-tag">Gewicht (kg)</span>
-        <span class="measure-tag">Spiermassa (kg)</span>
-        <span class="measure-tag">Vetpercentage (%)</span>
-        <span class="measure-tag">Visceraal Vet</span>
-        <span class="measure-tag">Energie (1–10)</span>
-        <span class="measure-tag">Slaap (1–10)</span>
-      </div>
-    </div>
-  </div>
 
   <div class="progress-form">
     <h3>NOTEER JE METINGEN</h3>
@@ -1804,35 +1770,64 @@ function toggleWeek(id) {
 var metingen = {};
 
 var MT_FIELDS = [
-  { key: 'gewicht',      step: '0.1', ph: '82.5' },
-  { key: 'spiermassa',   step: '0.1', ph: '38.0' },
-  { key: 'vetpct',       step: '0.1', ph: '22.5' },
-  { key: 'visceraaivet', step: '1',   ph: '8'    },
-  { key: 'energie',      step: '1',   ph: '7', min: 1, max: 10 },
-  { key: 'slaap',        step: '1',   ph: '7', min: 1, max: 10 }
+  { key: 'gewicht',      step: '0.1', ph: '82.5', lowerBetter: true  },
+  { key: 'spiermassa',   step: '0.1', ph: '38.0', lowerBetter: false },
+  { key: 'vetpct',       step: '0.1', ph: '22.5', lowerBetter: true  },
+  { key: 'visceraaivet', step: '1',   ph: '8',    lowerBetter: true  },
+  { key: 'energie',      step: '1',   ph: '7',    lowerBetter: false, min: 1, max: 10 },
+  { key: 'slaap',        step: '1',   ph: '7',    lowerBetter: false, min: 1, max: 10 }
 ];
 var MT_WEEK_LABELS = { 1: 'Nulmeting', 4: 'Halverwege', 8: 'Eindmeting' };
 
 function initMetingTable() {
   var tbody = document.getElementById('meting-tbody');
   if (!tbody) return;
+
+  // Build list of filled weeks for delta comparison
+  var filledWeeks = Object.keys(metingen).map(Number).sort(function(a,b){return a-b;});
+
   var html = '';
   for (var w = 1; w <= 8; w++) {
     var m = metingen[w] || {};
     var isMilestone = MT_WEEK_LABELS[w];
+
+    // Find the previous week that has data for delta comparison
+    var prevW = null;
+    for (var fi = filledWeeks.length - 1; fi >= 0; fi--) {
+      if (filledWeeks[fi] < w) { prevW = filledWeeks[fi]; break; }
+    }
+    var prev = prevW ? metingen[prevW] : null;
+
     html += '<tr id="mtr-' + w + '"' + (isMilestone ? ' class="meting-milestone"' : '') + '>';
     html += '<td><div class="meting-wk-label">Week ' + w + '</div>' +
             (isMilestone ? '<div class="meting-wk-sub">' + MT_WEEK_LABELS[w] + '</div>' : '') + '</td>';
+
     MT_FIELDS.forEach(function(f) {
       var val = m[f.key] != null ? m[f.key] : '';
       var cls = val !== '' ? ' filled' : '';
       var extras = '';
       if (f.min != null) extras += ' min="' + f.min + '"';
       if (f.max != null) extras += ' max="' + f.max + '"';
-      html += '<td><input type="number" step="' + f.step + '" class="meting-inp' + cls + '" ' +
-              'placeholder="' + f.ph + '" value="' + val + '"' + extras +
-              ' onblur="saveMetingCell(' + w + ',\'' + f.key + '\',this.value,this)"></td>';
+
+      // Delta vs previous filled week
+      var deltaHtml = '';
+      if (val !== '' && prev && prev[f.key] != null) {
+        var diff = Math.round((parseFloat(val) - prev[f.key]) * 10) / 10;
+        if (diff !== 0) {
+          var isGood = f.lowerBetter ? diff < 0 : diff > 0;
+          var dCls = isGood ? 'good' : 'bad';
+          cls += ' cell-' + dCls;
+          var arrow = diff < 0 ? '▼' : '▲';
+          deltaHtml = '<div class="cell-delta ' + dCls + '">' + arrow + ' ' + Math.abs(diff) + '</div>';
+        }
+      }
+
+      html += '<td style="text-align:center"><input type="number" step="' + f.step +
+              '" class="meting-inp' + cls + '" placeholder="' + f.ph + '" value="' + val + '"' + extras +
+              ' onblur="saveMetingCell(' + w + ',\'' + f.key + '\',this.value,this)">' +
+              deltaHtml + '</td>';
     });
+
     var notVal = (m.notitie || '').replace(/"/g, '&quot;');
     html += '<td><input type="text" class="meting-notitie-inp' + (notVal ? ' filled' : '') + '" ' +
             'placeholder="optioneel" value="' + notVal + '" ' +
@@ -1847,15 +1842,25 @@ function saveMetingCell(week, field, val, el) {
   var parsed = field === 'notitie' ? val.trim() : (val !== '' ? parseFloat(val) : null);
   if (parsed === null || (typeof parsed === 'number' && isNaN(parsed)) || parsed === '') {
     delete metingen[week][field];
-    if (el) el.classList.remove('filled');
   } else {
     metingen[week][field] = parsed;
-    if (el) el.classList.add('filled');
   }
   var keys = Object.keys(metingen[week]).filter(function(k) { return k !== 'week'; });
   var hasData = keys.some(function(k) { return metingen[week][k] != null && metingen[week][k] !== ''; });
   if (!hasData) delete metingen[week];
   localStorage.setItem('challenge_metingen', JSON.stringify(metingen));
+
+  // Rebuild table to refresh delta indicators (focus is already gone on blur)
+  initMetingTable();
+
+  // Flash row as confirmation
+  var row = document.getElementById('mtr-' + week);
+  if (row) {
+    row.classList.remove('row-saved');
+    void row.offsetWidth; // force reflow to restart animation
+    row.classList.add('row-saved');
+  }
+
   renderSparklines();
 }
 
@@ -3288,9 +3293,9 @@ function renderSparklines() {
   wrap.style.display = weekNums.length > 0 ? 'block' : 'none';
   if (weekNums.length === 0) return;
 
+  // Build HTML for all cards first
   var html = '';
   SPARKLINE_METRICS.forEach(function(m) {
-    // Collect values for this metric across all 8 weeks (null where missing)
     var dataByWeek = {};
     weekNums.forEach(function(w) {
       var v = metingen[w] && metingen[w][m.key];
@@ -3300,105 +3305,125 @@ function renderSparklines() {
 
     var currentVal = filledWeeks.length > 0 ? dataByWeek[filledWeeks[filledWeeks.length - 1]] : null;
     var startVal   = filledWeeks.length > 0 ? dataByWeek[filledWeeks[0]] : null;
-    var deltaHtml  = '';
+    var lastWeek   = filledWeeks.length > 0 ? filledWeeks[filledWeeks.length - 1] : null;
 
+    // Current value display
+    var valDisplay = currentVal !== null
+      ? '<span style="font-family:var(--font-display);font-size:24px;color:#fff;line-height:1">' + currentVal +
+        '<span style="font-size:12px;opacity:.5;margin-left:2px">' + (m.unit || '') + '</span></span>'
+      : '<span style="font-family:var(--font-display);font-size:24px;color:rgba(255,255,255,0.2)">—</span>';
+
+    // Delta vs start
+    var deltaHtml = '';
     if (currentVal !== null && startVal !== null && filledWeeks.length > 1) {
       var diff = Math.round((currentVal - startVal) * 10) / 10;
       var isGood = m.lowerBetter ? diff < 0 : diff > 0;
       var cls = diff === 0 ? 'neutral' : (isGood ? 'good' : 'bad');
       var sign = diff > 0 ? '+' : '';
-      deltaHtml = '<div class="sparkline-delta ' + cls + '">' + sign + diff + (m.unit || '') + ' vs start</div>';
+      deltaHtml = '<div class="sparkline-delta ' + cls + '">' + sign + diff + (m.unit || '') + ' vs week ' + filledWeeks[0] + '</div>';
+    } else if (startVal !== null && filledWeeks.length === 1) {
+      deltaHtml = '<div class="sparkline-delta neutral" style="font-size:9px">W' + lastWeek + ' — startpunt</div>';
     }
 
-    var valDisplay = currentVal !== null
-      ? '<div class="sparkline-val">' + currentVal + '<span style="font-size:13px;opacity:.6;margin-left:2px">' + (m.unit || '') + '</span></div>'
-      : '<div class="sparkline-val" style="opacity:.25">—</div>';
+    // Start value badge (shown when we have multiple weeks)
+    var startBadge = (startVal !== null && filledWeeks.length > 1)
+      ? '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:3px">start: ' + startVal + (m.unit || '') + '</div>'
+      : '';
 
     html += '<div class="sparkline-card">' +
       '<div class="sparkline-header">' +
-        '<div class="sparkline-title" style="color:' + m.color + ';opacity:.9">' + m.label + '</div>' +
-        '<div class="sparkline-current">' + valDisplay + deltaHtml + '</div>' +
+        '<div>' +
+          '<div class="sparkline-title" style="border-left:2px solid ' + m.color + ';padding-left:6px;color:rgba(255,255,255,0.7)">' + m.label + '</div>' +
+        '</div>' +
+        '<div style="text-align:right">' + valDisplay + deltaHtml + startBadge + '</div>' +
       '</div>' +
       (filledWeeks.length > 0
-        ? '<canvas class="sparkline-canvas" id="spk-' + m.key + '" height="70"></canvas>'
-        : '<div class="sparkline-nodata">Nog geen data</div>') +
+        ? '<canvas class="sparkline-canvas" id="spk-' + m.key + '" style="height:72px"></canvas>'
+        : '<div class="sparkline-nodata">Nog geen data ingevuld</div>') +
       '</div>';
   });
   grid.innerHTML = html;
 
-  // Draw each sparkline canvas
-  SPARKLINE_METRICS.forEach(function(m) {
-    var canvas = document.getElementById('spk-' + m.key);
-    if (!canvas) return;
+  // Draw canvasses after browser has done layout (requestAnimationFrame ensures correct clientWidth)
+  requestAnimationFrame(function() {
+    SPARKLINE_METRICS.forEach(function(m) {
+      var canvas = document.getElementById('spk-' + m.key);
+      if (!canvas) return;
 
-    var dataByWeek = {};
-    weekNums.forEach(function(w) {
-      var v = metingen[w] && metingen[w][m.key];
-      if (v != null) dataByWeek[w] = v;
-    });
-    var filledWeeks = Object.keys(dataByWeek).map(Number).sort(function(a,b){return a-b;});
-    if (filledWeeks.length === 0) return;
+      var dataByWeek = {};
+      weekNums.forEach(function(w) {
+        var v = metingen[w] && metingen[w][m.key];
+        if (v != null) dataByWeek[w] = v;
+      });
+      var filledWeeks = Object.keys(dataByWeek).map(Number).sort(function(a,b){return a-b;});
+      if (filledWeeks.length === 0) return;
 
-    var DPR = window.devicePixelRatio || 1;
-    var W = canvas.parentElement.clientWidth - 28; // card padding
-    var H = 70;
-    canvas.width  = Math.round(W * DPR);
-    canvas.height = Math.round(H * DPR);
-    canvas.style.width  = W + 'px';
-    canvas.style.height = H + 'px';
+      var DPR = window.devicePixelRatio || 1;
+      var W = Math.max(canvas.parentElement.clientWidth - 28, 80);
+      var H = 72;
+      canvas.width  = Math.round(W * DPR);
+      canvas.height = Math.round(H * DPR);
+      canvas.style.width  = W + 'px';
+      canvas.style.height = H + 'px';
 
-    var ctx = canvas.getContext('2d');
-    ctx.scale(DPR, DPR);
-    ctx.clearRect(0, 0, W, H);
+      var ctx = canvas.getContext('2d');
+      ctx.scale(DPR, DPR);
+      ctx.clearRect(0, 0, W, H);
 
-    var vals = filledWeeks.map(function(w) { return dataByWeek[w]; });
-    var mn   = Math.min.apply(null, vals);
-    var mx   = Math.max.apply(null, vals);
-    var span = mx - mn || 1;
-    var margin = span * 0.35;
-    var yMin = mn - margin;
-    var yMax = mx + margin;
-    var ySpan = yMax - yMin;
+      var vals = filledWeeks.map(function(w) { return dataByWeek[w]; });
+      var mn   = Math.min.apply(null, vals);
+      var mx   = Math.max.apply(null, vals);
+      var span = mx - mn || 1;
+      var margin = span * 0.4;
+      var yMin = mn - margin;
+      var yMax = mx + margin;
+      var ySpan = yMax - yMin;
 
-    var pad = { top: 8, right: 10, bottom: 20, left: 36 };
-    var plotW = W - pad.left - pad.right;
-    var plotH = H - pad.top - pad.bottom;
+      var pad = { top: 6, right: 8, bottom: 18, left: 34 };
+      var plotW = W - pad.left - pad.right;
+      var plotH = H - pad.top - pad.bottom;
 
-    function toX(w) { return pad.left + ((w - 1) / 7) * plotW; }
-    function toY(v)  { return pad.top + plotH - ((v - yMin) / ySpan) * plotH; }
+      function toX(w) { return pad.left + ((w - 1) / 7) * plotW; }
+      function toY(v) { return pad.top + plotH - ((v - yMin) / ySpan) * plotH; }
 
-    // Y-axis: 3 labels
-    ctx.font = '9px sans-serif';
-    ctx.fillStyle = 'rgba(255,255,255,0.3)';
-    ctx.textAlign = 'right';
-    [0, 0.5, 1].forEach(function(t) {
-      var yv = yMax - t * ySpan;
-      var ypx = pad.top + t * plotH;
-      ctx.fillText(yv.toFixed(1), pad.left - 4, ypx + 3);
-      ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-      ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(pad.left, ypx); ctx.lineTo(pad.left + plotW, ypx); ctx.stroke();
-    });
+      // Y-axis: 3 reference lines + labels
+      ctx.font = '9px sans-serif';
+      ctx.fillStyle = 'rgba(255,255,255,0.28)';
+      ctx.textAlign = 'right';
+      [0, 0.5, 1].forEach(function(t) {
+        var yv  = yMax - t * ySpan;
+        var ypx = pad.top + t * plotH;
+        ctx.fillText(yv.toFixed(1), pad.left - 3, ypx + 3);
+        ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(pad.left, ypx); ctx.lineTo(pad.left + plotW, ypx); ctx.stroke();
+      });
 
-    // X-axis week ticks (all 8)
-    ctx.textAlign = 'center';
-    ctx.font = '9px sans-serif';
-    for (var xi = 1; xi <= 8; xi++) {
-      var xx = toX(xi);
-      var hasVal = dataByWeek[xi] != null;
-      ctx.fillStyle = hasVal ? 'rgba(255,255,255,0.5)' : 'rgba(255,255,255,0.15)';
-      ctx.fillText(xi, xx, H - 4);
-    }
+      // X-axis: week numbers 1–8
+      ctx.textAlign = 'center';
+      ctx.font = '9px sans-serif';
+      for (var xi = 1; xi <= 8; xi++) {
+        var xx = toX(xi);
+        ctx.fillStyle = dataByWeek[xi] != null ? 'rgba(255,255,255,0.45)' : 'rgba(255,255,255,0.12)';
+        ctx.fillText(xi, xx, H - 3);
+      }
 
-    // Build points
-    var pts = filledWeeks.map(function(w) {
-      return { x: toX(w), y: toY(dataByWeek[w]), v: dataByWeek[w] };
-    });
+      var pts = filledWeeks.map(function(w) {
+        return { x: toX(w), y: toY(dataByWeek[w]), v: dataByWeek[w] };
+      });
 
-    if (pts.length >= 2) {
-      // Gradient fill
+      if (pts.length === 1) {
+        // Single point: draw a large dot only
+        ctx.shadowBlur = 8; ctx.shadowColor = hexToRgba(m.color, 0.7);
+        ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = m.color; ctx.fill();
+        ctx.shadowBlur = 0;
+        return;
+      }
+
+      // Gradient fill under curve
       var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
-      grad.addColorStop(0, hexToRgba(m.color, 0.25));
+      grad.addColorStop(0, hexToRgba(m.color, 0.28));
       grad.addColorStop(1, hexToRgba(m.color, 0.0));
       ctx.beginPath();
       ctx.moveTo(pts[0].x, pts[0].y);
@@ -3412,9 +3437,9 @@ function renderSparklines() {
       ctx.fillStyle = grad;
       ctx.fill();
 
-      // Line
+      // Smooth line
       ctx.strokeStyle = m.color;
-      ctx.lineWidth = 1.8;
+      ctx.lineWidth = 2;
       ctx.lineJoin = 'round';
       ctx.beginPath();
       ctx.moveTo(pts[0].x, pts[0].y);
@@ -3423,16 +3448,18 @@ function renderSparklines() {
         ctx.bezierCurveTo(cpx2, pts[pj-1].y, cpx2, pts[pj].y, pts[pj].x, pts[pj].y);
       }
       ctx.stroke();
-    }
 
-    // Dots
-    pts.forEach(function(p) {
-      ctx.shadowBlur = 6; ctx.shadowColor = hexToRgba(m.color, 0.6);
-      ctx.beginPath(); ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = m.color; ctx.fill();
-      ctx.shadowBlur = 0;
-      ctx.beginPath(); ctx.arc(p.x, p.y, 1.2, 0, Math.PI * 2);
-      ctx.fillStyle = '#fff'; ctx.fill();
+      // Dots
+      pts.forEach(function(p, idx) {
+        var isLast = idx === pts.length - 1;
+        ctx.shadowBlur = isLast ? 8 : 4;
+        ctx.shadowColor = hexToRgba(m.color, 0.6);
+        ctx.beginPath(); ctx.arc(p.x, p.y, isLast ? 4 : 2.5, 0, Math.PI * 2);
+        ctx.fillStyle = m.color; ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.beginPath(); ctx.arc(p.x, p.y, isLast ? 1.8 : 1, 0, Math.PI * 2);
+        ctx.fillStyle = '#fff'; ctx.fill();
+      });
     });
   });
 }
