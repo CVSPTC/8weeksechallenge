@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>8-Weken Droog Train Challenge</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0d0d0b">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="8W Challenge">
+<meta name="description" content="8-Weken Droog Train Challenge voor drukke ondernemers — traceer voortgang, voeding en mindset.">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&family=Montserrat:wght@400;600;700;900&family=Playfair+Display:wght@400;700;900&family=Oswald:wght@400;600;700&family=Raleway:wght@300;400;600;700&family=Space+Grotesk:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
 :root {
@@ -1015,6 +1021,105 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 .pr-badge{display:inline-block;background:rgba(201,168,76,0.12);border:1px solid rgba(201,168,76,0.3);border-radius:5px;padding:1px 8px;font-size:9px;font-weight:700;color:#e8c97a;margin-right:6px;vertical-align:middle;letter-spacing:0.5px}
 .wk-cardio-note{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:8px;padding:10px 14px;margin-top:12px;font-size:12px;color:var(--muted);display:flex;align-items:center;gap:8px}
 @media(max-width:600px){.train-table th,.train-table td{padding:8px 10px}.ex-note{min-width:0;max-width:120px}.day-tab{font-size:9px;padding:7px 5px}}
+
+/* ══════════════════════════════════════
+   WEKELIJKSE GEWICHTSGRAFIEK
+══════════════════════════════════════ */
+.wg-wrap{background:var(--dark2);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:24px}
+.wg-head{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:20px}
+.wg-title{font-family:var(--font-display);font-size:22px;letter-spacing:1.5px;color:#fff}
+.wg-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.5}
+.wg-delta{font-family:var(--font-display);font-size:32px;line-height:1;text-align:right}
+.wg-delta.loss{color:var(--green)}.wg-delta.gain{color:#b0a098}.wg-delta.neutral{color:var(--muted)}
+.wg-delta-lbl{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:3px;text-align:right}
+.wg-inputs{display:grid;grid-template-columns:repeat(8,1fr);gap:8px;margin-bottom:20px}
+@media(max-width:640px){.wg-inputs{grid-template-columns:repeat(4,1fr)}}
+.wg-inp-block{display:flex;flex-direction:column;gap:5px}
+.wg-inp-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;text-align:center}
+.wg-inp-lbl.current{color:var(--fire)}
+.wg-inp{width:100%;background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:8px 4px;font-family:var(--font-body);font-size:13px;color:var(--text);text-align:center;outline:none;transition:border-color 0.2s;-moz-appearance:textfield}
+.wg-inp::-webkit-outer-spin-button,.wg-inp::-webkit-inner-spin-button{-webkit-appearance:none}
+.wg-inp:focus{border-color:var(--fire)}
+.wg-inp.has-val{border-color:rgba(229,222,209,0.3);background:rgba(229,222,209,0.04)}
+.wg-inp.current-week{border-color:rgba(229,222,209,0.5)}
+.wg-canvas-wrap{position:relative;border-radius:10px;overflow:hidden}
+.wg-canvas-wrap canvas{width:100%;display:block}
+.wg-stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+.wg-stat{background:var(--dark3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;flex:1;min-width:90px}
+.wg-stat-num{font-family:var(--font-display);font-size:22px;color:var(--fire);line-height:1}
+.wg-stat-num.good{color:var(--green)}.wg-stat-num.warn{color:#b0a098}
+.wg-stat-lbl{font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:600;margin-top:4px}
+.wg-goal-row{display:flex;align-items:center;gap:10px;margin-bottom:16px;flex-wrap:wrap}
+.wg-goal-lbl{font-size:11px;color:var(--muted);white-space:nowrap}
+.wg-goal-inp{background:var(--dark3);border:1px solid var(--border);border-radius:8px;padding:7px 12px;font-family:var(--font-body);font-size:13px;color:var(--text);outline:none;width:100px;transition:border-color 0.2s}
+.wg-goal-inp:focus{border-color:var(--fire)}
+
+/* ══════════════════════════════════════
+   SHARE MODAL
+══════════════════════════════════════ */
+.share-bg{position:fixed;inset:0;background:rgba(0,0,0,0.8);backdrop-filter:blur(6px);z-index:2000;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.25s}
+.share-bg.open{opacity:1;pointer-events:all}
+.share-modal{background:var(--dark2);border:1px solid var(--border);border-radius:20px;padding:28px;width:min(500px,94vw);max-height:90vh;overflow-y:auto}
+.share-modal-title{font-family:var(--font-display);font-size:22px;letter-spacing:2px;color:#fff;margin-bottom:4px}
+.share-modal-sub{font-size:12px;color:var(--muted);margin-bottom:18px}
+.share-canvas-preview{width:100%;border-radius:12px;display:block;border:1px solid var(--border);margin-bottom:16px;cursor:pointer}
+.share-btns{display:flex;gap:10px;flex-wrap:wrap}
+.share-btn{flex:1;padding:11px 16px;border-radius:10px;border:none;font-family:var(--font-body);font-size:13px;font-weight:600;cursor:pointer;transition:opacity 0.15s;min-width:100px}
+.share-btn:hover{opacity:0.82}
+.share-btn.primary{background:var(--fire);color:#000}
+.share-btn.secondary{background:var(--dark3);color:var(--text);border:1px solid var(--border)}
+
+/* ══════════════════════════════════════
+   PWA INSTALL BANNER
+══════════════════════════════════════ */
+.pwa-banner{display:none;position:fixed;bottom:92px;left:50%;transform:translateX(-50%);background:var(--dark2);border:1px solid var(--border);border-radius:14px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,0,0,0.6);z-index:900;align-items:center;gap:14px;max-width:400px;width:calc(100% - 40px)}
+.pwa-banner.show{display:flex}
+.pwa-banner-icon{font-size:28px;flex-shrink:0}
+.pwa-banner-text{flex:1}
+.pwa-banner-title{font-size:13px;font-weight:600;color:#fff}
+.pwa-banner-sub{font-size:11px;color:var(--muted);margin-top:2px}
+.pwa-install-btn{background:var(--fire);color:#000;border:none;border-radius:8px;padding:8px 14px;font-family:var(--font-body);font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.pwa-dismiss{background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer;padding:0;line-height:1;flex-shrink:0}
+
+/* Print-only boodschappenlijst */
+.bq-print-header{display:none}
+@media print{
+  .bq-print-header{display:block;margin-bottom:16px}
+  .bq-print-header h2{font-size:18pt;margin-bottom:4px;color:#111}
+  .bq-print-header p{font-size:10pt;color:#666}
+}
+/* Gerichte boodschappenlijst print */
+body.print-boodschappen .tab-content,
+body.print-boodschappen .hero,
+body.print-boodschappen .tab-bar,
+body.print-boodschappen .top-utility-bar,
+body.print-boodschappen #settings-toggle,
+body.print-boodschappen #settings-panel,
+body.print-boodschappen #boodschappen-stap1,
+body.print-boodschappen .bq-result-header,
+body.print-boodschappen .bq-loading,
+body.print-boodschappen .bq-schema-block,
+body.print-boodschappen #pwa-banner,
+body.print-boodschappen #share-bg { display:none !important }
+body.print-boodschappen #tab-boodschappen { display:block !important }
+body.print-boodschappen #boodschappen-stap2 { display:block !important }
+body.print-boodschappen .bq-print-header { display:block !important }
+@media print {
+  body.print-boodschappen .tab-content { display:none !important }
+  body.print-boodschappen #tab-boodschappen { display:block !important; page-break-before:avoid !important }
+  body.print-boodschappen #boodschappen-stap2 { display:block !important }
+  body.print-boodschappen #boodschappen-stap1 { display:none !important }
+  body.print-boodschappen .bq-result-header { display:none !important }
+  body.print-boodschappen .bq-schema-block { display:none !important }
+  body.print-boodschappen .bq-print-header { display:block !important }
+  body.print-boodschappen .bq-categorie-blok { break-inside:avoid; background:#f9f9f9 !important; border:1px solid #ddd !important; margin-bottom:10px }
+  body.print-boodschappen .bq-cat-title { color:#333 !important }
+  body.print-boodschappen .bq-item-naam { color:#111 !important }
+  body.print-boodschappen .bq-item-hoeveelheid { color:#555 !important }
+  body.print-boodschappen .bq-item-row { border-bottom:1px solid #eee !important }
+  body.print-boodschappen .hero, body.print-boodschappen .tab-bar, body.print-boodschappen .top-utility-bar,
+  body.print-boodschappen #settings-toggle, body.print-boodschappen #settings-panel { display:none !important }
+}
 </style>
 </head>
 <body>
@@ -1225,9 +1330,12 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 
 <!-- TAB: METEN -->
 <div class="tab-content" id="tab-meten">
-  <div class="sec-head">
-    <h2>PROGRESSIE METEN</h2>
-    <p>Wat je meet, beheer je. Weeg jezelf niet dagelijks — gebruik de drie meetmomenten. Groen = goede kant op, rood = bijsturen.</p>
+  <div class="sec-head" style="display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px">
+    <div>
+      <h2>PROGRESSIE METEN</h2>
+      <p>Wat je meet, beheer je. Weeg jezelf niet dagelijks — gebruik de drie meetmomenten. Groen = goede kant op, rood = bijsturen.</p>
+    </div>
+    <button class="export-btn" onclick="openShareModal()" style="margin-top:4px;white-space:nowrap">📤 Deel voortgang</button>
   </div>
 
   <div class="measure-timeline">
@@ -1318,6 +1426,31 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
       <div style="font-size:12px;color:var(--muted);margin-bottom:16px">Gewicht, taille en heupen over de meetmomenten</div>
       <canvas id="progress-chart" style="width:100%;display:block"></canvas>
     </div>
+  </div>
+
+  <!-- WEKELIJKSE GEWICHTSGRAFIEK -->
+  <div class="wg-wrap">
+    <div class="wg-head">
+      <div>
+        <div class="wg-title">WEKELIJKSE WEGING</div>
+        <div class="wg-sub">Vul elke week je gewicht in voor een volledige grafiek over 8 weken</div>
+      </div>
+      <div id="wg-delta-block" style="display:none">
+        <div class="wg-delta neutral" id="wg-delta-num">—</div>
+        <div class="wg-delta-lbl">verschil vs week 1</div>
+      </div>
+    </div>
+    <div class="wg-goal-row">
+      <span class="wg-goal-lbl">🎯 Doelgewicht (kg):</span>
+      <input type="number" step="0.1" class="wg-goal-inp" id="wg-goal" placeholder="bijv. 78.0" oninput="wgSaveGoal(this.value)">
+    </div>
+    <div class="wg-inputs" id="wg-inputs">
+      <!-- ingevuld door JS -->
+    </div>
+    <div class="wg-canvas-wrap" id="wg-canvas-wrap" style="display:none">
+      <canvas id="wg-canvas"></canvas>
+    </div>
+    <div class="wg-stats-row" id="wg-stats" style="display:none"></div>
   </div>
 
     <div class="progress-form" style="margin-top:20px">
@@ -1540,8 +1673,13 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap">
         <button class="save-btn" style="background:var(--dark3);color:var(--muted);font-size:12px;padding:8px 14px" onclick="resetBoodschappen()">Opnieuw invullen</button>
+        <button class="save-btn" style="background:var(--dark3);color:var(--muted);font-size:12px;padding:8px 14px" onclick="printBoodschappen()">🖨 Print lijst</button>
         <button class="save-btn" style="font-size:12px;padding:8px 14px" onclick="exportPDF()">Exporteer als PDF</button>
       </div>
+    </div>
+    <div class="bq-print-header">
+      <h2>Persoonlijke Boodschappenlijst — 8-Weken Challenge</h2>
+      <p id="bq-print-meta"></p>
     </div>
     <div id="bq-loading" class="bq-loading" style="display:none">
       <div class="bq-spinner"></div>
@@ -3736,6 +3874,7 @@ document.addEventListener('DOMContentLoaded', function() {
   loadSettings();
   renderWeekCards();
   updateBoodschappenBmrNotice();
+  wgInit();
   setTimeout(function() {
     renderProgressChart();
     renderFotoVergelijking();
@@ -3745,6 +3884,538 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+// ════════════════════════════════════════
+// WEKELIJKS GEWICHT TRACKER
+// ════════════════════════════════════════
+var gewichtData = JSON.parse(localStorage.getItem('challenge_gewicht_wekelijks') || '{}');
+var gewichtGoal = parseFloat(localStorage.getItem('challenge_gewicht_goal') || '0') || null;
+
+function wgInit() {
+  var goalInp = document.getElementById('wg-goal');
+  if (goalInp && gewichtGoal) goalInp.value = gewichtGoal;
+  wgBuildInputs();
+  renderWekelijksGrafiek();
+}
+
+function wgBuildInputs() {
+  var wrap = document.getElementById('wg-inputs');
+  if (!wrap) return;
+  var currentWeek = getCurrentWeekNum();
+  var html = '';
+  for (var i = 1; i <= 8; i++) {
+    var val = gewichtData[i] || '';
+    var isCurrent = (i === currentWeek);
+    html += '<div class="wg-inp-block">' +
+      '<div class="wg-inp-lbl' + (isCurrent ? ' current' : '') + '">W' + i + (isCurrent ? ' ★' : '') + '</div>' +
+      '<input type="number" step="0.1" class="wg-inp' + (val ? ' has-val' : '') + (isCurrent ? ' current-week' : '') + '" ' +
+      'id="wg-inp-' + i + '" placeholder="kg" value="' + (val || '') + '" ' +
+      'oninput="wgSave(' + i + ', this.value)">' +
+      '</div>';
+  }
+  wrap.innerHTML = html;
+}
+
+function getCurrentWeekNum() {
+  var start = localStorage.getItem('challenge_startdatum');
+  if (!start) return 1;
+  var ms = Date.now() - new Date(start).getTime();
+  var w = Math.floor(ms / (7 * 24 * 3600 * 1000)) + 1;
+  return Math.max(1, Math.min(8, w));
+}
+
+function wgSave(week, val) {
+  var v = parseFloat(val);
+  var inp = document.getElementById('wg-inp-' + week);
+  if (!isNaN(v) && v > 0) {
+    gewichtData[week] = Math.round(v * 10) / 10;
+    if (inp) inp.classList.add('has-val');
+  } else {
+    delete gewichtData[week];
+    if (inp) inp.classList.remove('has-val');
+  }
+  localStorage.setItem('challenge_gewicht_wekelijks', JSON.stringify(gewichtData));
+  renderWekelijksGrafiek();
+}
+
+function wgSaveGoal(val) {
+  var v = parseFloat(val);
+  gewichtGoal = (!isNaN(v) && v > 0) ? v : null;
+  localStorage.setItem('challenge_gewicht_goal', gewichtGoal || '');
+  renderWekelijksGrafiek();
+}
+
+function renderWekelijksGrafiek() {
+  var canvas = document.getElementById('wg-canvas');
+  var canvasWrap = document.getElementById('wg-canvas-wrap');
+  var statsRow = document.getElementById('wg-stats');
+  var deltaBlock = document.getElementById('wg-delta-block');
+  var deltaNum = document.getElementById('wg-delta-num');
+  if (!canvas) return;
+
+  var dataPoints = [];
+  for (var wi = 1; wi <= 8; wi++) dataPoints.push(gewichtData[wi] || null);
+  var filled = [];
+  dataPoints.forEach(function(v, i) { if (v !== null) filled.push({ week: i + 1, val: v }); });
+
+  if (filled.length === 0) {
+    if (canvasWrap) canvasWrap.style.display = 'none';
+    if (statsRow) statsRow.style.display = 'none';
+    if (deltaBlock) deltaBlock.style.display = 'none';
+    return;
+  }
+
+  if (canvasWrap) canvasWrap.style.display = 'block';
+
+  var firstVal = filled[0].val;
+  var lastVal = filled[filled.length - 1].val;
+  var minVal = Math.min.apply(null, filled.map(function(p) { return p.val; }));
+  var maxVal = Math.max.apply(null, filled.map(function(p) { return p.val; }));
+
+  // Delta update
+  if (deltaBlock && filled.length > 1) {
+    var diff = Math.round((lastVal - firstVal) * 10) / 10;
+    deltaNum.textContent = (diff > 0 ? '+' : '') + diff + ' kg';
+    deltaNum.className = 'wg-delta ' + (diff < 0 ? 'loss' : diff > 0 ? 'gain' : 'neutral');
+    deltaBlock.style.display = 'block';
+  }
+
+  // Stats row
+  if (statsRow) {
+    var avgChange = filled.length > 1
+      ? (Math.round(((lastVal - firstVal) / (filled.length - 1)) * 100) / 100).toFixed(2)
+      : null;
+    var toGoal = gewichtGoal ? (Math.round((lastVal - gewichtGoal) * 10) / 10) : null;
+    statsRow.style.display = 'flex';
+    statsRow.innerHTML =
+      '<div class="wg-stat"><div class="wg-stat-num">' + firstVal.toFixed(1) + '</div><div class="wg-stat-lbl">Start (kg)</div></div>' +
+      '<div class="wg-stat"><div class="wg-stat-num">' + lastVal.toFixed(1) + '</div><div class="wg-stat-lbl">Huidig (kg)</div></div>' +
+      '<div class="wg-stat"><div class="wg-stat-num good">' + minVal.toFixed(1) + '</div><div class="wg-stat-lbl">Laagste (kg)</div></div>' +
+      (avgChange !== null ? '<div class="wg-stat"><div class="wg-stat-num' + (parseFloat(avgChange) <= 0 ? ' good' : ' warn') + '">' + (parseFloat(avgChange) > 0 ? '+' : '') + avgChange + '/w</div><div class="wg-stat-lbl">Gem. wijziging</div></div>' : '') +
+      (toGoal !== null ? '<div class="wg-stat"><div class="wg-stat-num' + (toGoal <= 0 ? ' good' : '') + '">' + (toGoal > 0 ? '+' : '') + toGoal + ' kg</div><div class="wg-stat-lbl">vs doel</div></div>' : '');
+  }
+
+  // ─── Canvas tekenen ───────────────────────────────────
+  var W = (canvas.parentElement.offsetWidth) || 560;
+  var H = 240;
+  canvas.width = W * (window.devicePixelRatio || 1);
+  canvas.height = H * (window.devicePixelRatio || 1);
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  var ctx = canvas.getContext('2d');
+  ctx.scale(window.devicePixelRatio || 1, window.devicePixelRatio || 1);
+  ctx.clearRect(0, 0, W, H);
+
+  var pad = { top: 36, right: 20, bottom: 42, left: 56 };
+  var plotW = W - pad.left - pad.right;
+  var plotH = H - pad.top - pad.bottom;
+
+  var allY = filled.map(function(p) { return p.val; });
+  if (gewichtGoal) allY.push(gewichtGoal);
+  var vMin = Math.min.apply(null, allY);
+  var vMax = Math.max.apply(null, allY);
+  var vRange = vMax - vMin || 2;
+  var margin = vRange * 0.22;
+  var yMin = vMin - margin;
+  var yMax = vMax + margin;
+  var yRange = yMax - yMin;
+
+  function toX(wk) { return pad.left + ((wk - 1) / 7) * plotW; }
+  function toY(v) { return pad.top + plotH - ((v - yMin) / yRange) * plotH; }
+
+  // Grid lijnen + Y-labels
+  for (var gi = 0; gi <= 5; gi++) {
+    var gy = pad.top + (gi / 5) * plotH;
+    var gv = yMax - (gi / 5) * yRange;
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(pad.left, gy); ctx.lineTo(pad.left + plotW, gy); ctx.stroke();
+    ctx.fillStyle = 'rgba(255,255,255,0.28)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right';
+    ctx.fillText(gv.toFixed(1), pad.left - 7, gy + 4);
+  }
+
+  // X-as labels + verticale stippellijnen
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'center';
+  for (var xi = 1; xi <= 8; xi++) {
+    var xx = toX(xi);
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(xx, pad.top); ctx.lineTo(xx, pad.top + plotH); ctx.stroke();
+    ctx.fillStyle = gewichtData[xi] ? 'rgba(229,222,209,0.6)' : 'rgba(255,255,255,0.25)';
+    ctx.fillText('W' + xi, xx, H - 6);
+  }
+
+  // Doelgewicht stippellijn
+  if (gewichtGoal && gewichtGoal >= yMin && gewichtGoal <= yMax) {
+    var gy2 = toY(gewichtGoal);
+    ctx.setLineDash([5, 4]);
+    ctx.strokeStyle = 'rgba(168,197,160,0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(pad.left, gy2); ctx.lineTo(pad.left + plotW, gy2); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(168,197,160,0.8)';
+    ctx.font = '10px sans-serif';
+    ctx.textAlign = 'left';
+    ctx.fillText('🎯 doel ' + gewichtGoal + ' kg', pad.left + 4, gy2 - 5);
+  }
+
+  // Gradient fill + smooth lijn
+  var pts = [];
+  dataPoints.forEach(function(v, i) {
+    if (v !== null) pts.push({ x: toX(i + 1), y: toY(v), v: v, week: i + 1 });
+  });
+
+  if (pts.length >= 2) {
+    // Gradient
+    var grad = ctx.createLinearGradient(0, pad.top, 0, pad.top + plotH);
+    grad.addColorStop(0, 'rgba(229,222,209,0.22)');
+    grad.addColorStop(1, 'rgba(229,222,209,0.01)');
+
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var pi = 1; pi < pts.length; pi++) {
+      var cpx = (pts[pi - 1].x + pts[pi].x) / 2;
+      ctx.bezierCurveTo(cpx, pts[pi - 1].y, cpx, pts[pi].y, pts[pi].x, pts[pi].y);
+    }
+    ctx.lineTo(pts[pts.length - 1].x, pad.top + plotH);
+    ctx.lineTo(pts[0].x, pad.top + plotH);
+    ctx.closePath();
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Lijn
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (var pj = 1; pj < pts.length; pj++) {
+      var cpx2 = (pts[pj - 1].x + pts[pj].x) / 2;
+      ctx.bezierCurveTo(cpx2, pts[pj - 1].y, cpx2, pts[pj].y, pts[pj].x, pts[pj].y);
+    }
+    ctx.strokeStyle = 'rgba(229,222,209,0.95)';
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+  } else if (pts.length === 1) {
+    ctx.beginPath(); ctx.arc(pts[0].x, pts[0].y, 6, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(229,222,209,0.9)'; ctx.fill();
+  }
+
+  // Datapunten met glow + value labels
+  ctx.font = 'bold 10px sans-serif';
+  pts.forEach(function(p, idx) {
+    // Outer glow
+    ctx.shadowBlur = 10; ctx.shadowColor = 'rgba(229,222,209,0.5)';
+    ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#e5ded1'; ctx.fill();
+    ctx.shadowBlur = 0;
+    // White center
+    ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    // Value label (afwisselend boven/onder)
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#e5ded1';
+    var labelY = (idx % 2 === 0) ? p.y - 13 : p.y + 22;
+    ctx.fillText(p.v.toFixed(1), p.x, labelY);
+  });
+
+  // Legenda
+  ctx.font = '10px sans-serif';
+  ctx.textAlign = 'left';
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillRect(pad.left, 10, 20, 3);
+  ctx.fillStyle = 'rgba(229,222,209,0.9)';
+  ctx.fillRect(pad.left, 10, 20, 3);
+  ctx.fillStyle = 'rgba(255,255,255,0.4)';
+  ctx.fillText('GEWICHT (kg)', pad.left + 26, 15);
+  if (gewichtGoal) {
+    ctx.fillStyle = 'rgba(168,197,160,0.8)';
+    ctx.fillRect(pad.left + 130, 10, 14, 2);
+    ctx.fillStyle = 'rgba(255,255,255,0.35)';
+    ctx.fillText('DOEL', pad.left + 150, 15);
+  }
+}
+
+// ════════════════════════════════════════
+// PRINT BOODSCHAPPENLIJST
+// ════════════════════════════════════════
+function printBoodschappen() {
+  var label = document.getElementById('bq-week-label');
+  var meta = document.getElementById('bq-print-meta');
+  if (meta && label) meta.textContent = label.textContent;
+
+  // Tijdelijk body klasse voor gerichte print
+  document.body.classList.add('print-boodschappen');
+  window.print();
+  setTimeout(function() { document.body.classList.remove('print-boodschappen'); }, 1200);
+}
+
+// ════════════════════════════════════════
+// SHARE VOORTGANG (Canvas image)
+// ════════════════════════════════════════
+function openShareModal() {
+  var modal = document.getElementById('share-bg');
+  if (!modal) return;
+  modal.classList.add('open');
+  generateShareCard();
+}
+function closeShareModal() {
+  var modal = document.getElementById('share-bg');
+  if (modal) modal.classList.remove('open');
+}
+
+function generateShareCard() {
+  var canvas = document.getElementById('share-canvas');
+  if (!canvas) return;
+
+  var W = 1080, H = 1080;
+  canvas.width = W; canvas.height = H;
+  var ctx = canvas.getContext('2d');
+
+  // Achtergrond
+  var bg = ctx.createLinearGradient(0, 0, W, H);
+  bg.addColorStop(0, '#0d0d0b');
+  bg.addColorStop(0.5, '#1a1917');
+  bg.addColorStop(1, '#0d0d0b');
+  ctx.fillStyle = bg;
+  ctx.fillRect(0, 0, W, H);
+
+  // Subtiele grid achtergrond
+  ctx.strokeStyle = 'rgba(229,222,209,0.04)';
+  ctx.lineWidth = 1;
+  for (var gx = 0; gx < W; gx += 80) {
+    ctx.beginPath(); ctx.moveTo(gx, 0); ctx.lineTo(gx, H); ctx.stroke();
+  }
+  for (var gy = 0; gy < H; gy += 80) {
+    ctx.beginPath(); ctx.moveTo(0, gy); ctx.lineTo(W, gy); ctx.stroke();
+  }
+
+  // Grote accent-cirkel rechtsonder
+  var radGrad = ctx.createRadialGradient(W * 0.85, H * 0.85, 0, W * 0.85, H * 0.85, 400);
+  radGrad.addColorStop(0, 'rgba(229,222,209,0.07)');
+  radGrad.addColorStop(1, 'transparent');
+  ctx.fillStyle = radGrad;
+  ctx.fillRect(0, 0, W, H);
+
+  // Topbalk lijn
+  ctx.strokeStyle = 'rgba(229,222,209,0.18)';
+  ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(80, 110); ctx.lineTo(W - 80, 110); ctx.stroke();
+
+  // Label boven
+  ctx.font = '600 28px sans-serif';
+  ctx.fillStyle = 'rgba(229,222,209,0.5)';
+  ctx.textAlign = 'left';
+  ctx.letterSpacing = '4px';
+  ctx.fillText('8-WEKEN DROOG TRAIN CHALLENGE', 80, 82);
+
+  // Week indicator
+  var currentWeek = getCurrentWeekNum();
+  ctx.font = 'bold 220px Bebas Neue, sans-serif';
+  ctx.fillStyle = 'rgba(229,222,209,0.06)';
+  ctx.textAlign = 'right';
+  ctx.fillText('W' + currentWeek, W - 60, H * 0.62);
+
+  // Hoofdtitel
+  ctx.font = 'bold 96px Bebas Neue, sans-serif';
+  ctx.fillStyle = '#e5ded1';
+  ctx.textAlign = 'left';
+  ctx.fillText('WEEK ' + currentWeek + ' VAN 8', 80, 220);
+
+  // Voortgangsbalk
+  var barX = 80, barY = 260, barW = W - 160, barH = 8;
+  var pct = currentWeek / 8;
+  ctx.fillStyle = 'rgba(255,255,255,0.08)';
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(barX, barY, barW, barH, 4) : ctx.rect(barX, barY, barW, barH);
+  ctx.fill();
+  var barGrad = ctx.createLinearGradient(barX, 0, barX + barW * pct, 0);
+  barGrad.addColorStop(0, '#e5ded1'); barGrad.addColorStop(1, '#ece9e3');
+  ctx.fillStyle = barGrad;
+  ctx.beginPath();
+  ctx.roundRect ? ctx.roundRect(barX, barY, barW * pct, barH, 4) : ctx.rect(barX, barY, barW * pct, barH);
+  ctx.fill();
+  ctx.font = '500 26px sans-serif';
+  ctx.fillStyle = 'rgba(229,222,209,0.55)';
+  ctx.textAlign = 'right';
+  ctx.fillText(Math.round(pct * 100) + '% voltooid', W - 80, barY + barH + 32);
+
+  // Stats: gewicht
+  var statY = 380;
+  var stats = [];
+  // Gewicht data
+  var filledGew = [];
+  for (var w = 1; w <= 8; w++) { if (gewichtData[w]) filledGew.push({ week: w, val: gewichtData[w] }); }
+  if (filledGew.length >= 2) {
+    var diff = Math.round((filledGew[filledGew.length-1].val - filledGew[0].val) * 10) / 10;
+    stats.push({ label: 'GEWICHT', val: filledGew[filledGew.length-1].val.toFixed(1) + ' kg', sub: (diff > 0 ? '+' : '') + diff + ' kg vs start', good: diff <= 0 });
+  } else if (filledGew.length === 1) {
+    stats.push({ label: 'GEWICHT', val: filledGew[0].val.toFixed(1) + ' kg', sub: 'week ' + filledGew[0].week, good: true });
+  }
+
+  // Metingen data
+  if (metingen[1] && metingen[1].gewicht) {
+    var latestMeting = metingen[8] || metingen[4] || metingen[1];
+    if (latestMeting !== metingen[1] && latestMeting.taille && metingen[1].taille) {
+      var tailleDiff = Math.round((latestMeting.taille - metingen[1].taille) * 10) / 10;
+      stats.push({ label: 'TAILLE', val: latestMeting.taille + ' cm', sub: (tailleDiff > 0 ? '+' : '') + tailleDiff + ' cm vs start', good: tailleDiff <= 0 });
+    }
+  }
+
+  // Taken
+  var takenData = JSON.parse(localStorage.getItem('challenge_taken') || '{}');
+  var weekKey = 'week' + currentWeek;
+  if (takenData[weekKey]) {
+    var done = Object.values(takenData[weekKey]).filter(Boolean).length;
+    var total = Object.keys(takenData[weekKey]).length;
+    if (total > 0) stats.push({ label: 'TAKEN W' + currentWeek, val: done + '/' + total, sub: Math.round(done/total*100) + '% afgevinkt', good: done >= total });
+  }
+
+  // Stats blokken
+  var numStats = Math.min(stats.length, 3);
+  var statBlockW = (W - 160 - (numStats - 1) * 24) / Math.max(numStats, 1);
+  stats.slice(0, 3).forEach(function(s, idx) {
+    var bx = 80 + idx * (statBlockW + 24);
+    ctx.fillStyle = 'rgba(229,222,209,0.06)';
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx, statY, statBlockW, 220, 16);
+    else ctx.rect(bx, statY, statBlockW, 220);
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(229,222,209,0.12)';
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    if (ctx.roundRect) ctx.roundRect(bx, statY, statBlockW, 220, 16);
+    else ctx.rect(bx, statY, statBlockW, 220);
+    ctx.stroke();
+
+    ctx.font = '600 22px sans-serif';
+    ctx.fillStyle = 'rgba(229,222,209,0.4)';
+    ctx.textAlign = 'left';
+    ctx.fillText(s.label, bx + 28, statY + 52);
+
+    ctx.font = 'bold 62px Bebas Neue, sans-serif';
+    ctx.fillStyle = s.good ? '#a8c5a0' : '#e5ded1';
+    ctx.fillText(s.val, bx + 28, statY + 140);
+
+    ctx.font = '500 22px sans-serif';
+    ctx.fillStyle = s.good ? 'rgba(168,197,160,0.7)' : 'rgba(176,160,152,0.7)';
+    ctx.fillText(s.sub, bx + 28, statY + 182);
+  });
+
+  if (stats.length === 0) {
+    ctx.font = '500 36px sans-serif';
+    ctx.fillStyle = 'rgba(229,222,209,0.3)';
+    ctx.textAlign = 'center';
+    ctx.fillText('Vul je metingen in om stats te zien', W / 2, statY + 120);
+  }
+
+  // Onderbalk
+  ctx.strokeStyle = 'rgba(229,222,209,0.12)';
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(80, H - 120); ctx.lineTo(W - 80, H - 120); ctx.stroke();
+
+  ctx.font = '500 28px sans-serif';
+  ctx.fillStyle = 'rgba(229,222,209,0.35)';
+  ctx.textAlign = 'left';
+  ctx.fillText('8weeksechallenge.app', 80, H - 72);
+
+  ctx.font = '500 28px sans-serif';
+  ctx.fillStyle = 'rgba(229,222,209,0.35)';
+  ctx.textAlign = 'right';
+  var today = new Date();
+  ctx.fillText(today.toLocaleDateString('nl-NL', { day: 'numeric', month: 'long', year: 'numeric' }), W - 80, H - 72);
+
+  // Preview schalen
+  var preview = document.getElementById('share-preview');
+  if (preview) preview.src = canvas.toDataURL('image/png');
+}
+
+function shareDownload() {
+  var canvas = document.getElementById('share-canvas');
+  if (!canvas) return;
+  var link = document.createElement('a');
+  link.download = '8weken-week' + getCurrentWeekNum() + '-voortgang.png';
+  link.href = canvas.toDataURL('image/png');
+  link.click();
+}
+
+function shareNative() {
+  var canvas = document.getElementById('share-canvas');
+  if (!canvas) return;
+  canvas.toBlob(function(blob) {
+    var file = new File([blob], '8weken-voortgang.png', { type: 'image/png' });
+    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({
+        title: '8-Weken Challenge — Week ' + getCurrentWeekNum(),
+        text: 'Mijn voortgang in de 8-Weken Droog Train Challenge! 💪',
+        files: [file]
+      }).catch(function(){});
+    } else {
+      shareDownload();
+    }
+  });
+}
+
+// ════════════════════════════════════════
+// PWA — SERVICE WORKER + INSTALL PROMPT
+// ════════════════════════════════════════
+var _pwaPrompt = null;
+window.addEventListener('beforeinstallprompt', function(e) {
+  e.preventDefault();
+  _pwaPrompt = e;
+  var banner = document.getElementById('pwa-banner');
+  if (banner) banner.classList.add('show');
+});
+window.addEventListener('appinstalled', function() {
+  var banner = document.getElementById('pwa-banner');
+  if (banner) banner.classList.remove('show');
+  _pwaPrompt = null;
+});
+function pwaInstall() {
+  if (!_pwaPrompt) return;
+  _pwaPrompt.prompt();
+  _pwaPrompt.userChoice.then(function() { _pwaPrompt = null; });
+  var banner = document.getElementById('pwa-banner');
+  if (banner) banner.classList.remove('show');
+}
+function pwaDismiss() {
+  var banner = document.getElementById('pwa-banner');
+  if (banner) banner.classList.remove('show');
+}
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  });
+}
+
 </script>
+
+<!-- SHARE MODAL -->
+<div class="share-bg" id="share-bg" onclick="if(event.target===this)closeShareModal()">
+  <div class="share-modal">
+    <div class="share-modal-title">DEEL VOORTGANG</div>
+    <div class="share-modal-sub">Jouw week-kaart — klik om te downloaden</div>
+    <img class="share-canvas-preview" id="share-preview" src="" alt="Share kaart" onclick="shareDownload()">
+    <canvas id="share-canvas" style="display:none"></canvas>
+    <div class="share-btns">
+      <button class="share-btn primary" onclick="shareNative()">📤 Delen</button>
+      <button class="share-btn secondary" onclick="shareDownload()">⬇ Opslaan</button>
+      <button class="share-btn secondary" onclick="closeShareModal()">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- PWA INSTALL BANNER -->
+<div class="pwa-banner" id="pwa-banner">
+  <div class="pwa-banner-icon">📱</div>
+  <div class="pwa-banner-text">
+    <div class="pwa-banner-title">Installeer als app</div>
+    <div class="pwa-banner-sub">Altijd beschikbaar, werkt offline</div>
+  </div>
+  <button class="pwa-install-btn" onclick="pwaInstall()">Installeren</button>
+  <button class="pwa-dismiss" onclick="pwaDismiss()">×</button>
+</div>
+
 </body>
 </html>
