@@ -1908,7 +1908,149 @@ function resetMetingen() {
 
 // Legacy stubs
 function saveMeting() {}
-function renderMetingen() { initMetingTable(); renderSparklines(); }
+
+function getDelta(oldVal, newVal, lowerIsBetter) {
+  if (oldVal == null || newVal == null) return null;
+  var diff = Math.round((newVal - oldVal) * 100) / 100;
+  var good = lowerIsBetter ? diff < 0 : diff > 0;
+  var neutral = diff === 0;
+  return { diff: diff, good: good, neutral: neutral };
+}
+
+function metricHTML(label, oldVal, newVal, unit, lowerIsBetter) {
+  if (oldVal == null && newVal == null) return '';
+  if (oldVal == null) {
+    return '<div class="metric-block"><div class="metric-label">' + label + '</div>' +
+           '<div class="metric-values"><span class="metric-new neutral">' + newVal + unit + '</span></div></div>';
+  }
+  var d = getDelta(oldVal, newVal, lowerIsBetter);
+  if (!d) return '';
+  var cls = d.neutral ? 'neutral' : d.good ? 'good' : 'bad';
+  var sign = d.diff > 0 ? '+' : '';
+  var icon = d.neutral ? '→' : d.good ? '▼' : '▲';
+  return '<div class="metric-block"><div class="metric-label">' + label + '</div>' +
+         '<div class="metric-values">' +
+         '<span class="metric-old">' + oldVal + unit + '</span>' +
+         '<span class="metric-arrow">→</span>' +
+         '<span class="metric-new ' + cls + '">' + newVal + unit + '</span>' +
+         '<span class="metric-delta ' + cls + '">' + icon + ' ' + sign + d.diff + unit + '</span>' +
+         '</div></div>';
+}
+
+function renderComparison(prev, curr) {
+  var weekNum = curr.week;
+  var label = weekNum === 4 ? 'Week 1 → Week 4 (halverwege)' : weekNum === 8 ? (prev.week === 4 ? 'Week 4 → Week 8 (eindresultaat)' : 'Week 1 → Week 8 (eindresultaat)') : '';
+  var prevLabel = weekNum === 4 ? 'Nulmeting' : 'Halverwege';
+  var currLabel = weekNum === 4 ? 'Halverwege' : 'Eindmeting';
+
+  var metrics = '';
+  metrics += metricHTML('⚖️ Gewicht', prev.gewicht || null, curr.gewicht || null, ' kg', true);
+  metrics += metricHTML('📐 Taille', prev.taille || null, curr.taille || null, ' cm', true);
+  metrics += metricHTML('📐 Heupen', prev.heupen || null, curr.heupen || null, ' cm', true);
+  metrics += metricHTML('💪 Spiermassa', prev.spiermassa || null, curr.spiermassa || null, ' kg', false);
+  metrics += metricHTML('📊 Vetperc.', prev.vetpct || null, curr.vetpct || null, '%', true);
+  metrics += metricHTML('⚡ Energie', prev.energie || null, curr.energie || null, '/10', false);
+  metrics += metricHTML('😴 Slaap', prev.slaap || null, curr.slaap || null, '/10', false);
+
+  var goodCount = 0, badCount = 0;
+  var fields = [
+    { old: prev.gewicht, new: curr.gewicht, lower: true },
+    { old: prev.taille, new: curr.taille, lower: true },
+    { old: prev.heupen, new: curr.heupen, lower: true },
+    { old: prev.spiermassa, new: curr.spiermassa, lower: false },
+    { old: prev.vetpct, new: curr.vetpct, lower: true },
+    { old: prev.energie, new: curr.energie, lower: false },
+    { old: prev.slaap, new: curr.slaap, lower: false }
+  ];
+  fields.forEach(function(f) {
+    if (f.old != null && f.new != null) {
+      var d = getDelta(f.old, f.new, f.lower);
+      if (d && d.good) goodCount++;
+      else if (d && !d.good && !d.neutral) badCount++;
+    }
+  });
+
+  var statusClass, statusText;
+  if (badCount === 0 && goodCount > 0) {
+    statusClass = 'winning'; statusText = '✅ Uitstekend! Je bent op de goede weg. Alle metingen gaan de juiste kant op.';
+  } else if (goodCount > badCount) {
+    statusClass = 'mixed'; statusText = '⚠️ Gemengd resultaat. Sommige metingen gaan goed, maar er is nog ruimte voor verbetering.';
+  } else if (badCount > 0 && goodCount === 0) {
+    statusClass = 'losing'; statusText = '🔴 Bijsturen nodig! De metingen gaan de verkeerde kant op. Bespreek dit met je trainer.';
+  } else {
+    statusClass = 'mixed'; statusText = '→ Geen grote verandering gemeten. Analyseer voeding en training.';
+  }
+
+  var notitie = curr.notitie ? '<div style="margin-top:10px;font-size:12px;color:var(--muted);font-style:italic">"' + curr.notitie + '"</div>' : '';
+  var hasData = Object.keys(curr).some(function(k) { return k !== 'week' && curr[k] != null && curr[k] !== ''; });
+
+  return '<div class="comparison-card" style="position:relative">' +
+         '<button class="meting-milestone-del" onclick="deleteMetingRow(' + weekNum + ')" title="Week ' + weekNum + ' verwijderen"' + (hasData ? '' : ' disabled') + '>✕</button>' +
+         '<div class="comparison-header">' +
+         '<div class="comparison-title">' + label + '</div>' +
+         '<div class="comparison-weeks">' + prevLabel + ' vs ' + currLabel + '</div>' +
+         '</div>' +
+         '<div class="comparison-metrics">' + metrics + '</div>' +
+         '<div class="progress-status ' + statusClass + '">' + statusText + '</div>' +
+         notitie +
+         '</div>';
+}
+
+function renderMetingen() {
+  initMetingTable();
+  renderSparklines();
+
+  var el = document.getElementById('saved-entries');
+  if (!el) return;
+
+  if (Object.keys(metingen).length === 0) { el.innerHTML = ''; return; }
+
+  var html = '<div class="progress-comparison">';
+
+  if (metingen[1]) {
+    var m = metingen[1];
+    var hasData1 = Object.keys(m).some(function(k) { return k !== 'week' && m[k] != null && m[k] !== ''; });
+    html += '<div class="comparison-card" style="position:relative">' +
+            '<button class="meting-milestone-del" onclick="deleteMetingRow(1)" title="Week 1 verwijderen"' + (hasData1 ? '' : ' disabled') + '>✕</button>' +
+            '<div class="comparison-header"><div class="comparison-title">📍 Week 1 — Nulmeting (startpunt)</div></div>' +
+            '<div class="comparison-metrics">' +
+            (m.gewicht != null ? '<div class="metric-block"><div class="metric-label">⚖️ Gewicht</div><div class="metric-values"><span class="metric-new neutral">' + m.gewicht + ' kg</span></div></div>' : '') +
+            (m.taille != null ? '<div class="metric-block"><div class="metric-label">📐 Taille</div><div class="metric-values"><span class="metric-new neutral">' + m.taille + ' cm</span></div></div>' : '') +
+            (m.heupen != null ? '<div class="metric-block"><div class="metric-label">📐 Heupen</div><div class="metric-values"><span class="metric-new neutral">' + m.heupen + ' cm</span></div></div>' : '') +
+            (m.spiermassa != null ? '<div class="metric-block"><div class="metric-label">💪 Spiermassa</div><div class="metric-values"><span class="metric-new neutral">' + m.spiermassa + ' kg</span></div></div>' : '') +
+            (m.vetpct != null ? '<div class="metric-block"><div class="metric-label">📊 Vetperc.</div><div class="metric-values"><span class="metric-new neutral">' + m.vetpct + '%</span></div></div>' : '') +
+            (m.energie != null ? '<div class="metric-block"><div class="metric-label">⚡ Energie</div><div class="metric-values"><span class="metric-new neutral">' + m.energie + '/10</span></div></div>' : '') +
+            (m.slaap != null ? '<div class="metric-block"><div class="metric-label">😴 Slaap</div><div class="metric-values"><span class="metric-new neutral">' + m.slaap + '/10</span></div></div>' : '') +
+            '</div>' +
+            (m.notitie ? '<div style="margin-top:8px;font-size:12px;color:var(--muted);font-style:italic">"' + m.notitie + '"</div>' : '') +
+            '</div>';
+  }
+
+  if (metingen[4] && metingen[1]) {
+    html += renderComparison(metingen[1], metingen[4]);
+  } else if (metingen[4]) {
+    var m4 = metingen[4];
+    var hasData4 = Object.keys(m4).some(function(k) { return k !== 'week' && m4[k] != null && m4[k] !== ''; });
+    html += '<div class="comparison-card" style="position:relative">' +
+            '<button class="meting-milestone-del" onclick="deleteMetingRow(4)" title="Week 4 verwijderen"' + (hasData4 ? '' : ' disabled') + '>✕</button>' +
+            '<div class="comparison-title">Week 4 opgeslagen — voeg ook week 1 toe voor vergelijking</div></div>';
+  }
+
+  if (metingen[8] && metingen[4]) {
+    html += renderComparison(metingen[4], metingen[8]);
+  } else if (metingen[8] && metingen[1]) {
+    html += renderComparison(metingen[1], metingen[8]);
+  } else if (metingen[8]) {
+    var m8 = metingen[8];
+    var hasData8 = Object.keys(m8).some(function(k) { return k !== 'week' && m8[k] != null && m8[k] !== ''; });
+    html += '<div class="comparison-card" style="position:relative">' +
+            '<button class="meting-milestone-del" onclick="deleteMetingRow(8)" title="Week 8 verwijderen"' + (hasData8 ? '' : ' disabled') + '>✕</button>' +
+            '<div class="comparison-title">Week 8 opgeslagen — voeg ook eerdere metingen toe voor vergelijking</div></div>';
+  }
+
+  html += '</div>';
+  el.innerHTML = html;
+}
 
 
 
