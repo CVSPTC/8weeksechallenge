@@ -475,6 +475,10 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 .cell-delta.bad  { color: #b0a098; }
 .meting-notitie-inp { width: 110px; background: var(--dark3); border: 1px solid var(--border); border-radius: 6px; padding: 7px 8px; font-family: var(--font-body); font-size: 11px; color: var(--text); outline: none; transition: border-color 0.2s; }
 .meting-notitie-inp:focus { border-color: var(--fire); }
+.meting-del-btn { background: none; border: none; cursor: pointer; color: var(--muted); font-size: 14px; padding: 4px 6px; border-radius: 6px; transition: color 0.2s, background 0.2s; line-height: 1; }
+.meting-del-btn:hover { color: #c48a8a; background: rgba(180,100,100,0.12); }
+.meting-del-btn:disabled { opacity: 0.2; cursor: default; }
+.meting-del-btn:disabled:hover { color: var(--muted); background: none; }
 @keyframes rowSaved { 0%{background:rgba(168,197,160,0.12)} 100%{background:transparent} }
 .row-saved { animation: rowSaved 0.9s ease-out; }
 
@@ -1389,6 +1393,7 @@ body.print-boodschappen .bq-print-header { display:block !important }
             <th>Energie<br><span style="font-size:9px;opacity:.6;font-weight:400;text-transform:none;letter-spacing:0">1–10</span></th>
             <th>Slaap<br><span style="font-size:9px;opacity:.6;font-weight:400;text-transform:none;letter-spacing:0">1–10</span></th>
             <th>Notitie</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="meting-tbody"><!-- gegenereerd door JS --></tbody>
@@ -1811,7 +1816,8 @@ function initMetingTable() {
             (isMilestone ? '<div class="meting-wk-sub">' + MT_WEEK_LABELS[w] + '</div>' : '') + '</td>';
 
     MT_FIELDS.forEach(function(f) {
-      var val = m[f.key] != null ? m[f.key] : '';
+      var rawVal = m[f.key] != null ? m[f.key] : '';
+      var val = rawVal !== '' ? (Math.round(parseFloat(rawVal) * 100) / 100) : '';
       var cls = val !== '' ? ' filled' : '';
       var extras = '';
       if (f.min != null) extras += ' min="' + f.min + '"';
@@ -1840,14 +1846,25 @@ function initMetingTable() {
     html += '<td><input type="text" class="meting-notitie-inp' + (notVal ? ' filled' : '') + '" ' +
             'placeholder="optioneel" value="' + notVal + '" ' +
             'onblur="saveMetingCell(' + w + ',\'notitie\',this.value,this)"></td>';
+    var hasWeekData = Object.keys(m).some(function(k) { return k !== 'week' && m[k] != null && m[k] !== ''; });
+    html += '<td style="text-align:center"><button class="meting-del-btn" onclick="deleteMetingRow(' + w + ')" title="Week ' + w + ' verwijderen"' + (hasWeekData ? '' : ' disabled') + '>🗑</button></td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
 }
 
+function deleteMetingRow(week) {
+  if (!metingen[week]) return;
+  if (!confirm('Week ' + week + ' verwijderen? Dit kan niet ongedaan worden gemaakt.')) return;
+  delete metingen[week];
+  localStorage.setItem('challenge_metingen', JSON.stringify(metingen));
+  initMetingTable();
+  renderSparklines();
+}
+
 function saveMetingCell(week, field, val, el) {
   if (!metingen[week]) metingen[week] = { week: week };
-  var parsed = field === 'notitie' ? val.trim() : (val !== '' ? parseFloat(val) : null);
+  var parsed = field === 'notitie' ? val.trim() : (val !== '' ? Math.round(parseFloat(val) * 100) / 100 : null);
   if (parsed === null || (typeof parsed === 'number' && isNaN(parsed)) || parsed === '') {
     delete metingen[week][field];
   } else {
