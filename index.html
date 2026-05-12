@@ -479,6 +479,10 @@ main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
 .meting-del-btn:hover { color: #c48a8a; background: rgba(180,100,100,0.12); }
 .meting-del-btn:disabled { opacity: 0.2; cursor: default; }
 .meting-del-btn:disabled:hover { color: var(--muted); background: none; }
+.meting-milestone-del { position: absolute; top: 5px; right: 5px; background: none; border: none; cursor: pointer; color: var(--muted); font-size: 11px; font-weight: 700; padding: 2px 5px; border-radius: 4px; line-height: 1; transition: color 0.2s, background 0.2s; }
+.meting-milestone-del:hover { color: #c48a8a; background: rgba(180,100,100,0.15); }
+.meting-milestone-del:disabled { opacity: 0.2; cursor: default; }
+.meting-milestone-del:disabled:hover { color: var(--muted); background: none; }
 @keyframes rowSaved { 0%{background:rgba(168,197,160,0.12)} 100%{background:transparent} }
 .row-saved { animation: rowSaved 0.9s ease-out; }
 
@@ -1811,9 +1815,15 @@ function initMetingTable() {
     }
     var prev = prevW ? metingen[prevW] : null;
 
+    var hasWeekDataEarly = Object.keys(m).some(function(k) { return k !== 'week' && m[k] != null && m[k] !== ''; });
     html += '<tr id="mtr-' + w + '"' + (isMilestone ? ' class="meting-milestone"' : '') + '>';
-    html += '<td><div class="meting-wk-label">Week ' + w + '</div>' +
-            (isMilestone ? '<div class="meting-wk-sub">' + MT_WEEK_LABELS[w] + '</div>' : '') + '</td>';
+    if (isMilestone) {
+      html += '<td style="position:relative;padding-right:28px"><div class="meting-wk-label">Week ' + w + '</div>' +
+              '<div class="meting-wk-sub">' + MT_WEEK_LABELS[w] + '</div>' +
+              '<button class="meting-milestone-del" onclick="deleteMetingRow(' + w + ')" title="Week ' + w + ' verwijderen"' + (hasWeekDataEarly ? '' : ' disabled') + '>✕</button></td>';
+    } else {
+      html += '<td><div class="meting-wk-label">Week ' + w + '</div></td>';
+    }
 
     MT_FIELDS.forEach(function(f) {
       var rawVal = m[f.key] != null ? m[f.key] : '';
@@ -1846,8 +1856,7 @@ function initMetingTable() {
     html += '<td><input type="text" class="meting-notitie-inp' + (notVal ? ' filled' : '') + '" ' +
             'placeholder="optioneel" value="' + notVal + '" ' +
             'onblur="saveMetingCell(' + w + ',\'notitie\',this.value,this)"></td>';
-    var hasWeekData = Object.keys(m).some(function(k) { return k !== 'week' && m[k] != null && m[k] !== ''; });
-    html += '<td style="text-align:center"><button class="meting-del-btn" onclick="deleteMetingRow(' + w + ')" title="Week ' + w + ' verwijderen"' + (hasWeekData ? '' : ' disabled') + '>🗑</button></td>';
+    html += '<td style="text-align:center"><button class="meting-del-btn" onclick="deleteMetingRow(' + w + ')" title="Week ' + w + ' verwijderen"' + (hasWeekDataEarly ? '' : ' disabled') + '>🗑</button></td>';
     html += '</tr>';
   }
   tbody.innerHTML = html;
