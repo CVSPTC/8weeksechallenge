@@ -2490,33 +2490,95 @@ function genereerBoodschappen() {
 
   const isHeer = gender === 'heer';
 
+  // ── Macro-targets op basis van caloriedoel ────────────────────────
+  // 1g eiwit = 4 kcal · 1g koolhydraten = 4 kcal · 1g vet = 9 kcal
+  const _baseKcal   = isHeer ? 1900 : 1500;
+  const _actualKcal = (bmrData && bmrData.doel) ? bmrData.doel : _baseKcal;
+  const _mEiwit = Math.round(_actualKcal * 0.325 / 4);  // g/dag eiwit (32.5%)
+  const _mKoolh = Math.round(_actualKcal * 0.375 / 4);  // g/dag koolhydraten (37.5%)
+  const _mVet   = Math.round(_actualKcal * 0.275 / 9);  // g/dag vet (27.5%)
+
+  // Per-maaltijd eiwit-doelen
+  const _eLu  = Math.round(_mEiwit * 0.25);  // lunch
+  const _eTr  = Math.round(_mEiwit * 0.23);  // post-training
+  const _eAv  = Math.round(_mEiwit * 0.25);  // avond
+  const _eGem = Math.round((_eLu + _eTr + _eAv) / 3);  // gemiddeld hoofd-maaltijd
+
+  // Per-maaltijd koolhydraten-doelen
+  const _kLu  = Math.round(_mKoolh * 0.35);  // lunch (grootste KH-maaltijd)
+  const _kTr  = Math.round(_mKoolh * 0.30);  // post-training
+  const _kGem = Math.round((_kLu + _kTr) / 2);
+
+  // Eiwit (g) per 100g voedsel
+  const _EP = { 'kip':22,'kalkoen':21,'vis':20,'zalm':20,'tonijn':25,'rund':20,'ei':13,'kwark':11,'griekse-yoghurt':10,'cottage-cheese':11,'peulvruchten':9,'tempeh':19,'tofu':8 };
+  // KH (g) per 100g + drooggewicht vlag
+  const _KP = { 'rijst':{k:77,d:true},'zilvervliesrijst':{k:76,d:true},'aardappel':{k:17,d:false},'zoete-aardappel':{k:20,d:false},'havermout':{k:62,d:true},'quinoa':{k:64,d:true},'brood':{k:42,d:false},'pasta':{k:65,d:true},'bulgur':{k:68,d:true},'wraps':{k:50,d:false} };
+
+  // Gram eiwitbron voor doel-eiwit (afgerond op 5g)
+  function _gE(key, tP) { return Math.round(tP * 100 / (_EP[key]||20) / 5) * 5; }
+  // Gram koolhbron voor doel-KH (afgerond op 5g)
+  function _gK(key, tK) { return Math.round(tK * 100 / ((_KP[key]||{k:50}).k) / 5) * 5; }
+
+  // Portie-label eiwitbron
+  function _lE(key, g) {
+    if (key==='ei') return Math.max(2, Math.round(g/58)) + ' eieren';
+    if (key==='tonijn') { const b=Math.max(1,Math.round(g/130)); return b+' blikje'+(b>1?'s':'')+' tonijn'; }
+    const nm = {kip:'kipfilet',kalkoen:'kalkoenfilet',vis:'witte vis',zalm:'zalm',rund:'rundergehakt',kwark:'kwark','griekse-yoghurt':'Gr. yoghurt','cottage-cheese':'cottage cheese',peulvruchten:'peulvruchten',tempeh:'tempeh',tofu:'tofu'};
+    return g+'g '+(nm[key]||key);
+  }
+  // Portie-label koolhydraatbron
+  function _lK(key, g) {
+    const m = _KP[key]||{d:false};
+    if (key==='brood') return Math.max(1,Math.round(g/35))+' sneden brood';
+    if (key==='wraps') return '1 wrap';
+    return g+'g'+(m.d?' (droog)':'');
+  }
+
+  // Weekhoeveelheid eiwitbron (voor boodschappenlijst)
+  function _weekE(key, n) {
+    const meals = Math.ceil(17 / Math.max(1,n));  // 17 eiwit-maaltijden/week ÷ n bronnen
+    const g = meals * _gE(key, _eGem);
+    if (key==='ei') { const st=Math.ceil(g/58); return st+' eieren ('+Math.ceil(st/6)+' pak)'; }
+    if (key==='tonijn') { const b=Math.ceil(g/130); return b+' blikjes'; }
+    return g>=900 ? (Math.round(g/100)/10).toFixed(1)+' kg' : Math.round(g/50)*50+' g';
+  }
+  // Weekhoeveelheid koolhydraatbron (voor boodschappenlijst)
+  function _weekK(key, n) {
+    const meals = Math.ceil(10 / Math.max(1,n));  // 10 KH-maaltijden/week ÷ n bronnen
+    const g = meals * _gK(key, _kGem);
+    if (key==='brood') { const sn=Math.ceil(g/35); return Math.ceil(sn/10)+' pak brood'; }
+    if (key==='wraps') return Math.ceil(10/Math.max(1,n))+' wraps';
+    const droogLabel = (_KP[key]||{}).d?' (droog)':'';
+    return g>=900 ? (Math.round(g/100)/10).toFixed(1)+' kg'+droogLabel : Math.round(g/50)*50+'g'+droogLabel;
+  }
+
   const eiwitMap = {
-    'kip':             { naam: 'Kipfilet',                    hoeveelheid: isHeer ? '1.4 kg'    : '1.0 kg',    cat: 'Vlees & Vis' },
-    'kalkoen':         { naam: 'Kalkoenfilet',                hoeveelheid: isHeer ? '1.2 kg'    : '900 g',     cat: 'Vlees & Vis' },
-    'vis':             { naam: 'Witte vis (bijv. tilapia)',   hoeveelheid: isHeer ? '1.0 kg'    : '700 g',     cat: 'Vlees & Vis' },
-    'zalm':            { naam: 'Zalmmoten / zalmfilet',      hoeveelheid: isHeer ? '800 g'     : '600 g',     cat: 'Vlees & Vis' },
-    'tonijn':          { naam: 'Tonijn in water (blikjes)',   hoeveelheid: isHeer ? '8 blikjes' : '6 blikjes', cat: 'Vlees & Vis' },
-    'rund':            { naam: 'Mager rundergehakt',         hoeveelheid: isHeer ? '1.0 kg'    : '700 g',     cat: 'Vlees & Vis' },
-    'ei':              { naam: 'Eieren (M/L)',               hoeveelheid: isHeer ? '18 stuks'  : '14 stuks',  cat: 'Zuivel & Eieren' },
-    'kwark':           { naam: 'Magere kwark',               hoeveelheid: isHeer ? '1.5 kg'    : '1.0 kg',    cat: 'Zuivel & Eieren' },
-    'griekse-yoghurt': { naam: 'Griekse yoghurt 0%',        hoeveelheid: isHeer ? '1.5 kg'    : '1.0 kg',    cat: 'Zuivel & Eieren' },
-    'cottage-cheese':  { naam: 'Cottage cheese',            hoeveelheid: isHeer ? '1.0 kg'    : '750 g',     cat: 'Zuivel & Eieren' },
-    'peulvruchten':    { naam: 'Kikkererwten / linzen (blik)', hoeveelheid: '4 blikjes',                       cat: 'Plantaardig Eiwit' },
-    'tempeh':          { naam: 'Tempeh',                     hoeveelheid: isHeer ? '700 g'     : '500 g',     cat: 'Plantaardig Eiwit' },
-    'tofu':            { naam: 'Tofu naturel',               hoeveelheid: isHeer ? '800 g'     : '600 g',     cat: 'Plantaardig Eiwit' },
+    'kip':             { naam: 'Kipfilet',                     hoeveelheid: _weekE('kip',eiwitten.length),             cat: 'Vlees & Vis' },
+    'kalkoen':         { naam: 'Kalkoenfilet',                 hoeveelheid: _weekE('kalkoen',eiwitten.length),         cat: 'Vlees & Vis' },
+    'vis':             { naam: 'Witte vis (bijv. tilapia)',    hoeveelheid: _weekE('vis',eiwitten.length),             cat: 'Vlees & Vis' },
+    'zalm':            { naam: 'Zalmmoten / zalmfilet',       hoeveelheid: _weekE('zalm',eiwitten.length),            cat: 'Vlees & Vis' },
+    'tonijn':          { naam: 'Tonijn in water (blikjes)',    hoeveelheid: _weekE('tonijn',eiwitten.length),          cat: 'Vlees & Vis' },
+    'rund':            { naam: 'Mager rundergehakt',          hoeveelheid: _weekE('rund',eiwitten.length),            cat: 'Vlees & Vis' },
+    'ei':              { naam: 'Eieren (M/L)',                hoeveelheid: _weekE('ei',eiwitten.length),              cat: 'Zuivel & Eieren' },
+    'kwark':           { naam: 'Magere kwark',                hoeveelheid: _weekE('kwark',eiwitten.length),           cat: 'Zuivel & Eieren' },
+    'griekse-yoghurt': { naam: 'Griekse yoghurt 0%',         hoeveelheid: _weekE('griekse-yoghurt',eiwitten.length), cat: 'Zuivel & Eieren' },
+    'cottage-cheese':  { naam: 'Cottage cheese',             hoeveelheid: _weekE('cottage-cheese',eiwitten.length),  cat: 'Zuivel & Eieren' },
+    'peulvruchten':    { naam: 'Kikkererwten / linzen (blik)',hoeveelheid: _weekE('peulvruchten',eiwitten.length),    cat: 'Plantaardig Eiwit' },
+    'tempeh':          { naam: 'Tempeh',                      hoeveelheid: _weekE('tempeh',eiwitten.length),          cat: 'Plantaardig Eiwit' },
+    'tofu':            { naam: 'Tofu naturel',                hoeveelheid: _weekE('tofu',eiwitten.length),            cat: 'Plantaardig Eiwit' },
   };
 
   const koolhydratenMap = {
-    'rijst':            { naam: 'Witte rijst',           hoeveelheid: isHeer ? '1.5 kg' : '1.0 kg', cat: 'Koolhydraten' },
-    'zilvervliesrijst': { naam: 'Zilvervliesrijst',      hoeveelheid: isHeer ? '1.5 kg' : '1.0 kg', cat: 'Koolhydraten' },
-    'aardappel':        { naam: 'Aardappelen',           hoeveelheid: isHeer ? '2.0 kg' : '1.5 kg', cat: 'Koolhydraten' },
-    'zoete-aardappel':  { naam: 'Zoete aardappelen',     hoeveelheid: isHeer ? '2.0 kg' : '1.5 kg', cat: 'Koolhydraten' },
-    'havermout':        { naam: 'Havermout',             hoeveelheid: isHeer ? '1.0 kg' : '750 g',  cat: 'Koolhydraten' },
-    'quinoa':           { naam: 'Quinoa',                hoeveelheid: isHeer ? '800 g'  : '600 g',  cat: 'Koolhydraten' },
-    'brood':            { naam: 'Volkoren brood',        hoeveelheid: '2 pakken',                   cat: 'Koolhydraten' },
-    'pasta':            { naam: 'Volkoren pasta',        hoeveelheid: isHeer ? '1.0 kg' : '750 g',  cat: 'Koolhydraten' },
-    'bulgur':           { naam: 'Bulgur',                hoeveelheid: isHeer ? '800 g'  : '600 g',  cat: 'Koolhydraten' },
-    'wraps':            { naam: 'Volkoren wraps',        hoeveelheid: '2 pakken (8 st)', cat: 'Koolhydraten' },
+    'rijst':            { naam: 'Witte rijst',        hoeveelheid: _weekK('rijst',koolhydraten.length),            cat: 'Koolhydraten' },
+    'zilvervliesrijst': { naam: 'Zilvervliesrijst',   hoeveelheid: _weekK('zilvervliesrijst',koolhydraten.length), cat: 'Koolhydraten' },
+    'aardappel':        { naam: 'Aardappelen',        hoeveelheid: _weekK('aardappel',koolhydraten.length),        cat: 'Koolhydraten' },
+    'zoete-aardappel':  { naam: 'Zoete aardappelen',  hoeveelheid: _weekK('zoete-aardappel',koolhydraten.length),  cat: 'Koolhydraten' },
+    'havermout':        { naam: 'Havermout',          hoeveelheid: _weekK('havermout',koolhydraten.length),        cat: 'Koolhydraten' },
+    'quinoa':           { naam: 'Quinoa',             hoeveelheid: _weekK('quinoa',koolhydraten.length),           cat: 'Koolhydraten' },
+    'brood':            { naam: 'Volkoren brood',     hoeveelheid: _weekK('brood',koolhydraten.length),            cat: 'Koolhydraten' },
+    'pasta':            { naam: 'Volkoren pasta',     hoeveelheid: _weekK('pasta',koolhydraten.length),            cat: 'Koolhydraten' },
+    'bulgur':           { naam: 'Bulgur',             hoeveelheid: _weekK('bulgur',koolhydraten.length),           cat: 'Koolhydraten' },
+    'wraps':            { naam: 'Volkoren wraps',     hoeveelheid: _weekK('wraps',koolhydraten.length),            cat: 'Koolhydraten' },
   };
 
   const groentenMap = {
@@ -2653,16 +2715,11 @@ function genereerBoodschappen() {
   function gr(i)  { return beschikbareGroenten[i % beschikbareGroenten.length]  ? groentenMap[beschikbareGroenten[i % beschikbareGroenten.length]].naam : null; }
   function vt(i)  { return beschikbareVetten[i % beschikbareVetten.length]      ? vettenMap[beschikbareVetten[i % beschikbareVetten.length]].naam       : null; }
 
-  // Portiegroottes op calorie target (BMR doel indien beschikbaar, anders gender-gemiddelde)
-  const baseKcal  = isHeer ? 1900 : 1500;
-  const actualKcal = (bmrData && bmrData.doel) ? bmrData.doel : baseKcal;
-  const calDoel   = actualKcal + ' kcal';
-  const kcalScale = actualKcal / baseKcal;
-  function scaleG(val) { return Math.round(val * kcalScale); }
-  const pEiwit  = scaleG(isHeer ? 150 : 100) + '–' + scaleG(isHeer ? 180 : 130) + ' g';
-  const pKoolh  = scaleG(isHeer ? 150 : 100) + '–' + scaleG(isHeer ? 200 : 150) + ' g';
-  const pGroen  = scaleG(isHeer ? 200 : 150) + ' g';
-  const pSnack  = scaleG(isHeer ? 200 : 150) + ' g';
+  // actualKcal en scaleG (voor snack-porties en ontbijt-rotatie)
+  const actualKcal = _actualKcal;
+  const calDoel    = actualKcal + ' kcal';
+  function scaleG(val) { return Math.round(val * actualKcal / _baseKcal); }
+  const pSnack = scaleG(isHeer ? 200 : 150) + ' g';
 
   // ── Extra flags ──────────────────────────────────────────────────
   const heeftHavermout = beschikbareKoolh.includes('havermout');
@@ -2713,14 +2770,35 @@ function genereerBoodschappen() {
   function _kh(i) { const k = _useKoolh[i % Math.max(_useKoolh.length,1)]; return k && koolhydratenMap[k] ? koolhydratenMap[k].naam : 'Koolhydraat'; }
   function _gr(i) { const k = beschikbareGroenten[i % Math.max(beschikbareGroenten.length,1)]; return k && groentenMap[k] ? groentenMap[k].naam : 'Groenten'; }
 
+  // Sleutels voor dagschema portie-berekening
+  const _e0k = beschikbareEiwitten[0];
+  const _e1k = beschikbareEiwitten[Math.min(1, beschikbareEiwitten.length-1)];
+  const _e2k = beschikbareEiwitten[Math.min(2, beschikbareEiwitten.length-1)];
+  const _k0k = _useKoolh[0];
+  const _k1k = _useKoolh[Math.min(1, _useKoolh.length-1)];
+  const _g0k = beschikbareGroenten[0];
+  const _g1k = beschikbareGroenten[Math.min(1, beschikbareGroenten.length-1)];
+  const _gGr = 200;  // groenten gram (vast, caloriearm)
+
+  // Portie-labels per maaltijd (voedsel + gram gelabeld)
+  const _portLunch = _e0k && _k0k
+    ? `${_lE(_e0k,_gE(_e0k,_eLu))} · ${_lK(_k0k,_gK(_k0k,_kLu))} · ${_gGr}g ${_g0k ? groentenMap[_g0k].naam : 'groenten'}`
+    : '—';
+  const _portTraining = _e1k && _k1k
+    ? `${_lE(_e1k,_gE(_e1k,_eTr))} · ${_lK(_k1k,_gK(_k1k,_kTr))}`
+    : '—';
+  const _portAvond = _e2k
+    ? `${_lE(_e2k,_gE(_e2k,_eAv))} · ${_gGr+50}g ${_g1k ? groentenMap[_g1k].naam : 'groenten'}`
+    : '—';
+
   // ── Single-day schema (fixed view) ───────────────────────────────
   const schema = [
-    { maaltijd:'🌅 Ontbijt',       wat:_obRot[0].w,                                                         portie:_obRot[0].p,                                                    tip:'Start de dag met eiwitten — geen snel-opgenomen koolhydraten' },
-    { maaltijd:'🍎 Ochtendsnack',  wat:_snRot[0].w,                                                         portie:_snRot[0].p,                                                    tip:'Houd bloedsuiker stabiel tot de lunch' },
-    { maaltijd:'☀️ Lunch',         wat:`${_ep(0)} met ${_kh(0)} en ${_gr(0)}`,                              portie:`${pEiwit} · ${pKoolh} · ${pGroen}`,                            tip:'Grootste koolhydraatmaaltijd van de dag' },
-    { maaltijd:'💪 Na training',   wat:`${_ep(1)} met ${_kh(1)}`,                                           portie:`${pEiwit} · ${scaleG(isHeer?120:90)} g koolhydraat`,           tip:'Binnen 30–60 min na training — glycogeen aanvullen' },
-    { maaltijd:'🌙 Avondeten',     wat:`${_ep(2)} met ${_gr(1)}`,                                           portie:`${pEiwit} eiwit · ${pGroen} groenten`,                         tip:'Geen/weinig koolhydraten — eiwit + groenten' },
-    { maaltijd:'🌛 Avondsnack',    wat:_avSn.w,                                                             portie:_avSn.p,                                                        tip:'Caseïne-eiwit voor nachtelijk spierherstel' }
+    { maaltijd:'🌅 Ontbijt',       wat:_obRot[0].w, portie:_obRot[0].p,  tip:'Start de dag met eiwitten — geen snel-opgenomen koolhydraten' },
+    { maaltijd:'🍎 Ochtendsnack',  wat:_snRot[0].w, portie:_snRot[0].p,  tip:'Houd bloedsuiker stabiel tot de lunch' },
+    { maaltijd:'☀️ Lunch',         wat:`${_ep(0)} met ${_kh(0)} en ${_gr(0)}`, portie:_portLunch,    tip:'Grootste koolhydraatmaaltijd van de dag' },
+    { maaltijd:'💪 Na training',   wat:`${_ep(1)} met ${_kh(1)}`,        portie:_portTraining, tip:'Binnen 30–60 min na training — glycogeen aanvullen' },
+    { maaltijd:'🌙 Avondeten',     wat:`${_ep(2)} met ${_gr(1)}`,        portie:_portAvond,    tip:'Geen/weinig koolhydraten — eiwit + groenten' },
+    { maaltijd:'🌛 Avondsnack',    wat:_avSn.w,                          portie:_avSn.p,       tip:'Caseïne-eiwit voor nachtelijk spierherstel' }
   ];
 
   // ── 7-day varied plan ────────────────────────────────────────────
@@ -2730,16 +2808,29 @@ function genereerBoodschappen() {
     const tr  = _trainDagen[d];
     const ob  = _obRot[d % _obRot.length];
     const sn  = _snRot[d % _snRot.length];
+    const nE  = Math.max(beschikbareEiwitten.length,1);
+    const nK  = Math.max(_useKoolh.length,1);
+    const nG  = Math.max(beschikbareGroenten.length,1);
+    const ek0 = beschikbareEiwitten[d % nE];
+    const ek1 = beschikbareEiwitten[(d+1) % nE];
+    const ek2 = beschikbareEiwitten[(d+2) % nE];
+    const kk0 = _useKoolh[d % nK];
+    const kk1 = _useKoolh[(d+1) % nK];
+    const gk0 = beschikbareGroenten[d % nG];
+    const gk1 = beschikbareGroenten[(d+2) % nG];
+    const pLu = ek0 && kk0 ? `${_lE(ek0,_gE(ek0,_eLu))} · ${_lK(kk0,_gK(kk0,_kLu))} · ${_gGr}g ${gk0?groentenMap[gk0].naam:'groenten'}` : '—';
+    const pTr = ek0 && kk1 ? `${_lE(ek1||ek0,_gE(ek1||ek0,_eTr))} · ${_lK(kk1,_gK(kk1,_kTr))}` : '—';
+    const pAv = ek2 ? `${_lE(ek2,_gE(ek2,_eAv))} · ${_gGr+50}g ${gk1?groentenMap[gk1].naam:'groenten'}` : '—';
     return {
       dag: dag, training: tr,
       m: [
-        { m:'🌅 Ontbijt',                            w: ob.w,                                          p: ob.p },
-        { m:'🍎 Ochtendsnack',                        w: sn.w,                                          p: sn.p },
-        { m:'☀️ Lunch',                               w: `${_ep(d)} met ${_kh(d)} en ${_gr(d)}`,       p: `${pEiwit} · ${pKoolh} · ${pGroen}` },
-        { m: tr ? '💪 Na training' : '🍽️ Middagsnack', w: tr ? `${_ep(d)} met ${_kh((d+1)%Math.max(_useKoolh.length,1))}` : (_snRot[(d+1)%_snRot.length]).w,
-                                                       p: tr ? `${pEiwit} · ${scaleG(isHeer?120:90)} g koolh.` : (_snRot[(d+1)%_snRot.length]).p },
-        { m:'🌙 Avondeten',                           w: `${_ep(d+1)} met ${_gr(d+2)}`,                p: `${pEiwit} eiwit · ${pGroen} groenten` },
-        { m:'🌛 Avondsnack',                          w: _avSn.w,                                       p: _avSn.p }
+        { m:'🌅 Ontbijt',                              w: ob.w,  p: ob.p },
+        { m:'🍎 Ochtendsnack',                          w: sn.w,  p: sn.p },
+        { m:'☀️ Lunch',                                 w: `${_ep(d)} met ${_kh(d)} en ${_gr(d)}`, p: pLu },
+        { m: tr ? '💪 Na training' : '🍽️ Middagsnack',  w: tr ? `${_ep(d+1)} met ${_kh(d+1)}` : (_snRot[(d+1)%_snRot.length]).w,
+                                                         p: tr ? pTr : (_snRot[(d+1)%_snRot.length]).p },
+        { m:'🌙 Avondeten',                             w: `${_ep(d+2)} met ${_gr(d+2)}`, p: pAv },
+        { m:'🌛 Avondsnack',                            w: _avSn.w, p: _avSn.p }
       ]
     };
   });
@@ -2750,14 +2841,19 @@ function genereerBoodschappen() {
     t += '<thead><tr style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);font-weight:700;border-bottom:1px solid rgba(255,255,255,0.08)">'
        + '<td style="padding:8px 12px 8px 0;white-space:nowrap">Maaltijd</td>'
        + '<td style="padding:8px 12px">Wat je eet</td>'
-       + '<td style="padding:8px 12px;white-space:nowrap">Portie</td>'
+       + '<td style="padding:8px 12px">Hoeveelheid</td>'
        + (showTip ? '<td style="padding:8px 0;color:var(--fire2)">💡 Tip</td>' : '')
        + '</tr></thead><tbody>';
     maaltijden.forEach(function(m) {
+      const portieStr = m.portie||m.p||'';
+      // Splits op " · " voor duidelijke weergave per ingredient
+      const portieHtml = portieStr.split(' · ').map(function(stuk, i) {
+        return '<span style="display:block;white-space:nowrap' + (i > 0 ? ';color:var(--muted)' : '') + '">' + stuk + '</span>';
+      }).join('');
       t += '<tr style="border-bottom:1px solid rgba(255,255,255,0.05)">'
          + `<td style="padding:10px 12px 10px 0;color:var(--text);font-weight:600;white-space:nowrap;vertical-align:top">${m.maaltijd||m.m}</td>`
          + `<td style="padding:10px 12px;color:var(--text);vertical-align:top">${m.wat||m.w}</td>`
-         + `<td style="padding:10px 12px;color:var(--accent,#e8c96d);font-size:12px;white-space:nowrap;vertical-align:top">${m.portie||m.p}</td>`
+         + `<td style="padding:10px 12px;color:var(--accent,#e8c96d);font-size:12px;vertical-align:top">${portieHtml}</td>`
          + (showTip && m.tip ? `<td style="padding:10px 0;color:var(--muted);font-size:11px;font-style:italic;vertical-align:top">${m.tip}</td>` : (showTip ? '<td></td>' : ''))
          + '</tr>';
     });
@@ -2792,14 +2888,18 @@ function genereerBoodschappen() {
 
       <div id="bq-view-dag">
         ${renderMaalTable(schema, true)}
-        <div style="margin-top:14px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
-          <strong style="color:var(--text)">Macroverdeling:</strong>
-          Eiwitten <strong style="color:var(--green)">30–35%</strong> &nbsp;·&nbsp;
-          Koolhydraten <strong style="color:var(--fire2)">35–40%</strong> &nbsp;·&nbsp;
-          Vetten <strong style="color:var(--fire2)">25–30%</strong>
-          &nbsp;&nbsp;|&nbsp;&nbsp;
-          <strong style="color:var(--text)">Eetpatroon:</strong> ${eetpatroon}
-          ${allergies.filter(a => a !== 'geen').length ? '&nbsp;·&nbsp;<strong style="color:var(--text)">Allergie-vrij:</strong> ' + allergies.filter(a => a !== 'geen').join(', ') : ''}
+        <div style="margin-top:14px;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.8">
+          <div style="margin-bottom:6px">
+            <strong style="color:var(--text)">Dagdoel: ${actualKcal} kcal</strong>
+            &nbsp;·&nbsp; Eetpatroon: ${eetpatroon}
+            ${allergies.filter(a => a !== 'geen').length ? '&nbsp;·&nbsp;Allergie-vrij: ' + allergies.filter(a => a !== 'geen').join(', ') : ''}
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px">
+            <span>🥩 Eiwit: <strong style="color:var(--green)">${_mEiwit}g</strong> <span style="opacity:.7">(${Math.round(_mEiwit*4)} kcal · 1g=4kcal)</span></span>
+            <span>🍚 KH: <strong style="color:var(--fire2)">${_mKoolh}g</strong> <span style="opacity:.7">(${Math.round(_mKoolh*4)} kcal · 1g=4kcal)</span></span>
+            <span>🥑 Vet: <strong style="color:var(--fire2)">${_mVet}g</strong> <span style="opacity:.7">(${Math.round(_mVet*9)} kcal · 1g=9kcal)</span></span>
+            <span style="opacity:.6">Totaal: ${Math.round(_mEiwit*4+_mKoolh*4+_mVet*9)} kcal</span>
+          </div>
         </div>
       </div>
 
@@ -2807,13 +2907,13 @@ function genereerBoodschappen() {
         <div style="font-size:12px;color:var(--muted);margin-bottom:4px">Alle producten uit de boodschappenlijst worden verdeeld over de week. 💪 = trainingsdag (ma/wo/vr).</div>
         ${weekTabsHtml}
         <div id="bq-week-panels" style="margin-top:12px">${weekPanelsHtml}</div>
-        <div style="margin-top:14px;padding:10px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.6">
-          <strong style="color:var(--text)">Macroverdeling:</strong>
-          Eiwitten <strong style="color:var(--green)">30–35%</strong> &nbsp;·&nbsp;
-          Koolhydraten <strong style="color:var(--fire2)">35–40%</strong> &nbsp;·&nbsp;
-          Vetten <strong style="color:var(--fire2)">25–30%</strong>
-          &nbsp;&nbsp;|&nbsp;&nbsp;
-          <strong style="color:var(--text)">Eetpatroon:</strong> ${eetpatroon}
+        <div style="margin-top:14px;padding:12px 14px;background:rgba(255,255,255,0.04);border-radius:8px;font-size:12px;color:var(--muted);line-height:1.8">
+          <div style="margin-bottom:6px"><strong style="color:var(--text)">Dagdoel: ${actualKcal} kcal</strong> &nbsp;·&nbsp; Eetpatroon: ${eetpatroon}</div>
+          <div style="display:flex;flex-wrap:wrap;gap:16px">
+            <span>🥩 Eiwit: <strong style="color:var(--green)">${_mEiwit}g</strong> <span style="opacity:.7">(${Math.round(_mEiwit*4)} kcal)</span></span>
+            <span>🍚 KH: <strong style="color:var(--fire2)">${_mKoolh}g</strong> <span style="opacity:.7">(${Math.round(_mKoolh*4)} kcal)</span></span>
+            <span>🥑 Vet: <strong style="color:var(--fire2)">${_mVet}g</strong> <span style="opacity:.7">(${Math.round(_mVet*9)} kcal)</span></span>
+          </div>
         </div>
       </div>
     </div>`;
