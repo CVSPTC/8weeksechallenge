@@ -2731,20 +2731,49 @@ function genereerBoodschappen() {
   const heeftCottage   = beschikbareEiwitten.includes('cottage-cheese');
   const heeftNoten     = beschikbareVetten.some(k => ['noten','amandelen','walnoten'].includes(k));
   const heeftPinda     = beschikbareVetten.includes('pindakaas');
+  const heeftTonijn    = beschikbareEiwitten.includes('tonijn');
+  const heeftKip       = beschikbareEiwitten.includes('kip');
+  const heeftKalkoen   = beschikbareEiwitten.includes('kalkoen');
+  const heeftVis       = beschikbareEiwitten.includes('vis');
+  const heeftZalm      = beschikbareEiwitten.includes('zalm');
+  const heeftRund      = beschikbareEiwitten.includes('rund');
+  const heeftTempeh    = beschikbareEiwitten.includes('tempeh');
+  const heeftTofu      = beschikbareEiwitten.includes('tofu');
+
+  // Hulp: eerste beschikbare groente naam (voor ontbijt)
+  const _obGr = beschikbareGroenten.length ? groentenMap[beschikbareGroenten[0]].naam : 'groenten';
 
   // ── Breakfast rotation (NO starchy carbs: rice/pasta/potato) ────
   const _obRot = [];
+  // Zuivel + havermout opties
   if (heeftHavermout && heeftKwark)    _obRot.push({ w:'Havermout met kwark & kaneel',        p:`${scaleG(isHeer?80:60)} g havermout + ${scaleG(isHeer?150:100)} g kwark` });
   if (heeftHavermout && heeftYoghurt)  _obRot.push({ w:'Havermout met Griekse yoghurt',        p:`${scaleG(isHeer?80:60)} g havermout + ${scaleG(isHeer?150:100)} g yoghurt` });
   if (heeftHavermout)                  _obRot.push({ w:'Havermout met melk & kaneel',           p:`${scaleG(isHeer?80:60)} g havermout` });
+  // Ei opties
   if (heeftEi && heeftBrood)           _obRot.push({ w:'Scrambled eggs op volkoren brood',      p:`${isHeer?'3':'2'} eieren + 2 sneden brood` });
   if (heeftEi && heeftWraps)           _obRot.push({ w:'Omelet in volkoren wrap',               p:`${isHeer?'3':'2'} eieren + 1 wrap` });
-  if (heeftEi)                         _obRot.push({ w:'Roerei met groenten',                   p:`${isHeer?'3':'2'} eieren + handvol groenten` });
-  if (heeftYoghurt)                    _obRot.push({ w:'Griekse yoghurt 0% met noten',          p:`${scaleG(isHeer?200:150)} g yoghurt + 20 g noten` });
+  if (heeftEi)                         _obRot.push({ w:'Roerei met groenten',                   p:`${isHeer?'3':'2'} eieren + 150g ${_obGr}` });
+  if (heeftEi && heeftTonijn)          _obRot.push({ w:'Tonijn-omelet',                         p:`2 eieren + 1 blikje tonijn + 100g ${_obGr}` });
+  // Zuivel opties
+  if (heeftYoghurt)                    _obRot.push({ w:'Griekse yoghurt 0% met noten',          p:`${scaleG(isHeer?200:150)} g yoghurt${heeftNoten?' + 20 g noten':''}` });
   if (heeftKwark)                      _obRot.push({ w:'Kwark met kaneel & fruit',              p:`${scaleG(isHeer?200:150)} g kwark` });
   if (heeftCottage)                    _obRot.push({ w:'Cottage cheese kom',                    p:`${scaleG(isHeer?200:150)} g cottage cheese` });
   if (heeftBrood && heeftKwark)        _obRot.push({ w:'Volkoren brood met kwark',              p:`2 sneden + ${scaleG(isHeer?100:80)} g kwark` });
-  if (_obRot.length === 0)             _obRot.push({ w:'Eiwitrijke ochtendmaaltijd',            p:'Zie boodschappenlijst' });
+  // Vis/vlees opties (voor wie geen zuivel/eieren kiest)
+  if (heeftTonijn)                     _obRot.push({ w:'Tonijn met groenten',                   p:`1 blikje tonijn + 150g ${_obGr}` });
+  if (heeftZalm)                       _obRot.push({ w:'Gerookte zalm met groenten',            p:`${_lE('zalm',_gE('zalm',Math.round(_mEiwit*0.22)))} + 150g ${_obGr}` });
+  if (heeftKip && !heeftEi && !heeftKwark && !heeftYoghurt && !heeftTonijn) {
+    _obRot.push({ w:'Kipfilet met groenten',  p:`${_lE('kip',_gE('kip',Math.round(_mEiwit*0.22)))} + 150g ${_obGr}` });
+  }
+  if (heeftTempeh)                     _obRot.push({ w:'Tempeh met groenten',                   p:`${_lE('tempeh',_gE('tempeh',Math.round(_mEiwit*0.22)))} + 150g ${_obGr}` });
+  if (heeftTofu)                       _obRot.push({ w:'Tofu scramble met groenten',            p:`${_lE('tofu',_gE('tofu',Math.round(_mEiwit*0.22)))} + 150g ${_obGr}` });
+  // Slimme fallback: gebruik eerste beschikbare eiwitbron
+  if (_obRot.length === 0 && beschikbareEiwitten.length > 0) {
+    const ek = beschikbareEiwitten[0];
+    const eG = _gE(ek, Math.round(_mEiwit * 0.22));
+    _obRot.push({ w:`${eiwitMap[ek].naam} met groenten`, p:`${_lE(ek,eG)} + 150g ${_obGr}` });
+  }
+  if (_obRot.length === 0) _obRot.push({ w:'Eiwitrijke ochtendmaaltijd', p:`${scaleG(isHeer?30:25)}g proteïne + groenten` });
 
   // ── Snack rotation ───────────────────────────────────────────────
   const _snRot = [];
@@ -2752,9 +2781,20 @@ function genereerBoodschappen() {
   if (heeftYoghurt) _snRot.push({ w:'Griekse yoghurt 0%',          p:`${scaleG(isHeer?150:120)} g` });
   if (heeftNoten)   _snRot.push({ w:'Gemengde noten',              p:'25–30 g' });
   if (heeftEi)      _snRot.push({ w:'Hardgekookt ei',              p:`${isHeer?'2':'1–2'} eieren` });
-  if (heeftPinda && heeftBrood) _snRot.push({ w:'Brood met pindakaas', p:'1 snede + 20 g' });
+  if (heeftPinda && heeftBrood) _snRot.push({ w:'Brood met pindakaas', p:'1 snede + 20 g pindakaas' });
   if (heeftCottage) _snRot.push({ w:'Cottage cheese',              p:`${scaleG(isHeer?150:120)} g` });
-  if (_snRot.length === 0) _snRot.push({ w:'Eiwitrijke snack',     p:pSnack });
+  if (heeftTonijn)  _snRot.push({ w:'Tonijn (blikje)',             p:'1 blikje tonijn in water' });
+  if (heeftZalm && !heeftKwark && !heeftYoghurt && !heeftEi) {
+    const snG = _gE('zalm', Math.round(_mEiwit * 0.13));
+    _snRot.push({ w:'Zalmfilet (koud)',  p:`${_lE('zalm', snG)}` });
+  }
+  // Slimme fallback: gebruik eerste beschikbare eiwitbron als snack
+  if (_snRot.length === 0 && beschikbareEiwitten.length > 0) {
+    const ek = beschikbareEiwitten[0];
+    const snG = _gE(ek, Math.round(_mEiwit * 0.13));
+    _snRot.push({ w:eiwitMap[ek].naam, p:_lE(ek, snG) });
+  }
+  if (_snRot.length === 0) _snRot.push({ w:'Eiwitrijke snack', p:`${scaleG(isHeer?25:20)}g proteïne` });
 
   // ── Avondsnack (caseine) ─────────────────────────────────────────
   const _avSn = heeftKwark   ? { w:'Magere kwark',        p:`${scaleG(isHeer?150:120)} g` }
@@ -2772,10 +2812,17 @@ function genereerBoodschappen() {
 
   // Sleutels voor dagschema portie-berekening
   const _e0k = beschikbareEiwitten[0];
-  const _e1k = beschikbareEiwitten[Math.min(1, beschikbareEiwitten.length-1)];
+  // Na training: gebruik andere eiwitbron dan lunch indien beschikbaar
+  const _e1k = beschikbareEiwitten.length > 1
+    ? beschikbareEiwitten[1]
+    : beschikbareEiwitten[0];
   const _e2k = beschikbareEiwitten[Math.min(2, beschikbareEiwitten.length-1)];
   const _k0k = _useKoolh[0];
-  const _k1k = _useKoolh[Math.min(1, _useKoolh.length-1)];
+  // Na training: gebruik andere koolhydraatbron dan lunch indien beschikbaar
+  const _k1k = _useKoolh.length > 1
+    ? _useKoolh[1]
+    : _useKoolh[0];
+  const _sameKarbLunch = _k0k === _k1k;  // zelfde bron → lagere portie na training
   const _g0k = beschikbareGroenten[0];
   const _g1k = beschikbareGroenten[Math.min(1, beschikbareGroenten.length-1)];
   const _gGr = 200;  // groenten gram (vast, caloriearm)
@@ -2784,19 +2831,26 @@ function genereerBoodschappen() {
   const _portLunch = _e0k && _k0k
     ? `${_lE(_e0k,_gE(_e0k,_eLu))} · ${_lK(_k0k,_gK(_k0k,_kLu))} · ${_gGr}g ${_g0k ? groentenMap[_g0k].naam : 'groenten'}`
     : '—';
+  // Na training: wanneer zelfde KH-bron als lunch → kleinere portie (30% minder)
+  const _kTrAdj = _sameKarbLunch ? Math.round(_kTr * 0.7) : _kTr;
   const _portTraining = _e1k && _k1k
-    ? `${_lE(_e1k,_gE(_e1k,_eTr))} · ${_lK(_k1k,_gK(_k1k,_kTr))}`
+    ? `${_lE(_e1k,_gE(_e1k,_eTr))} · ${_lK(_k1k,_gK(_k1k,_kTrAdj))}`
     : '—';
   const _portAvond = _e2k
     ? `${_lE(_e2k,_gE(_e2k,_eAv))} · ${_gGr+50}g ${_g1k ? groentenMap[_g1k].naam : 'groenten'}`
     : '—';
+
+  // Omschrijving na-training maaltijd (andere naam als zelfde eiwit+KH als lunch)
+  const _watTraining = (_e1k === _e0k && _k1k === _k0k)
+    ? `${_ep(0)} met ${_kh(0)} (post-workout, kleinere portie)`
+    : `${_ep(1)} met ${_kh(1)}`;
 
   // ── Single-day schema (fixed view) ───────────────────────────────
   const schema = [
     { maaltijd:'🌅 Ontbijt',       wat:_obRot[0].w, portie:_obRot[0].p,  tip:'Start de dag met eiwitten — geen snel-opgenomen koolhydraten' },
     { maaltijd:'🍎 Ochtendsnack',  wat:_snRot[0].w, portie:_snRot[0].p,  tip:'Houd bloedsuiker stabiel tot de lunch' },
     { maaltijd:'☀️ Lunch',         wat:`${_ep(0)} met ${_kh(0)} en ${_gr(0)}`, portie:_portLunch,    tip:'Grootste koolhydraatmaaltijd van de dag' },
-    { maaltijd:'💪 Na training',   wat:`${_ep(1)} met ${_kh(1)}`,        portie:_portTraining, tip:'Binnen 30–60 min na training — glycogeen aanvullen' },
+    { maaltijd:'💪 Na training',   wat:_watTraining,                      portie:_portTraining, tip:'Binnen 30–60 min na training — glycogeen aanvullen' },
     { maaltijd:'🌙 Avondeten',     wat:`${_ep(2)} met ${_gr(1)}`,        portie:_portAvond,    tip:'Geen/weinig koolhydraten — eiwit + groenten' },
     { maaltijd:'🌛 Avondsnack',    wat:_avSn.w,                          portie:_avSn.p,       tip:'Caseïne-eiwit voor nachtelijk spierherstel' }
   ];
@@ -2818,8 +2872,13 @@ function genereerBoodschappen() {
     const kk1 = _useKoolh[(d+1) % nK];
     const gk0 = beschikbareGroenten[d % nG];
     const gk1 = beschikbareGroenten[(d+2) % nG];
+    const sameKarb = kk0 === kk1;
+    const kTrW = sameKarb ? Math.round(_kTr * 0.7) : _kTr;
+    const watTr = (ek1 === ek0 && kk1 === kk0)
+      ? `${_ep(d)} met ${_kh(d)} (post-workout, kleinere portie)`
+      : `${_ep(d+1)} met ${_kh(d+1)}`;
     const pLu = ek0 && kk0 ? `${_lE(ek0,_gE(ek0,_eLu))} · ${_lK(kk0,_gK(kk0,_kLu))} · ${_gGr}g ${gk0?groentenMap[gk0].naam:'groenten'}` : '—';
-    const pTr = ek0 && kk1 ? `${_lE(ek1||ek0,_gE(ek1||ek0,_eTr))} · ${_lK(kk1,_gK(kk1,_kTr))}` : '—';
+    const pTr = ek0 && kk1 ? `${_lE(ek1||ek0,_gE(ek1||ek0,_eTr))} · ${_lK(kk1,_gK(kk1,kTrW))}` : '—';
     const pAv = ek2 ? `${_lE(ek2,_gE(ek2,_eAv))} · ${_gGr+50}g ${gk1?groentenMap[gk1].naam:'groenten'}` : '—';
     return {
       dag: dag, training: tr,
@@ -2827,7 +2886,7 @@ function genereerBoodschappen() {
         { m:'🌅 Ontbijt',                              w: ob.w,  p: ob.p },
         { m:'🍎 Ochtendsnack',                          w: sn.w,  p: sn.p },
         { m:'☀️ Lunch',                                 w: `${_ep(d)} met ${_kh(d)} en ${_gr(d)}`, p: pLu },
-        { m: tr ? '💪 Na training' : '🍽️ Middagsnack',  w: tr ? `${_ep(d+1)} met ${_kh(d+1)}` : (_snRot[(d+1)%_snRot.length]).w,
+        { m: tr ? '💪 Na training' : '🍽️ Middagsnack',  w: tr ? watTr : (_snRot[(d+1)%_snRot.length]).w,
                                                          p: tr ? pTr : (_snRot[(d+1)%_snRot.length]).p },
         { m:'🌙 Avondeten',                             w: `${_ep(d+2)} met ${_gr(d+2)}`, p: pAv },
         { m:'🌛 Avondsnack',                            w: _avSn.w, p: _avSn.p }
